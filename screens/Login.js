@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, TextInput, Button } from 'react-native';
+import { Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { auth, signInWithEmailAndPassword } from '../contexts/firebase';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Login() {
   const [userName, setUserName] = useState('');
@@ -30,62 +30,58 @@ export default function Login() {
   }, [userName, password]);
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView>
-        <View style={styles.container}>
-        <Text style={styles.heading}>
-          Login
-        </Text>
+    <View style={styles.container}>
+      {errorMessage &&
+        <View style={styles.error}>
+          <Text style={styles.message}>{errorMessage}</Text>
+        </View>}
 
-        {errorMessage &&
-          <View style={styles.error}>
-            <Text style={styles.message}>{errorMessage}</Text>
-          </View>}
+      <TextInput
+        value={userName}
+        onChangeText={(username) => setUserName(username)}
+        placeholder={'Username'}
+        style={styles.input}
+        autoCapitalize='none'
+        autoFocus={true}
+      />
 
-        <TextInput
-          value={userName}
-          onChangeText={(username) => setUserName(username)}
-          placeholder={'Username'}
-          style={styles.input}
-          autoCapitalize='none'
-          autoFocus={true}
-        />
+      <TextInput
+        value={password}
+        onChangeText={(password) => setPassword(password)}
+        placeholder={'Password'}
+        secureTextEntry={true}
+        style={styles.input}
+        autoCapitalize='none'
+      />
 
-        <TextInput
-          value={password}
-          onChangeText={(password) => setPassword(password)}
-          placeholder={'Password'}
-          secureTextEntry={true}
-          style={styles.input}
-          autoCapitalize='none'
-        />
-
-        <Button
-          title={'Login'}
-          onPress={handleLogin}
-          disabled={disabled}
-        />
-      </View>
-      </SafeAreaView>
-    </SafeAreaProvider>
-  )
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+      <Text style={styles.text}>LOGIN</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    flex: 1,
+    justifyContent: "center",
+    paddingHorizontal: '10%',
+    backgroundColor: '#e5dbff'
   },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
+  button: {
+    alignItems: "center",
+    paddingVertical: 10,
+    backgroundColor: '#845ef7',
+    borderRadius: 4
+  },
+  text: {
+    color: '#fff',
   },
   input: {
-    // width: 200,
     height: 44,
-    padding: 10,
+    paddingHorizontal: 20,
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: '#5f3dc4',
     marginBottom: 10,
   },
   error: {

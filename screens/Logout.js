@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { StyleSheet, TouchableOpacity, Text, SafeAreaView } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text, View} from 'react-native';
 import { auth, signOut } from '../contexts/firebase';
 import { AuthContext } from '../contexts/Authentication';
 
@@ -12,11 +12,11 @@ export default function Logout() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
         <Text style={styles.text}>LOGOUT</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   )
 }
 
@@ -24,7 +24,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: '20%',
+    paddingHorizontal: '10%',
+    backgroundColor: '#e5dbff',
   },
   button: {
     alignItems: "center",

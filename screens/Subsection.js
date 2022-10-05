@@ -1,6 +1,6 @@
 import React from 'react';
-import Logout from './Logout';
+import { MainStackNavigator } from '../navigation/StackNavigator';
 
 export default function Subsection() {
-  return <Logout />
+  return <MainStackNavigator />
 }
