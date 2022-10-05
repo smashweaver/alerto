@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet, TextInput, Button } from 'react-native';
 import { auth, signInWithEmailAndPassword } from '../contexts/firebase';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Login() {
   const [userName, setUserName] = useState('');
@@ -29,40 +30,44 @@ export default function Login() {
   }, [userName, password]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>
-        Login
-      </Text>
+    <SafeAreaProvider>
+      <SafeAreaView>
+        <View style={styles.container}>
+        <Text style={styles.heading}>
+          Login
+        </Text>
 
-      {errorMessage &&
-        <View style={styles.error}>
-          <Text style={styles.message}>{errorMessage}</Text>
-        </View>}
+        {errorMessage &&
+          <View style={styles.error}>
+            <Text style={styles.message}>{errorMessage}</Text>
+          </View>}
 
-      <TextInput
-        value={userName}
-        onChangeText={(username) => setUserName(username)}
-        placeholder={'Username'}
-        style={styles.input}
-        autoCapitalize='none'
-        autoFocus={true}
-      />
+        <TextInput
+          value={userName}
+          onChangeText={(username) => setUserName(username)}
+          placeholder={'Username'}
+          style={styles.input}
+          autoCapitalize='none'
+          autoFocus={true}
+        />
 
-      <TextInput
-        value={password}
-        onChangeText={(password) => setPassword(password)}
-        placeholder={'Password'}
-        secureTextEntry={true}
-        style={styles.input}
-        autoCapitalize='none'
-      />
+        <TextInput
+          value={password}
+          onChangeText={(password) => setPassword(password)}
+          placeholder={'Password'}
+          secureTextEntry={true}
+          style={styles.input}
+          autoCapitalize='none'
+        />
 
-      <Button
-        title={'Login'}
-        onPress={handleLogin}
-        disabled={disabled}
-      />
-    </View>
+        <Button
+          title={'Login'}
+          onPress={handleLogin}
+          disabled={disabled}
+        />
+      </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   )
 }
 

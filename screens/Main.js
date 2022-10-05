@@ -1,10 +1,11 @@
 import React from 'react';
-import { Text } from 'react-native';
-// import { SafeAreaView } from 'react-native-safe-area-context';
-// import AppStyle from '../styles/AppStyle';
+import { MainStackNavigator } from '../navigation/StackNavigator';
+import { NavigationContainer } from '@react-navigation/native';
 
 export default function Main() {
   return (
-    <Text>Main</Text>
+    <NavigationContainer>
+      <MainStackNavigator />
+    </NavigationContainer>
   )
 }

@@ -22,12 +22,8 @@ const Screen = () => {
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <SafeAreaView>
-        <AuthProvider>
-          <Screen />
-        </AuthProvider>
-      </SafeAreaView>
-    </SafeAreaProvider>
+    <AuthProvider>
+      <Screen />
+    </AuthProvider>
   )
 }
