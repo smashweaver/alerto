@@ -12,11 +12,9 @@ const Nav = createBottomTabNavigator();
 const BottomTabNavigator = () => {
   return (
     <Nav.Navigator  initialRouteName="Home"
-      tabBarOptions={{
-        showLabel: false
-      }}
       screenOptions={{
         headerShown: false,
+        showLabel: false,
       }}
     >
       <Nav.Screen
