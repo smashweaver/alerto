@@ -2,6 +2,7 @@
   "expo": {
     "name": "alerto",
     "slug": "alerto",
+    "owner": "capstone_app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -12,7 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/c4ff40b2-f5d0-47cf-83a7-b5ede873c4c6"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -24,10 +26,19 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.jasonjimenez.alerto"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c4ff40b2-f5d0-47cf-83a7-b5ede873c4c6"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
     }
   }
 }
