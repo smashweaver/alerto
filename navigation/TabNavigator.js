@@ -14,19 +14,9 @@ const BottomTabNavigator = () => {
     <Nav.Navigator  initialRouteName="Home"
       screenOptions={{
         headerShown: false,
-        showLabel: false,
+        tabBarShowLabel: false,
       }}
     >
-      <Nav.Screen
-        name="Subsection"
-        component={Subsection}
-        options={{
-          tabLabel: 'Others',
-          tabBarIcon: ({ color, size }) => (
-            <Octicons name="three-bars" color={color} size={size} />
-          ),
-        }}
-      />
       <Nav.Screen
         name="Profile"
         component={Profile}

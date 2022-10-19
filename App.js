@@ -1,18 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react';
-// import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext, AuthProvider } from './contexts/Authentication';
 import Login from './screens/Login';
 import Main from './screens/Main';
-// import AppStyle from './styles/AppStyle';
 import * as SplashScreen from 'expo-splash-screen';
 
 const Screen = () => {
-  const { user } = useContext(AuthContext);
   const [view, setView] = useState(null);
+  const { user, isUserVerified } = useContext(AuthContext);
 
   SplashScreen.preventAutoHideAsync();
 
   useEffect(() => {
+    if (!isUserVerified) return;
+
     SplashScreen.hideAsync();
 
     if (user) {
@@ -20,7 +20,7 @@ const Screen = () => {
     } else {
       setView(<Login />)
     }
-  }, [user]);
+  }, [isUserVerified, user]);
 
   return view;
 };
@@ -28,7 +28,7 @@ const Screen = () => {
 export default function App() {
   return (
     <AuthProvider>
-      <Screen />
+      <Screen/>
     </AuthProvider>
   )
 }

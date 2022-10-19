@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, Text, View, ScrollView, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { TouchableOpacity, Text, View, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
 
 const Task = ({ text }) => {
-  console.log(text);
+  // console.log(text);
   return (
     <View style={[styles.cardContainer, styles.cardShadow]}>
       <Text style={[styles.text]}>
@@ -109,16 +108,16 @@ const EventList = () => {
       keyboardShouldPersistTaps='handled'
     >
       <View style={styles.tasksContainer}>
-      {
-        tasks.map((item, index) => {
-          return (
-            <TouchableOpacity key={index} >
-              <Task text={item} />
-            </TouchableOpacity>
-          )
-        })
-      }
-    </View>
+        {
+          tasks.map((item, index) => {
+            return (
+              <TouchableOpacity key={index} >
+                <Task text={item} />
+              </TouchableOpacity>
+            )
+          })
+        }
+      </View>
     </ScrollView>
 
   );
