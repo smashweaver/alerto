@@ -54,8 +54,12 @@ export default function Login() {
         autoCapitalize='none'
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-      <Text style={styles.text}>LOGIN</Text>
+      <TouchableOpacity
+        disabled={disabled}
+        style={styles.button}
+        onPress={handleLogin}
+      >
+        <Text style={styles.text}>LOGIN</Text>
       </TouchableOpacity>
     </View>
   );
