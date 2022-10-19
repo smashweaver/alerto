@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { auth, signInWithEmailAndPassword } from '../contexts/firebase';
 // import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
@@ -8,8 +8,14 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [disabled, setDisabled] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [buttonText, setButtonText] = useState(null);
 
   const handleLogin = () => {
+    setErrorMessage('');
+    setDisabled(true);
+    setBusy(true);
+
     signInWithEmailAndPassword(auth, userName, password)
       .then((userCredential) => {
         console.log(JSON.stringify(userCredential, null, 2));
@@ -22,7 +28,18 @@ export default function Login() {
         setUserName('');
         setPassword('');
       })
+      .finally(() => {
+        setBusy(false);
+      });
   };
+
+  useEffect(() => {
+    if (busy) {
+      setButtonText(<ActivityIndicator size="small" color="#ccc" />);
+    } else {
+      setButtonText(<Text style={styles.text}>LOGIN</Text>)
+    }
+  }, [busy]);
 
   useEffect(() => {
     const enableButton = userName.trim() && password.trim();
@@ -59,7 +76,7 @@ export default function Login() {
         style={styles.button}
         onPress={handleLogin}
       >
-        <Text style={styles.text}>LOGIN</Text>
+        {buttonText}
       </TouchableOpacity>
     </View>
   );
