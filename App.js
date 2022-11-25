@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext, AuthProvider } from './contexts/Authentication';
-import Login from './screens/Login';
+import Auth from './screens/Auth';
 import Main from './screens/Main';
 import * as SplashScreen from 'expo-splash-screen';
 
@@ -18,7 +18,7 @@ const Screen = () => {
     if (user) {
       setView(<Main />);
     } else {
-      setView(<Login />)
+      setView(<Auth />)
     }
   }, [isUserVerified, user]);
 

@@ -1,7 +1,7 @@
 import React from "react";
-import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
 import TabNavigator from "./TabNavigator";
-import { MainStackNavigator } from "./StackNavigator";
+import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
+import { DrawerStackNavigator } from "./StackNavigator";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { auth, signOut } from '../contexts/firebase';
 
@@ -68,7 +68,7 @@ export default function DrawerNavigator() {
       }}
     >
       <Drawer.Screen name="Tab" component={TabNavigator} />
-      <Drawer.Screen name="Main" component={MainStackNavigator} />
+      <Drawer.Screen name="Main" component={DrawerStackNavigator} />
     </Drawer.Navigator>
   );
 }

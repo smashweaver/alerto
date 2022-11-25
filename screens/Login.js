@@ -33,6 +33,10 @@ export default function Login() {
       });
   };
 
+  const handleRegister = () => {
+    console.log('*** Navigating to Register');
+  };
+
   useEffect(() => {
     if (busy) {
       setButtonText(<ActivityIndicator size="small" color="#ccc" />);
@@ -78,6 +82,14 @@ export default function Login() {
       >
         {buttonText}
       </TouchableOpacity>
+
+      <TouchableOpacity
+        disabled={false}
+        style={styles.button}
+        onPress={handleRegister}
+      >
+        <Text style={styles.text}>REGISTER</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -91,6 +103,7 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: "center",
+    marginTop: 5,
     paddingVertical: 10,
     backgroundColor: '#845ef7',
     borderRadius: 4

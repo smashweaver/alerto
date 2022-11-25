@@ -3,7 +3,6 @@ import Home from '../screens/Home';
 import Profile from '../screens/Profile';
 import Schedule from '../screens/Schedule';
 import Settings from '../screens/Settings';
-import Subsection from '../screens/Subsection';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
 
