@@ -1,7 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import { auth, signInWithEmailAndPassword } from '../contexts/firebase';
 
 export default function Login() {
   const navigation = useNavigation();
@@ -13,34 +12,18 @@ export default function Login() {
   const [buttonText, setButtonText] = useState(null);
 
   const handleLogin = () => {
-    setErrorMessage('');
-    setDisabled(true);
-    setBusy(true);
-
-    signInWithEmailAndPassword(auth, userName, password)
-      .then((userCredential) => {
-        console.log(JSON.stringify(userCredential, null, 2));
-        setErrorMessage('');
-      })
-      .catch((error) => {
-        setErrorMessage(error.message);
-      })
-      .finally(() => {
-        setBusy(false);
-        setUserName('');
-        setPassword('');
-      });
+    console.log('*** switching to login');
+    navigation.navigate('Login');
   };
-
   const handleRegister = () => {
-    navigation.navigate('Register');
+    console.log('*** register the user');
   };
 
   useEffect(() => {
     if (busy) {
       setButtonText(<ActivityIndicator size="small" color="#ccc" />);
     } else {
-      setButtonText(<Text style={styles.text}>LOGIN</Text>)
+      setButtonText(<Text style={styles.text}>REGISTER</Text>)
     }
   }, [busy]);
 
@@ -77,7 +60,7 @@ export default function Login() {
       <TouchableOpacity
         disabled={disabled}
         style={styles.button}
-        onPress={handleLogin}
+        onPress={handleRegister}
       >
         {buttonText}
       </TouchableOpacity>
@@ -85,9 +68,9 @@ export default function Login() {
       <TouchableOpacity
         disabled={false}
         style={styles.button}
-        onPress={handleRegister}
+        onPress={handleLogin}
       >
-        <Text style={styles.text}>REGISTER</Text>
+        <Text style={styles.text}>LOGIN</Text>
       </TouchableOpacity>
     </View>
   );

@@ -1,10 +1,8 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, Text, View} from 'react-native';
 import { auth, signOut } from '../contexts/firebase';
-// import { AuthContext } from '../contexts/Authentication';
 
 export default function Logout() {
-  // const { setUser } = useContext(AuthContext);
   const handleLogout = () => {
     signOut(auth).catch((error) => {
       console.log(error.message);
