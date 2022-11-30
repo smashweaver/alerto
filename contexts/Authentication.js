@@ -5,17 +5,16 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isUserVerified, setIsUserVerified] = useState(false);
 
   useEffect(() => {
     auth.onAuthStateChanged((u) => {
+      console.log('*** onAuthStateChanged', u);
       setUser(u);
-      setIsUserVerified(true);
     });
   }, []);
 
   return (
-    <AuthContext.Provider value={{user, isUserVerified }}>
+    <AuthContext.Provider value={{user }}>
       {children}
     </AuthContext.Provider>
   );

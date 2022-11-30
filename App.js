@@ -6,13 +6,11 @@ import * as SplashScreen from 'expo-splash-screen';
 
 const Screen = () => {
   const [view, setView] = useState(null);
-  const { user, isUserVerified } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   SplashScreen.preventAutoHideAsync();
 
   useEffect(() => {
-    if (!isUserVerified) return;
-
     SplashScreen.hideAsync();
 
     if (user) {
@@ -20,7 +18,7 @@ const Screen = () => {
     } else {
       setView(<Auth />)
     }
-  }, [isUserVerified, user]);
+  }, [user]);
 
   return view;
 };

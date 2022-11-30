@@ -5,7 +5,7 @@ import { auth, signInWithEmailAndPassword } from '../contexts/firebase';
 
 export default function Login() {
   const navigation = useNavigation();
-  const [userName, setUserName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [disabled, setDisabled] = useState(true);
@@ -17,7 +17,7 @@ export default function Login() {
     setDisabled(true);
     setBusy(true);
 
-    signInWithEmailAndPassword(auth, userName, password)
+    signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log(JSON.stringify(userCredential, null, 2));
         setErrorMessage('');
@@ -27,7 +27,7 @@ export default function Login() {
       })
       .finally(() => {
         setBusy(false);
-        setUserName('');
+        setEmail('');
         setPassword('');
       });
   };
@@ -45,9 +45,9 @@ export default function Login() {
   }, [busy]);
 
   useEffect(() => {
-    const enableButton = userName.trim() && password.trim();
-    setDisabled(!enableButton);
-  }, [userName, password]);
+    const valid = email.trim() && password.trim();
+    setDisabled(!valid);
+  }, [email, password]);
 
   return (
     <View style={styles.container}>
@@ -57,9 +57,9 @@ export default function Login() {
         </View>}
 
       <TextInput
-        value={userName}
-        onChangeText={(username) => setUserName(username)}
-        placeholder={'Username'}
+        value={email}
+        onChangeText={(text) => setEmail(text)}
+        placeholder={'Email'}
         style={styles.input}
         autoCapitalize='none'
         autoFocus={true}
@@ -67,7 +67,7 @@ export default function Login() {
 
       <TextInput
         value={password}
-        onChangeText={(password) => setPassword(password)}
+        onChangeText={(text) => setPassword(text)}
         placeholder={'Password'}
         secureTextEntry={true}
         style={styles.input}
@@ -75,7 +75,7 @@ export default function Login() {
       />
 
       <TouchableOpacity
-        disabled={disabled}
+        disabled={disabled || busy}
         style={styles.button}
         onPress={handleLogin}
       >
@@ -83,7 +83,7 @@ export default function Login() {
       </TouchableOpacity>
 
       <TouchableOpacity
-        disabled={false}
+        disabled={busy}
         style={styles.button}
         onPress={handleRegister}
       >
