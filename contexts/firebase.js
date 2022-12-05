@@ -1,7 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeApp } from 'firebase/app';
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth/react-native';
-import { getAuth, createUserWithEmailAndPassword, updateProfile, signOut } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signOut,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 // import { getFirestore } from "firebase/firestore"
 
 const firebaseConfig = {
@@ -22,7 +28,17 @@ initializeAuth(app, {
 const registerUser = async (email, password, name) => {
   const auth = getAuth();
   const { user } = await createUserWithEmailAndPassword(auth, email, password);
+  auth.currentUser.displayName = name;
   await updateProfile(user, { displayName: name });
+};
+
+const signInUser = async (email, password) => {
+  try {
+    const auth = getAuth();
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch(error) {
+    throw error;
+  }
 };
 
 const signOutUser = async () => {
@@ -34,4 +50,4 @@ const signOutUser = async () => {
   }
 };
 
-export { registerUser, signOutUser }
+export { getAuth, registerUser, signInUser, signOutUser }

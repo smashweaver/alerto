@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { signInUser } from '../contexts/firebase';
 
 export default function Login() {
   const navigation = useNavigation();
@@ -18,14 +18,11 @@ export default function Login() {
     setBusy(true);
 
     try {
-      const auth = getAuth();
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInUser(email, password);
     } catch(error) {
       setErrorMessage(error.message);
     } finally {
       setBusy(false);
-      // setEmail('');
-      // setPassword('');
     }
   };
 

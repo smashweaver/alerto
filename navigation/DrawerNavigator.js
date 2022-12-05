@@ -1,14 +1,24 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import TabNavigator from "./TabNavigator";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { signOutUser } from "../contexts/firebase";
+import { AuthContext } from "../contexts/Authentication";
+
 const Drawer = createDrawerNavigator();
 
 const CustomDrawer = (props) => {
+  const [userName, setName] = useState('Unknown');
+  const { user } = useContext(AuthContext);
+
   const handleLogout = async () => {
     await signOutUser();
   };
+
+  useEffect(() => {
+    const { displayName } = user || {};
+    setName(displayName || 'Unknown');
+  }, [user]);
 
   return (
     <View style={{ flex: 1, backgroundColor: '#e5dbff' }}>
@@ -24,8 +34,8 @@ const CustomDrawer = (props) => {
           }}
         >
           <View>
-            <Text>John Doe</Text>
-            <Text>example@email.com</Text>
+            <Text>{userName}</Text>
+            <Text>{user && user.email}</Text>
           </View>
           <Image
             source={{
