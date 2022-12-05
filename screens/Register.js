@@ -1,6 +1,14 @@
-import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import {
+  ActivityIndicator,
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
+import { registerUser } from '../contexts/firebase';
 
 export default function Login() {
   const navigation = useNavigation();
@@ -17,8 +25,19 @@ export default function Login() {
     navigation.navigate('Login');
   };
 
-  const handleRegister = () => {
-    console.log('*** register the user');
+  const handleRegister = async () => {
+    console.log('*** register the user\n');
+    setErrorMessage('');
+    setDisabled(true);
+    setBusy(true);
+
+    try {
+      await registerUser(email, password, name);
+    } catch(error) {
+      setErrorMessage(error.message);
+    } finally {
+      setBusy(false);
+    }
   };
 
   useEffect(() => {

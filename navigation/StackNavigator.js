@@ -1,27 +1,10 @@
 
 import React from "react";
-import Logout from '../screens/Logout';
 import Login from '../screens/Login'
 import Register from '../screens/Register';
 import { createStackNavigator } from "@react-navigation/stack";
 
 const Stack = createStackNavigator();
-
-const DrawerStackNavigator = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-        headerStyle: {
-          backgroundColor: "#9775fa",
-        },
-        headerTintColor: "#fff",
-      }}
-    >
-      <Stack.Screen name="Logout" component={Logout} />
-    </Stack.Navigator>
-  );
-}
 
 const AuthStackNavigator = () => {
   return (
@@ -40,4 +23,4 @@ const AuthStackNavigator = () => {
   )
 }
 
-export { AuthStackNavigator, DrawerStackNavigator };
+export { AuthStackNavigator };

@@ -1,7 +1,7 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { initializeApp } from "firebase/app";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { initializeApp } from 'firebase/app';
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth/react-native';
+import { getAuth, createUserWithEmailAndPassword, updateProfile, signOut } from "firebase/auth";
 // import { getFirestore } from "firebase/firestore"
 
 const firebaseConfig = {
@@ -14,13 +14,24 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = initializeAuth(app, {
+initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage)
 });
 // const db = getFirestore(app);
 
-export {
-  auth,
-  signInWithEmailAndPassword,
-  signOut,
-}
+const registerUser = async (email, password, name) => {
+  const auth = getAuth();
+  const { user } = await createUserWithEmailAndPassword(auth, email, password);
+  await updateProfile(user, { displayName: name });
+};
+
+const signOutUser = async () => {
+  const auth = getAuth();
+  try {
+    await signOut(auth);
+  } catch(error) {
+    console.log(error.message);
+  }
+};
+
+export { registerUser, signOutUser }

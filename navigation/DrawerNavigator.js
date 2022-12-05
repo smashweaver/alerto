@@ -1,17 +1,13 @@
 import React from "react";
 import TabNavigator from "./TabNavigator";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
-import { DrawerStackNavigator } from "./StackNavigator";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { auth, signOut } from '../contexts/firebase';
-
+import { signOutUser } from "../contexts/firebase";
 const Drawer = createDrawerNavigator();
 
 const CustomDrawer = (props) => {
-  const handleLogout = () => {
-    signOut(auth).catch((error) => {
-      console.log(error.message);
-    });
+  const handleLogout = async () => {
+    await signOutUser();
   };
 
   return (
@@ -68,7 +64,6 @@ export default function DrawerNavigator() {
       }}
     >
       <Drawer.Screen name="Tab" component={TabNavigator} />
-      <Drawer.Screen name="Main" component={DrawerStackNavigator} />
     </Drawer.Navigator>
   );
 }

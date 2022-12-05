@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import { auth, signInWithEmailAndPassword } from '../contexts/firebase';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 export default function Login() {
   const navigation = useNavigation();
@@ -12,27 +12,25 @@ export default function Login() {
   const [busy, setBusy] = useState(false);
   const [buttonText, setButtonText] = useState(null);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setErrorMessage('');
     setDisabled(true);
     setBusy(true);
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log(JSON.stringify(userCredential, null, 2));
-        setErrorMessage('');
-      })
-      .catch((error) => {
-        setErrorMessage(error.message);
-      })
-      .finally(() => {
-        setBusy(false);
-        setEmail('');
-        setPassword('');
-      });
+    try {
+      const auth = getAuth();
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch(error) {
+      setErrorMessage(error.message);
+    } finally {
+      setBusy(false);
+      // setEmail('');
+      // setPassword('');
+    }
   };
 
   const handleRegister = () => {
+    console.log('*** switching to registration');
     navigation.navigate('Register');
   };
 
