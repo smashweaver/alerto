@@ -57,16 +57,22 @@ const signOutUser = async () => {
 };
 
 const getEventsQuery = (ownerId, date) => {
+  if (!ownerId) return null;
+
   const colRef = collection(db, 'events');
   return query(colRef, where('owner_id', '==', ownerId), where('date', '==', date));
 }
 
 const getLogsQuery = (ownerId, date) => {
+  if (!ownerId) return null;
+
   const colRef = collection(db, 'logs');
   return  query(colRef, where('owner_id', '==', ownerId), where('date', '==', date));
 }
 
 const createEventsFromTemplate = async (ownerId, date) => {
+  if (!ownerId) return null;
+
   const qryRef = getLogsQuery(ownerId, date);
   try {
     const snapshot = await getDocs(qryRef);

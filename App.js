@@ -13,10 +13,10 @@ const Screen = () => {
   useEffect(() => {
     SplashScreen.hideAsync();
 
-    if (user) {
-      setView(<Main />);
-    } else {
+    if (!user) {
       setView(<Auth />)
+    } else {
+      setView(<Main />);
     }
   }, [user]);
 

@@ -1,29 +1,32 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const TaskView = ({ task }) => {
-  const { alert, start, title } = task;
-  let color = '';
-
-  if (alert) {
+  const getAlertColor = (alert) => {
     switch (alert) {
       case 1:
-        color = 'green';
-        break;
+        return 'green';
       case 2:
-        color = 'yellow';
-        break;
+        return 'yellow';
       case 3:
-        color = 'red'
+        return 'red';
+      default:
+        return '';
     }
-  }
+  };
 
-  const hour = start > 12 ?  start - 12 : start === 0 ? 12 : start;
-  const amPm = start < 12 ? 'am' : 'pm';
-  const time = `${hour}${amPm}`;
+  const getFormattedTime = (start) => {
+    const hour = start > 12 ?  start - 12 : start === 0 ? 12 : start;
+    const amPm = start < 12 ? 'am' : 'pm';
+    return `${hour}${amPm}`;
+  };
 
-  console.log({ time, alert, color });
+  const color = useMemo(() => getAlertColor(task.alert), [task.alert]);
+  const time = useMemo(() => getFormattedTime(task.start), [task.start]);
+  const title = useMemo(() => task.title, [task.title]);
+
+  // console.log({ time, title, color });
 
   return (
     <View style={[styles.cardContainer, styles.cardShadow, styles.flexContainer]}>
@@ -35,7 +38,7 @@ const TaskView = ({ task }) => {
         {title}
       </Text>
 
-      {alert &&
+      {color &&
         <Ionicons name="alert-circle" size={30} color={color} style={{ marginLeft: 'auto' }} />}
     </View>
   )

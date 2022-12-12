@@ -4,13 +4,26 @@ import { AuthContext } from '../contexts/Authentication';
 import { getEventsQuery, createEventsFromTemplate } from '../contexts/firebase';
 import { onSnapshot } from "firebase/firestore";
 import { EventListView } from '../components/EventListView';
+import { debounce } from 'lodash';
 
 export default function Home() {
   const { user, date } = useContext(AuthContext)
   const [tasks] = useState([]);
   const [, setToggle] = useState(false);
 
-  const qryEvents = useMemo(() => getEventsQuery(user.uid, date), [user, date]);
+  const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
+
+  const uid = useMemo(() => {
+    console.log('*** memoizing uid');
+    const u = user || { uid: null };
+    return u.uid;
+  }, [user]);
+
+  const qryEvents = useMemo(() => {
+    if (!uid) return null;
+
+    return getEventsQuery(uid, date);
+  }, [uid, date]);
 
   const createEvents = async () => {
     await createEventsFromTemplate(user.uid, date);
@@ -22,19 +35,19 @@ export default function Home() {
 
   const sortTasks = () => {
     tasks.sort((x, y) => x.start - y.start);
-    setToggle(c => !c); // force rerender
+    reRender();
   };
 
   const addTask = (data) => {
     tasks.push(data);
-    setToggle(c => !c); // force rerender
+    reRender();
   };
 
   const removeTask = (data) => {
     const index = findDataIndex(data);
     if (index >= 0) {
       tasks.splice(index, 1);
-      setToggle(c => !c); // force rerender
+      reRender();
     }
   };
 
@@ -42,7 +55,7 @@ export default function Home() {
     const index = findDataIndex(data);
     if (index >= 0) {
       tasks[index] = data;
-      setToggle(c => !c); // force rerender
+      reRender();
     }
   }
 
@@ -54,6 +67,8 @@ export default function Home() {
   };
 
   const listenToEvents = (qryRef) => {
+    if (!qryRef) return () => {};
+
     const unsubscribe = onSnapshot(qryRef, (snapshot) => {
       snapshot.docChanges().forEach(change => {
         const { type } = change;
