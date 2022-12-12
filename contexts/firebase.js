@@ -8,22 +8,28 @@ import {
   signOut,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-// import { getFirestore } from "firebase/firestore"
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  getFirestore,
+  orderBy,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore"
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAoMRa4dyrX5lz4QebGX0xLCcnTTTAt7no",
-  authDomain: "capstone-mcm.firebaseapp.com",
-  projectId: "capstone-mcm",
-  storageBucket: "capstone-mcm.appspot.com",
-  messagingSenderId: "592672261236",
-  appId: "1:592672261236:web:3f643cffe4615aafc27d21"
-};
+import { firebaseConfig, template } from '../constants';
 
+// init firebase app
 const app = initializeApp(firebaseConfig);
 initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage)
 });
-// const db = getFirestore(app);
+
+// init services
+const db = getFirestore(app);
 
 const registerUser = async (email, password, name) => {
   const auth = getAuth();
@@ -50,4 +56,40 @@ const signOutUser = async () => {
   }
 };
 
-export { getAuth, registerUser, signInUser, signOutUser }
+const getEventsQuery = (ownerId, date) => {
+  const colRef = collection(db, 'events');
+  return query(colRef, where('owner_id', '==', ownerId), where('date', '==', date));
+}
+
+const getLogsQuery = (ownerId, date) => {
+  const colRef = collection(db, 'logs');
+  return  query(colRef, where('owner_id', '==', ownerId), where('date', '==', date));
+}
+
+const createEventsFromTemplate = async (ownerId, date) => {
+  const qryRef = getLogsQuery(ownerId, date);
+  try {
+    const snapshot = await getDocs(qryRef);
+    if (!snapshot.size) {
+      const eventRef = collection(db, 'events');
+      template.forEach(async t => {
+        console.log({ ...t, owner_id: ownerId, date })
+        await addDoc(eventRef, { ...t, owner_id: ownerId, date });
+      });
+
+      const logRef = collection(db, 'logs');
+      await addDoc(logRef, { owner_id: ownerId, date });
+    }
+  } catch(error) {
+    console.log('*** generateEvents:error', error);
+  }
+};
+
+export {
+  getAuth,
+  registerUser,
+  signInUser,
+  signOutUser,
+  createEventsFromTemplate,
+  getEventsQuery,
+}
