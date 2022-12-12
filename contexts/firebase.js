@@ -73,16 +73,19 @@ const getLogsQuery = (ownerId, date) => {
 const createEventsFromTemplate = async (ownerId, date) => {
   if (!ownerId) return null;
 
-  const qryRef = getLogsQuery(ownerId, date);
+  const qryLogs = getLogsQuery(ownerId, date);
   try {
-    const snapshot = await getDocs(qryRef);
+    // check log entry before generating event docs from our template
+    const snapshot = await getDocs(qryLogs);
     if (!snapshot.size) {
+      // create event doc for every template
       const eventRef = collection(db, 'events');
       template.forEach(async t => {
         console.log({ ...t, owner_id: ownerId, date })
         await addDoc(eventRef, { ...t, owner_id: ownerId, date });
       });
 
+      // create a log doc for the this operation
       const logRef = collection(db, 'logs');
       await addDoc(logRef, { owner_id: ownerId, date });
     }
