@@ -28,8 +28,8 @@ const EventListView = ({ tasks }) => {
 
 const styles = StyleSheet.create({
   listContainer: {
-    paddingTop: 10,
-    padding: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
   },
 });
 

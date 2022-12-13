@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { StyleSheet, SafeAreaView, Text } from 'react-native';
+import { StyleSheet, SafeAreaView } from 'react-native';
+import { onSnapshot } from "firebase/firestore";
 import { AuthContext } from '../contexts/Authentication';
 import { getScheduleQuery, createScheduleFromTemplate } from '../contexts/firebase';
-import { onSnapshot } from "firebase/firestore";
 import { EventListView } from '../components/EventListView';
+import { TopBar } from '../components/TopBar';
 import { debounce } from 'lodash';
 import { format } from 'date-fns';
 
@@ -103,8 +104,8 @@ export default function Home() {
   }, [qryEvents]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.today}>{today}</Text>
+    <SafeAreaView edges={[]} style={styles.container}>
+      <TopBar today={today} />
       <EventListView tasks={tasks} />
     </SafeAreaView>
   )
@@ -114,15 +115,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#e5dbff',
-  },
-  today: {
-    color: '#101113',
-    paddingHorizontal: 4,
-    paddingVertical: 4,
-    backgroundColor: '#B197FC',
-  },
-  listContainer: {
-    paddingTop: 10,
-    padding: 20,
   },
 });
