@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, SafeAreaView, Text } from 'react-native';
 import { AuthContext } from '../contexts/Authentication';
-import { getEventsQuery, createEventsFromTemplate } from '../contexts/firebase';
+import { getScheduleQuery, createScheduleFromTemplate } from '../contexts/firebase';
 import { onSnapshot } from "firebase/firestore";
 import { EventListView } from '../components/EventListView';
 import { debounce } from 'lodash';
@@ -12,23 +12,26 @@ export default function Home() {
   const [tasks] = useState([]);
   const [, setToggle] = useState(false);
 
-  const today = useMemo(() => format(new Date(date), 'PPP'), [date]);
+  const today = useMemo(() => format(new Date(date), 'EEEE, PPP'), [date]);
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
 
   const uid = useMemo(() => {
-    console.log('*** memoizing uid');
     const u = user || { uid: null };
+    console.log('*** memoizing uid:', { uid: u.uid });
     return u.uid;
   }, [user]);
 
   const qryEvents = useMemo(() => {
-    if (!uid) return null;
-
-    return getEventsQuery(uid, date);
+    let qry = null;
+    if (uid) {
+      qry = getScheduleQuery(uid, date);
+    }
+    console.log('*** memoizing qryEvents', { uid, date, qryEvents: qry });
+    return qry;
   }, [uid, date]);
 
-  const createEvents = async () => {
-    await createEventsFromTemplate(user.uid, date);
+  const createSchedule = async () => {
+    await createScheduleFromTemplate(user.uid, date);
   };
 
   const findDataIndex = (data) => {
@@ -59,7 +62,7 @@ export default function Home() {
       tasks[index] = data;
       reRender();
     }
-  }
+  };
 
   const handleChange = (type, data) => {
     // console.log('*** change:', { type, data });
@@ -85,11 +88,16 @@ export default function Home() {
 
   useEffect(() => {
     console.log('*** mounting Home');
-    createEvents();
+    tasks.splice(0, tasks.length);
   }, []);
 
   useEffect(() => {
-    console.log('*** qryEvents changed');
+    console.log('*** date changes');
+    createSchedule();
+  }, [date]);
+
+  useEffect(() => {
+    console.log('*** qryEvents changes');
     const unsubscribe = listenToEvents(qryEvents);
     return () => unsubscribe();
   }, [qryEvents]);

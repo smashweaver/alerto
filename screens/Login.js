@@ -27,7 +27,6 @@ export default function Login() {
   };
 
   const handleRegister = () => {
-    console.log('*** switching to registration');
     navigation.navigate('Register');
   };
 

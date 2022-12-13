@@ -11,12 +11,9 @@ import {
 import {
   addDoc,
   collection,
-  doc,
   getDocs,
   getFirestore,
-  orderBy,
   query,
-  setDoc,
   where,
 } from "firebase/firestore"
 
@@ -24,9 +21,13 @@ import { firebaseConfig, template } from '../constants';
 
 // init firebase app
 const app = initializeApp(firebaseConfig);
-initializeAuth(app, {
-  persistence: getReactNativePersistence(AsyncStorage)
-});
+try {
+  initializeAuth(app, {
+    persistence: getReactNativePersistence(AsyncStorage)
+  });
+} catch (error) {
+  console.log(`*** ${error.message}`);
+};
 
 // init services
 const db = getFirestore(app);
@@ -56,7 +57,7 @@ const signOutUser = async () => {
   }
 };
 
-const getEventsQuery = (ownerId, date) => {
+const getScheduleQuery = (ownerId, date) => {
   if (!ownerId) return null;
 
   const colRef = collection(db, 'events');
@@ -70,7 +71,7 @@ const getLogsQuery = (ownerId, date) => {
   return  query(colRef, where('owner_id', '==', ownerId), where('date', '==', date));
 }
 
-const createEventsFromTemplate = async (ownerId, date) => {
+const createScheduleFromTemplate = async (ownerId, date) => {
   if (!ownerId) return null;
 
   const qryLogs = getLogsQuery(ownerId, date);
@@ -99,6 +100,6 @@ export {
   registerUser,
   signInUser,
   signOutUser,
-  createEventsFromTemplate,
-  getEventsQuery,
+  createScheduleFromTemplate,
+  getScheduleQuery,
 }

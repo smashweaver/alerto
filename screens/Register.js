@@ -21,7 +21,6 @@ export default function Login() {
   const [buttonText, setButtonText] = useState(null);
 
   const handleLogin = () => {
-    console.log('*** switching to login');
     navigation.navigate('Login');
   };
 

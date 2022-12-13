@@ -12,6 +12,11 @@ export const AuthProvider = ({ children }) => {
     const auth = getAuth();
     auth.onAuthStateChanged(u => {
       // console.log('*** onAuthStateChanged\n', JSON.stringify(u, null, 2));
+      if (!u) {
+        console.log('*** user is signed out');
+      } else {
+        console.log('*** user is signed in');
+      }
       setUser(u);
     });
 
