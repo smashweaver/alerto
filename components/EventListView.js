@@ -12,14 +12,7 @@ const EventListView = ({ tasks }) => {
     >
       <View style={styles.listContainer}>
         {
-          tasks.map(activity => {
-            // console.log('*** activity', activity);
-            return (
-              <TouchableOpacity key={activity.id} >
-                <TaskView task={activity} />
-              </TouchableOpacity>
-            )
-          })
+          tasks.map(activity => <TaskView task={activity} key={activity.id} />)
         }
       </View>
     </ScrollView>

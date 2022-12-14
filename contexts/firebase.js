@@ -57,19 +57,33 @@ const signOutUser = async () => {
   }
 };
 
+const getEventsForNotification = async (ownerId, date, hour) => {
+  console.log({ ownerId, date, hour});
+  const colRef = collection(db, 'events');
+  const qryRef = query(colRef, where('owner_id', '==', ownerId),  where('date', '==', date), where('start', '==', hour));
+  const snap = await getDocs(qryRef);
+  // todo: handle multiple events in the given hour
+  if (!snap.empty) {
+    const x = snap.docs[0];
+    // console.log({ ... x.data(), id: x.id });
+    return { ... x.data(), id: x.id };
+  }
+  return null;
+};
+
 const getScheduleQuery = (ownerId, date) => {
   if (!ownerId) return null;
 
   const colRef = collection(db, 'events');
   return query(colRef, where('owner_id', '==', ownerId), where('date', '==', date));
-}
+};
 
 const getLogsQuery = (ownerId, date) => {
   if (!ownerId) return null;
 
   const colRef = collection(db, 'logs');
   return  query(colRef, where('owner_id', '==', ownerId), where('date', '==', date));
-}
+};
 
 const createScheduleFromTemplate = async (ownerId, date) => {
   if (!ownerId) return null;
@@ -102,4 +116,5 @@ export {
   signOutUser,
   createScheduleFromTemplate,
   getScheduleQuery,
+  getEventsForNotification,
 }
