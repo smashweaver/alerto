@@ -93,6 +93,7 @@ export default function Home() {
   };
 
   const scrollTo = (id) => {
+    if (!scrollRef) return;
     const [x, y] = [0, coords[id]-10];
     console.log('*** scrollTo', {x, y, id});
 

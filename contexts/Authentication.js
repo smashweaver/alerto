@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }) => {
 
   const requestNotificationPermissions = () => {
     const setStatus = p => {
-      console.log(p.status);
       setNotificationPermissions(p.status);
     };
     Notifications.requestPermissionsAsync().then(setStatus);
