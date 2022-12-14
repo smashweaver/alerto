@@ -7,18 +7,23 @@ import { EventListView } from '../components/EventListView';
 import { TopBar } from '../components/TopBar';
 import { debounce } from 'lodash';
 import { format } from 'date-fns';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function Home() {
+  const isFocused = useIsFocused();
   const { user, date } = useContext(AuthContext)
   const [tasks] = useState([]);
   const [, setToggle] = useState(false);
+  const [coords, setCoords] = useState({});
+  const [active, setActive] = useState(null);
+  const [scrollRef, setScrollRef] = useState(null);
 
   const today = useMemo(() => format(new Date(date), 'EEEE, PPP'), [date]);
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
 
   const uid = useMemo(() => {
     const u = user || { uid: null };
-    console.log('*** memoizing uid:', { uid: u.uid });
+    // console.log('*** memoizing uid:', { uid: u.uid });
     return u.uid;
   }, [user]);
 
@@ -27,7 +32,7 @@ export default function Home() {
     if (uid) {
       qry = getScheduleQuery(uid, date);
     }
-    console.log('*** memoizing qryEvents', { uid, date, qryEvents: qry });
+    // console.log('*** memoizing qryEvents', { uid, date, qryEvents: qry });
     return qry;
   }, [uid, date]);
 
@@ -87,6 +92,15 @@ export default function Home() {
     return unsubscribe;
   };
 
+  const scrollTo = (id) => {
+    const [x, y] = [0, coords[id]];
+    console.log('*** scrollTo', {x, y, id});
+
+    scrollRef.scrollTo({
+      x, y, animated: true,
+    });
+  };
+
   useEffect(() => {
     console.log('*** mounting Home');
     tasks.splice(0, tasks.length);
@@ -103,10 +117,18 @@ export default function Home() {
     return () => unsubscribe();
   }, [qryEvents]);
 
+  useEffect(() => {
+    if (!isFocused) return;
+    if (!active) return;
+    if (!coords[active]) return;
+    console.log('*** scroll into view:', { isFocused, active, scrollTo: coords[active]});
+    scrollTo(active);
+  }, [active, isFocused]);
+
   return (
     <SafeAreaView edges={[]} style={styles.container}>
       <TopBar today={today} />
-      <EventListView tasks={tasks} />
+      <EventListView setScrollRef={setScrollRef} scrollTo={scrollTo} setActive={setActive} coords={coords} tasks={tasks} />
     </SafeAreaView>
   )
 }

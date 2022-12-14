@@ -2,12 +2,12 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import DrawerNavigator from '../navigation/DrawerNavigator';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthContext } from '../contexts/Authentication';
-import { getEventsForNotification } from '../contexts/firebase';
+// import { getEventsForNotification } from '../contexts/firebase';
 import { PermissionStatus } from 'expo-modules-core';
 import * as Notifications from 'expo-notifications';
 
 export default function Main() {
-  const { user, hour, notificationPermissions } = useContext(AuthContext);
+  const { user, date, hour, notificationPermissions, scheduleNotification } = useContext(AuthContext);
 
   const uid = useMemo(() => {
     const u = user || { uid: null };
@@ -15,45 +15,9 @@ export default function Main() {
     return u.uid;
   }, [user]);
 
-  const notify = (data) => {
-    if (!data) return;
-
-    let title = 'HELLO';
-    switch (data.alert) {
-      case 1:
-        title = 'ATTENTION';
-        break;
-      case 2:
-        title = 'IMPORTANT';
-        break;
-      case 3:
-        title = 'URGENT';
-        break;
-      default:
-        break;
-    }
-
-    const body = data.title;
-    const sound = true;
-    const priority = Notifications.AndroidNotificationPriority.HIGH
-
-    const schedulingOptions = {
-      content: { title, body, sound, priority },
-      trigger: { seconds: 2 },
-    };
-
-    Notifications.scheduleNotificationAsync(schedulingOptions);
-  };
-
   const handleNotification = (notification) => {
     // todo:  show notification button here!
     console.log('*** fire notification:', notification);
-  };
-
-  // todo: this should be a background task
-  const scheduleNotification = (user) => {
-    getEventsForNotification('BTSDVodrkdMT6F8A9Nw5UGYUuMu1', '2022-12-14', 9)
-    .then(x => notify(x));
   };
 
   useEffect(() => {
@@ -69,8 +33,9 @@ export default function Main() {
 
   useEffect(() => {
     if (!uid) return;
-    console.log('*** hour changes: ', hour, uid);
-  }, [hour, uid])
+    // console.log('*** hour changes: ', hour, date, uid);
+     scheduleNotification(uid, date, hour);
+  }, [hour, date, uid])
 
   return (
     <NavigationContainer>

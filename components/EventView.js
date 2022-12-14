@@ -1,17 +1,45 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import React, { useContext, useEffect, useMemo, useState  } from 'react';
+import {  Text, View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { AuthContext } from '../contexts/Authentication';
 import { getAlertColor, getFormattedTime } from '../utils';
 
-const TaskView = ({ task }) => {
+const EventView = ({  scrollTo, setActive, coords, task }) => {
+  const { hour } = useContext(AuthContext);
   const color = useMemo(() => getAlertColor(task.alert), [task.alert]);
   const time = useMemo(() => getFormattedTime(task.start), [task.start]);
+  const start = useMemo(() => task.start, [task.start]);
   const title = useMemo(() => task.title, [task.title]);
 
-  // console.log({ time, title, color });
+  // console.log({ hour, time, title, color });
+
+  const [focusStyle, setFocusStyle] = useState(styles.normal);
+
+  const checkScroll = () => {
+    if (start === hour) {
+      scrollTo(task.id);
+    }
+  };
+
+  useEffect(() => {
+    if (start === hour) {
+      setFocusStyle(styles.active);
+      setActive(task.id);
+    } else {
+      setFocusStyle(styles.normal);
+    }
+  }, [hour, start]);
 
   return (
-    <View style={[styles.cardContainer, styles.cardShadow, styles.flexContainer]}>
+    <View
+      key={task.id}
+      style={[styles.cardContainer, styles.cardShadow, styles.flexContainer, styles.current, focusStyle]}
+      onLayout={event => {
+        const layout = event.nativeEvent.layout;
+        coords[task.id] = layout.y;
+        setTimeout(() => checkScroll(), 100);
+      }}
+    >
       <Text style={[styles.text]}>
         {time}
       </Text>
@@ -27,6 +55,12 @@ const TaskView = ({ task }) => {
 };
 
 const styles = StyleSheet.create({
+  active: {
+    borderColor: '#CC5DE8',
+    borderWidth: 4,
+  },
+  normal: {
+  },
   flexContainer: {
     flex: 1,
     flexDirection: 'row',
@@ -60,4 +94,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export { TaskView };
+export { EventView };

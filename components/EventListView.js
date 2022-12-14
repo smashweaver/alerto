@@ -1,10 +1,13 @@
 import React from 'react';
-import { TouchableOpacity, View, ScrollView, StyleSheet } from 'react-native';
-import { TaskView } from '../components/TaskView';
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { EventView } from './EventView';
 
-const EventListView = ({ tasks }) => {
+const EventListView = ({ scrollTo, setScrollRef, setActive, coords, tasks }) => {
   return (
     <ScrollView
+      ref={ref => {
+        setScrollRef(ref);
+      }}
       contentContainerStyle={{
         flexGrow: 1
       }}
@@ -12,7 +15,7 @@ const EventListView = ({ tasks }) => {
     >
       <View style={styles.listContainer}>
         {
-          tasks.map(activity => <TaskView task={activity} key={activity.id} />)
+          tasks.map(task => <EventView  scrollTo={scrollTo} setActive={setActive} coords={coords} task={task} key={task.id} />)
         }
       </View>
     </ScrollView>

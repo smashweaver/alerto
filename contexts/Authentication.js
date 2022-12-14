@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { format } from 'date-fns';
-import { getAuth } from './firebase';
+import { getAuth, getEventsForNotification } from './firebase';
 import { PermissionStatus } from 'expo-modules-core';
 import * as Notifications from 'expo-notifications';
 
@@ -13,8 +13,49 @@ export const AuthProvider = ({ children }) => {
   const [notificationPermissions, setNotificationPermissions] = useState(PermissionStatus.UNDETERMINED);
 
   const requestNotificationPermissions = () => {
-    const setStatus = status => setNotificationPermissions(status)
+    const setStatus = p => {
+      console.log(p.status);
+      setNotificationPermissions(p.status);
+    };
     Notifications.requestPermissionsAsync().then(setStatus);
+  };
+
+  const notify = (data) => {
+    if (!data) return;
+
+    let title = 'HELLO';
+    switch (data.alert) {
+      case 1:
+        title = 'ATTENTION';
+        break;
+      case 2:
+        title = 'IMPORTANT';
+        break;
+      case 3:
+        title = 'URGENT';
+        break;
+      default:
+        break;
+    }
+
+    const body = data.title;
+    const sound = true;
+    const priority = Notifications.AndroidNotificationPriority.HIGH
+
+    const schedulingOptions = {
+      content: { title, body, sound, priority },
+      trigger: { seconds: 2 },
+    };
+
+    Notifications.scheduleNotificationAsync(schedulingOptions);
+  };
+
+  // todo: this should be a background task
+  const scheduleNotification = (notifyUserId, notifyDate, notifyHour) => {
+    // console.log('*** schedule:', { notifyUserId, notifyDate, notifyHour, notificationPermissions});
+    if (notificationPermissions !== PermissionStatus.GRANTED) return;
+    getEventsForNotification(notifyUserId, notifyDate, notifyHour)
+    .then(x => notify(x));
   };
 
   useEffect(() => {
@@ -48,7 +89,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, hour, date, notificationPermissions }}>
+    <AuthContext.Provider value={{ user, hour, date, notificationPermissions, scheduleNotification }}>
       {children}
     </AuthContext.Provider>
   );
