@@ -11,10 +11,10 @@ import { useIsFocused } from '@react-navigation/native';
 
 export default function Home() {
   const isFocused = useIsFocused();
-  const { user, date } = useContext(AuthContext)
+  const { user, hour, date } = useContext(AuthContext)
   const [tasks] = useState([]);
   const [, setToggle] = useState(false);
-  const [coords, setCoords] = useState({});
+  const [coords] = useState({});
   const [active, setActive] = useState(null);
   const [scrollRef, setScrollRef] = useState(null);
 
@@ -93,12 +93,29 @@ export default function Home() {
   };
 
   const scrollTo = (id) => {
-    const [x, y] = [0, coords[id]];
+    const [x, y] = [0, coords[id]-10];
     console.log('*** scrollTo', {x, y, id});
 
     scrollRef.scrollTo({
       x, y, animated: true,
     });
+  };
+
+  const scrollToNearest = (oras) => {
+    console.log('*** scroll to nearest', { oras });
+    const t = setTimeout(() => {
+      if (tasks.length === 0) return;
+
+      let p = null;
+      for(let i = tasks.length -1 ; i >= 0; i--) {
+        if (tasks[i].start < oras) {
+          p = tasks[i];
+          break;
+        }
+      }
+      if (p) { scrollTo(p.id); }
+    }, 2000);
+    return t;
   };
 
   useEffect(() => {
@@ -107,28 +124,31 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    console.log('*** date changes');
+    const t = scrollToNearest(hour);
+    return () => clearTimeout(t);
+  }, [hour, tasks.length]);
+
+  useEffect(() => {
+    console.log('*** date changes', { date });
     createSchedule();
   }, [date]);
 
   useEffect(() => {
-    console.log('*** qryEvents changes');
     const unsubscribe = listenToEvents(qryEvents);
     return () => unsubscribe();
   }, [qryEvents]);
 
   useEffect(() => {
-    if (!isFocused) return;
-    if (!active) return;
-    if (!coords[active]) return;
     console.log('*** scroll into view:', { isFocused, active, scrollTo: coords[active]});
-    scrollTo(active);
+    if (active) scrollTo(active);
+    const t = scrollToNearest(hour);
+    return () => clearTimeout(t);
   }, [active, isFocused]);
 
   return (
     <SafeAreaView edges={[]} style={styles.container}>
       <TopBar today={today} />
-      <EventListView setScrollRef={setScrollRef} scrollTo={scrollTo} setActive={setActive} coords={coords} tasks={tasks} />
+      <EventListView setScrollRef={setScrollRef} setActive={setActive} coords={coords} tasks={tasks} />
     </SafeAreaView>
   )
 }

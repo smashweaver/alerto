@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
   const notify = (data) => {
     if (!data) return;
 
-    let title = 'HELLO';
+    let title = 'REMINDER';
     switch (data.alert) {
       case 1:
         title = 'ATTENTION';

@@ -4,25 +4,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { AuthContext } from '../contexts/Authentication';
 import { getAlertColor, getFormattedTime } from '../utils';
 
-const EventView = ({  scrollTo, setActive, coords, task }) => {
+const EventView = ({  setActive, coords, task }) => {
   const { hour } = useContext(AuthContext);
   const color = useMemo(() => getAlertColor(task.alert), [task.alert]);
   const time = useMemo(() => getFormattedTime(task.start), [task.start]);
-  const start = useMemo(() => task.start, [task.start]);
-  const title = useMemo(() => task.title, [task.title]);
-
-  // console.log({ hour, time, title, color });
-
   const [focusStyle, setFocusStyle] = useState(styles.normal);
 
-  const checkScroll = () => {
-    if (start === hour) {
-      scrollTo(task.id);
-    }
-  };
+  const { title, start } = task;
 
   useEffect(() => {
     if (start === hour) {
+      console.log('*** event activated:', { id: task.id });
       setFocusStyle(styles.active);
       setActive(task.id);
     } else {
@@ -37,7 +29,6 @@ const EventView = ({  scrollTo, setActive, coords, task }) => {
       onLayout={event => {
         const layout = event.nativeEvent.layout;
         coords[task.id] = layout.y;
-        setTimeout(() => checkScroll(), 100);
       }}
     >
       <Text style={[styles.text]}>

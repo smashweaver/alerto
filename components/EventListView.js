@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { EventView } from './EventView';
 
-const EventListView = ({ scrollTo, setScrollRef, setActive, coords, tasks }) => {
+const EventListView = ({ setScrollRef, setActive, coords, tasks }) => {
   return (
     <ScrollView
       ref={ref => {
@@ -15,7 +15,7 @@ const EventListView = ({ scrollTo, setScrollRef, setActive, coords, tasks }) => 
     >
       <View style={styles.listContainer}>
         {
-          tasks.map(task => <EventView  scrollTo={scrollTo} setActive={setActive} coords={coords} task={task} key={task.id} />)
+          tasks.map(task => <EventView  setActive={setActive} coords={coords} task={task} key={task.id} />)
         }
       </View>
     </ScrollView>
