@@ -19,7 +19,7 @@ export default function Home() {
   const [active, setActive] = useState(null);
   const [scrollRef, setScrollRef] = useState(null);
   const [visible, setVisible] = useState(false);
-  const [task, setTask] = useState(null);
+  const [modalData, setModalData] = useState(null);
 
   const today = useMemo(() => format(new Date(date), 'EEEE, PPP'), [date]);
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
@@ -124,14 +124,14 @@ export default function Home() {
 
   const openModal = (activity) => {
     console.log('*** open modal:', activity.title);
-    setTask(activity);
+    setModalData(activity);
     setVisible(true);
   };
 
   const closeModal = () => {
     console.log('*** close modal');
     setVisible(false);
-    setTask(null);
+    setModalData(null);
   };
 
   useEffect(() => {
@@ -180,11 +180,11 @@ export default function Home() {
           openModal={openModal}
           setActive={setActive}
           coords={coords}
-          tasks={tasks} />
+          list={[...tasks]} />
       </ScrollView>
 
       {visible &&
-        <EventModal close={closeModal} task={task} />}
+        <EventModal close={closeModal} task={modalData} />}
     </SafeAreaView>
   )
 }

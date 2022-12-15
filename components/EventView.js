@@ -16,9 +16,7 @@ const EventView = ({ openModal, setActive, coords, task }) => {
     console.log({ title, start, id: task.id, hour });
   }, []);*/
 
-  const onPress = () => {
-    openModal(task);
-  };
+  const onPress = () => openModal(task);
 
   useEffect(() => {
     if (start === hour) {

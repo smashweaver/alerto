@@ -2,11 +2,11 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { EventView } from './EventView';
 
-const EventListView = ({ openModal, setActive, coords, tasks }) => {
+const EventListView = ({ openModal, setActive, coords, list }) => {
   return (
     <View style={styles.listContainer}>
     {
-      tasks.map(task => <EventView  openModal={openModal} setActive={setActive} coords={coords} task={task} key={task.id} />)
+      list.map(task => <EventView  openModal={openModal} setActive={setActive} coords={coords} task={task} key={task.id} />)
     }
   </View>
   );
