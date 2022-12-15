@@ -1,13 +1,14 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { StyleSheet, SafeAreaView } from 'react-native';
+import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
+import { StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { onSnapshot } from "firebase/firestore";
 import { AuthContext } from '../contexts/Authentication';
 import { getScheduleQuery, createScheduleFromTemplate } from '../contexts/firebase';
 import { EventListView } from '../components/EventListView';
 import { TopBar } from '../components/TopBar';
+import { useIsFocused } from '@react-navigation/native';
+import { EventModal } from '../components/EventModal';
 import { debounce } from 'lodash';
 import { format } from 'date-fns';
-import { useIsFocused } from '@react-navigation/native';
 
 export default function Home() {
   const isFocused = useIsFocused();
@@ -17,9 +18,13 @@ export default function Home() {
   const [coords] = useState({});
   const [active, setActive] = useState(null);
   const [scrollRef, setScrollRef] = useState(null);
+  const [visible, setVisible] = useState(false);
+  const [task, setTask] = useState(null);
 
   const today = useMemo(() => format(new Date(date), 'EEEE, PPP'), [date]);
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
+
+  const t = useRef(null);
 
   const uid = useMemo(() => {
     const u = user || { uid: null };
@@ -93,41 +98,47 @@ export default function Home() {
   };
 
   const scrollTo = (id) => {
+    if (!id) return;
     if (!scrollRef) return;
     const [x, y] = [0, coords[id]-10];
-    console.log('*** scrollTo', {x, y, id});
-
+    // console.log('*** scrollTo', {x, y, id});
     scrollRef.scrollTo({
       x, y, animated: true,
     });
   };
 
-  const scrollToNearest = (oras) => {
-    console.log('*** scroll to nearest', { oras });
+  const scrollToNearest = (currentHour) => {
     const t = setTimeout(() => {
-      if (tasks.length === 0) return;
-
-      let p = null;
-      for(let i = tasks.length -1 ; i >= 0; i--) {
-        if (tasks[i].start < oras) {
+      if (tasks.length) {
+        console.log('*** scroll to nearest', { currentHour });
+        let p = null;
+        for(let i = tasks.length -1 ; i >= 0; i--) {
           p = tasks[i];
-          break;
+          if (p.start < currentHour) break;
         }
+        if (p) { scrollTo(p.id); }
       }
-      if (p) { scrollTo(p.id); }
-    }, 2000);
+    }, 1000);
     return t;
+  };
+
+  const openModal = (activity) => {
+    console.log('*** open modal:', activity.title);
+    setTask(activity);
+    setVisible(true);
+  };
+
+  const closeModal = () => {
+    console.log('*** close modal');
+    setVisible(false);
+    setTask(null);
   };
 
   useEffect(() => {
     console.log('*** mounting Home');
     tasks.splice(0, tasks.length);
+    return () => clearTimeout(t.current);
   }, []);
-
-  useEffect(() => {
-    const t = scrollToNearest(hour);
-    return () => clearTimeout(t);
-  }, [hour, tasks.length]);
 
   useEffect(() => {
     console.log('*** date changes', { date });
@@ -139,17 +150,41 @@ export default function Home() {
     return () => unsubscribe();
   }, [qryEvents]);
 
-  useEffect(() => {
-    console.log('*** scroll into view:', { isFocused, active, scrollTo: coords[active]});
+   useEffect(() => {
+    console.log('*** active changed:', active)
     if (active) scrollTo(active);
-    const t = scrollToNearest(hour);
-    return () => clearTimeout(t);
-  }, [active, isFocused]);
+  }, [active, scrollRef]);
+
+  useEffect(() => {
+    console.log('*** hour changed:', hour);
+    clearTimeout(t.current);
+    t.current = scrollToNearest(hour);
+   }, [hour, scrollRef]);
+
+  useEffect(() => {
+    if (!isFocused) return;
+    console.log('*** isFocused changed:', isFocused);
+    clearTimeout(t.current);
+    t.current = scrollToNearest(hour);
+  }, [isFocused, scrollRef]);
 
   return (
     <SafeAreaView edges={[]} style={styles.container}>
       <TopBar today={today} />
-      <EventListView setScrollRef={setScrollRef} setActive={setActive} coords={coords} tasks={tasks} />
+      <ScrollView
+        ref={ref => setScrollRef(ref)}
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps='handled'
+      >
+        <EventListView
+          openModal={openModal}
+          setActive={setActive}
+          coords={coords}
+          tasks={tasks} />
+      </ScrollView>
+
+      {visible &&
+        <EventModal close={closeModal} task={task} />}
     </SafeAreaView>
   )
 }

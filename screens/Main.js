@@ -16,7 +16,7 @@ export default function Main() {
 
   const handleNotification = (notification) => {
     // todo:  show notification button here!
-    console.log('*** fire notification:', notification);
+    console.log('*** fire notification:', notification.request.content.body);
   };
 
   useEffect(() => {

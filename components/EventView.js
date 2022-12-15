@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useMemo, useState  } from 'react';
-import {  Text, View, StyleSheet } from 'react-native';
+import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AuthContext } from '../contexts/Authentication';
 import { getAlertColor, getFormattedTime } from '../utils';
 
-const EventView = ({  setActive, coords, task }) => {
+const EventView = ({ openModal, setActive, coords, task }) => {
   const { hour } = useContext(AuthContext);
   const color = useMemo(() => getAlertColor(task.alert), [task.alert]);
   const time = useMemo(() => getFormattedTime(task.start), [task.start]);
@@ -12,11 +12,19 @@ const EventView = ({  setActive, coords, task }) => {
 
   const { title, start } = task;
 
+  /*useEffect(() => {
+    console.log({ title, start, id: task.id, hour });
+  }, []);*/
+
+  const onPress = () => {
+    openModal(task);
+  };
+
   useEffect(() => {
     if (start === hour) {
-      console.log('*** event activated:', { id: task.id });
+      console.log('*** event activated:', task.id);
       setFocusStyle(styles.active);
-      setActive(task.id);
+      setTimeout(() => setActive(task.id), 150);
     } else {
       setFocusStyle(styles.normal);
     }
@@ -40,7 +48,9 @@ const EventView = ({  setActive, coords, task }) => {
       </Text>
 
       {color &&
-        <Ionicons name="alert-circle" size={30} color={color} style={{ marginLeft: 'auto' }} />}
+        <TouchableOpacity style={{ marginLeft: 'auto' }} onPress={onPress}>
+          <Ionicons name="alert-circle" size={30} color={color} />
+        </TouchableOpacity>}
     </View>
   )
 };
@@ -48,7 +58,7 @@ const EventView = ({  setActive, coords, task }) => {
 const styles = StyleSheet.create({
   active: {
     borderColor: '#CC5DE8',
-    borderWidth: 4,
+    borderWidth: 2,
   },
   normal: {
   },
