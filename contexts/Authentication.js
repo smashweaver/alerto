@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { getAuth, getEventsForNotification } from './firebase';
 import { PermissionStatus } from 'expo-modules-core';
+import { debounce } from 'lodash';
 import * as Notifications from 'expo-notifications';
 
 export const AuthContext = createContext();
@@ -10,6 +11,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [hour, setHour] = useState(new Date().getHours());
+  const [active, setActive] = useState(null);
   const [notificationPermissions, setNotificationPermissions] = useState(PermissionStatus.UNDETERMINED);
 
   const requestNotificationPermissions = () => {
@@ -50,11 +52,11 @@ export const AuthProvider = ({ children }) => {
   };
 
   // todo: this should be a background task
-  const scheduleNotification = (notifyUserId, notifyDate, notifyHour) => {
+  const scheduleNotification = async (notifyUserId, notifyDate, notifyHour) => {
     // console.log('*** schedule:', { notifyUserId, notifyDate, notifyHour, notificationPermissions});
     if (notificationPermissions !== PermissionStatus.GRANTED) return;
-    getEventsForNotification(notifyUserId, notifyDate, notifyHour)
-    .then(x => notify(x));
+    const event = await getEventsForNotification(notifyUserId, notifyDate, notifyHour);
+    notify(event);
   };
 
   useEffect(() => {
@@ -88,7 +90,17 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, hour, date, notificationPermissions, scheduleNotification }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        hour,
+        date,
+        active,
+        notificationPermissions,
+        setActive,
+        scheduleNotification
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

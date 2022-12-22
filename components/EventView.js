@@ -4,8 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { AuthContext } from '../contexts/Authentication';
 import { getAlertColor, getFormattedTime } from '../utils';
 
-const EventView = ({ openModal, setActive, coords, task }) => {
-  const { hour } = useContext(AuthContext);
+const EventView = ({ openModal, coords, task }) => {
+  const { hour, setActive } = useContext(AuthContext);
   const color = useMemo(() => getAlertColor(task.alert), [task.alert]);
   const time = useMemo(() => getFormattedTime(task.start), [task.start]);
   const [focusStyle, setFocusStyle] = useState(styles.normal);

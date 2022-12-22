@@ -12,11 +12,10 @@ import { format } from 'date-fns';
 
 export default function Home() {
   const isFocused = useIsFocused();
-  const { user, hour, date } = useContext(AuthContext)
+  const { user, hour, date, active } = useContext(AuthContext)
   const [tasks] = useState([]);
   const [, setToggle] = useState(false);
   const [coords] = useState({});
-  const [active, setActive] = useState(null);
   const [scrollRef, setScrollRef] = useState(null);
   const [visible, setVisible] = useState(false);
   const [modalData, setModalData] = useState(null);
@@ -178,7 +177,6 @@ export default function Home() {
       >
         <EventListView
           openModal={openModal}
-          setActive={setActive}
           coords={coords}
           list={[...tasks]} />
       </ScrollView>
