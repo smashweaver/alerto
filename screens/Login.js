@@ -1,6 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import {
+  ActivityIndicator,
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Keyboard
+} from 'react-native';
 import { signInUser } from '../contexts/firebase';
 
 export default function Login() {
@@ -12,10 +20,17 @@ export default function Login() {
   const [busy, setBusy] = useState(false);
   const [buttonText, setButtonText] = useState(null);
 
+  const clear = () => {
+    setErrorMessage('');
+    setEmail('');
+    setPassword('');
+  };
+
   const handleLogin = async () => {
     setErrorMessage('');
     setDisabled(true);
     setBusy(true);
+    Keyboard.dismiss();
 
     try {
       await signInUser(email, password);
@@ -27,6 +42,7 @@ export default function Login() {
   };
 
   const handleRegister = () => {
+    clear();
     navigation.navigate('Register');
   };
 
@@ -50,6 +66,7 @@ export default function Login() {
           <Text style={styles.message}>{errorMessage}</Text>
         </View>}
 
+      <Text style={styles.prompt}>Email</Text>
       <TextInput
         value={email}
         onChangeText={(text) => setEmail(text)}
@@ -59,6 +76,7 @@ export default function Login() {
         autoFocus={true}
       />
 
+      <Text style={styles.prompt}>Password</Text>
       <TextInput
         value={password}
         onChangeText={(text) => setPassword(text)}
@@ -90,7 +108,8 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    // justifyContent: "center",
+    paddingTop: '10%',
     paddingHorizontal: '10%',
     backgroundColor: '#e5dbff'
   },
@@ -103,6 +122,10 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#fff',
+  },
+  prompt: {
+    color: '#5F3DC4',
+    fontSize: 12,
   },
   input: {
     height: 44,
