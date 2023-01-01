@@ -2,12 +2,15 @@ import React, { createContext, useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { getAuth, getEventsForNotification } from './firebase';
 import { PermissionStatus } from 'expo-modules-core';
-import { debounce } from 'lodash';
+// import { debounce } from 'lodash';
 import * as Notifications from 'expo-notifications';
+import { Appearance, useColorScheme } from 'react-native';
+// import { Appearance } from 'react-native-appearance';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const [colorScheme, setScheme] = useState(Appearance.getColorScheme());
   const [user, setUser] = useState(null);
   const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [hour, setHour] = useState(new Date().getHours());
@@ -82,25 +85,42 @@ export const AuthProvider = ({ children }) => {
       const hr = d.getHours();
       if (hr !=- hour) setHour(hr);
     }, 60000);
+  }, []);
+
+  useEffect(() => {
+    console.log('*** setup Appearance listener');
+    const subscription = Appearance.addChangeListener(
+      (p) => {
+        console.log('*** Appearance.changeListener\n', JSON.stringify(p, null, 2));
+        const { colorScheme: scheme } = p;
+        setScheme(scheme);
+      },
+    );
 
     return () => {
+      subscription.remove()
       clearInterval(timer);
       timer = 0;
     }
-  }, []);
+  }, [setScheme])
+
+  useEffect(() => {
+    console.log('***', { colorScheme });
+  }, [colorScheme]);
+
+  const value = {
+    user,
+    hour,
+    date,
+    active,
+    notificationPermissions,
+    colorScheme,
+    setActive,
+    scheduleNotification,
+  };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        hour,
-        date,
-        active,
-        notificationPermissions,
-        setActive,
-        scheduleNotification
-      }}
-    >
+    <AuthContext.Provider value={{...value}}>
       {children}
     </AuthContext.Provider>
   );

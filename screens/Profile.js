@@ -4,15 +4,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { AuthContext } from '../contexts/Authentication';
 import { TopBar } from '../components/TopBar';
-import { format } from 'date-fns';
 
 export default function Profile() {
   const { date } = useContext(AuthContext);
-  const today = useMemo(() => format(new Date(date), 'EEEE, PPP'), [date]);
 
   return (
     <SafeAreaView edges={[]} style={styles.container}>
-      <TopBar today={today} />
+      <TopBar date={date} />
       <View style={styles.centered}>
         <Feather name='alert-triangle' style={styles.icon}/>
         <Text style={styles.text}>Profile</Text>

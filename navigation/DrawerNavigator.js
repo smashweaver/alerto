@@ -2,21 +2,28 @@ import React, { useContext, useEffect, useState } from "react";
 import TabNavigator from "./TabNavigator";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
 import { DrawerContentView } from "../components/DrawerContentView";
+import { createTheme } from '../themes';
+import { AuthContext } from '../contexts/Authentication';
 
 const Drawer = createDrawerNavigator();
 
 export default function DrawerNavigator() {
+  const { colorScheme } = useContext(AuthContext)
+  const Theme = createTheme(colorScheme);
   return (
     <Drawer.Navigator
       drawerContent={(props) => <DrawerContentView {...props} />}
       screenOptions={{
         headerShown: true,
         headerTitle: 'Alerto',
-
         headerStyle: {
-          backgroundColor: "#9775fa",
+          backgroundColor: Theme.HeaderBackgroundColor,
+          elevation: 0,
+          shadowOpacity: 0,
+          borderWidth: 0,
         },
-        headerTintColor: "#fff",
+        drawerStyle: {},
+        headerTintColor: Theme.HeaderTintColor,
       }}
     >
       <Drawer.Screen name="Tab" component={TabNavigator} />

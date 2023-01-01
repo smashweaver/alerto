@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
 import { AuthContext, AuthProvider } from './contexts/Authentication';
 import Auth from './screens/Auth';
 import Main from './screens/Main';
@@ -17,7 +18,9 @@ const Screen = () => {
   const [view, setView] = useState(null);
   const { user } = useContext(AuthContext);
 
-  SplashScreen.preventAutoHideAsync();
+  useEffect(() => {
+    SplashScreen.preventAutoHideAsync();
+  }, []);
 
   useEffect(() => {
     SplashScreen.hideAsync();
@@ -35,6 +38,7 @@ const Screen = () => {
 export default function App() {
   return (
     <AuthProvider>
+      <StatusBar style='light' />
       <Screen/>
     </AuthProvider>
   )

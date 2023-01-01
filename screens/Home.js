@@ -8,19 +8,19 @@ import { TopBar } from '../components/TopBar';
 import { useIsFocused } from '@react-navigation/native';
 import { EventModal } from '../components/EventModal';
 import { debounce } from 'lodash';
-import { format } from 'date-fns';
+import { createTheme } from '../themes';
 
 export default function Home() {
   const isFocused = useIsFocused();
-  const { user, hour, date, active } = useContext(AuthContext)
+  const { user, hour, date, active, colorScheme } = useContext(AuthContext)
   const [tasks] = useState([]);
   const [, setToggle] = useState(false);
   const [coords] = useState({});
   const [scrollRef, setScrollRef] = useState(null);
   const [visible, setVisible] = useState(false);
   const [modalData, setModalData] = useState(null);
+  const Theme = createTheme(colorScheme);
 
-  const today = useMemo(() => format(new Date(date), 'EEEE, PPP'), [date]);
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
 
   const t = useRef(null);
@@ -168,8 +168,8 @@ export default function Home() {
   }, [isFocused, scrollRef]);
 
   return (
-    <SafeAreaView edges={[]} style={styles.container}>
-      <TopBar today={today} />
+    <SafeAreaView edges={[]} style={{ flex: 1 }}>
+      <TopBar date={date} />
       <ScrollView
         ref={ref => setScrollRef(ref)}
         contentContainerStyle={{ flexGrow: 1 }}
@@ -186,10 +186,3 @@ export default function Home() {
     </SafeAreaView>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#e5dbff',
-  },
-});

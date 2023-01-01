@@ -1,3 +1,5 @@
+import getDaysOfWeek from './getDaysOfWeek';
+
 const getAlertColor = (alert) => {
   switch (alert) {
     case 1:
@@ -17,4 +19,8 @@ const getFormattedTime = (start) => {
   return `${hour}${amPm}`;
 };
 
-export { getAlertColor, getFormattedTime };
+export {
+  getAlertColor,
+  getFormattedTime,
+  getDaysOfWeek
+};
