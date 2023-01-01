@@ -6,30 +6,24 @@ import { getAlertColor, getFormattedTime } from '../utils';
 import { createStyle } from '../styles';
 
 const EventView = ({ openModal, coords, task }) => {
-  const { hour, setActive, colorScheme } = useContext(AuthContext);
+  const { time, setActive, colorScheme } = useContext(AuthContext);
   const styles = createStyle('eventViewStyle', colorScheme);
-
   const color = useMemo(() => getAlertColor(task.alert), [task.alert]);
-  const time = useMemo(() => getFormattedTime(task.start), [task.start]);
+  const formattedTime = useMemo(() => getFormattedTime(task.hour, task.min), [task.hour, task.min]);
+  const start = useMemo(() => task.hour*60+task.min, [task.hour, task.min]);
   const [focusStyle, setFocusStyle] = useState(styles.normal);
-
-  const { title, start } = task;
-
-  /*useEffect(() => {
-    console.log({ title, start, id: task.id, hour });
-  }, []);*/
 
   const onPress = () => openModal(task);
 
   useEffect(() => {
-    if (start === hour) {
+    if (start === time) {
       console.log('*** event activated:', task.id);
       setFocusStyle(styles.active);
       setTimeout(() => setActive(task.id), 150);
     } else {
       setFocusStyle(styles.normal);
     }
-  }, [hour, start, colorScheme]);
+  }, [time, start, colorScheme]);
 
   return (
     <View
@@ -41,11 +35,11 @@ const EventView = ({ openModal, coords, task }) => {
       }}
     >
       <Text style={[styles.text]}>
-        {time}
+        {formattedTime}
       </Text>
 
       <Text style={[styles.text, styles.titleText]}>
-        {title}
+        {task.title}
       </Text>
 
       {color &&

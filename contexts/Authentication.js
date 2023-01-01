@@ -14,6 +14,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [hour, setHour] = useState(new Date().getHours());
+  const [minutes, setMinutes] = useState(new Date().getMinutes());
+  const [time, setTime] = useState(0);
   const [active, setActive] = useState(null);
   const [notificationPermissions, setNotificationPermissions] = useState(PermissionStatus.UNDETERMINED);
 
@@ -55,10 +57,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   // todo: this should be a background task
-  const scheduleNotification = async (notifyUserId, notifyDate, notifyHour) => {
+  const scheduleNotification = async (notifyUserId, notifyDate, notifyStart) => {
     // console.log('*** schedule:', { notifyUserId, notifyDate, notifyHour, notificationPermissions});
     if (notificationPermissions !== PermissionStatus.GRANTED) return;
-    const event = await getEventsForNotification(notifyUserId, notifyDate, notifyHour);
+    const event = await getEventsForNotification(notifyUserId, notifyDate, notifyStart);
     notify(event);
   };
 
@@ -83,13 +85,18 @@ export const AuthProvider = ({ children }) => {
       if (fd !== date) setDate(fd);
 
       const hr = d.getHours();
-      if (hr !=- hour) setHour(hr);
+      if (hr !== hour) setHour(hr);
+      setMinutes(d.getMinutes());
     }, 60000);
 
     return () => {
       clearInterval(timer);
     }
   }, []);
+
+  useEffect(() => {
+    setTime((hour * 60) + minutes);
+  }, [hour, minutes]);
 
   useEffect(() => {
     console.log('*** setup Appearance listener');
@@ -112,7 +119,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
-    hour,
+    time,
     date,
     active,
     notificationPermissions,

@@ -11,94 +11,60 @@ const note = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris lu
 
 const template = [
     {
-      start: 0,
-      title: 'Sleep',
-    },
-    {
-      start: 6,
+      hour: 5,
+      min: 0,
       title: 'Freshen up',
       alert: 1,
-      note,
+      note
     },
     {
-      start: 7,
-      title: 'Breakfast',
-      alert: 2,
-      note,
-    },
-    {
-      start: 9,
-      title: 'Sync Class',
-      alert: 3,
-      note,
-    },
-    {
-      start: 10,
-      title: 'Sync Class',
-      alert: 3,
-      note,
-    },
-    {
-      start: 11,
-      title: 'Sync Class',
-      alert: 3,
-      note,
-    },
-    {
-      start: 12,
-      title: 'Lunch',
-      alert: 2,
-      note,
-    },
-    {
-      start: 13,
+      hour: 5,
+      min: 30,
       title: 'Exercise',
       alert: 2,
-      note,
+      note
     },
     {
-      start: 14,
-      title: 'Sync Class',
-      alert: 3,
-      note,
+      hour: 6,
+      min: 0,
+      title: 'Eat',
+      alert: 2,
+      note
     },
     {
-      start: 15,
-      title: 'Sync Class',
-      alert: 3,
-      note,
-    },
-    {
-      start: 17,
-      title: 'Dinner',
-    },
-    {
-      start: 18,
-      title: 'Homework',
+      hour: 11,
+      min: 0,
+      title: 'Eat',
       alert: 2,
       note,
     },
     {
-      start: 19,
-      title: 'Free Time',
+      hour: 18,
+      min: 0,
+      title: 'Eat',
+      alert: 2,
+      note
     },
     {
-      start: 20,
-      title: 'Homework',
-      alert: 1,
-      note,
-    },
-    {
-      start: 21,
+      hour: 19,
+      min: 0,
       title: 'Meditation',
       alert: 2,
-      note,
+      note
     },
     {
-      start: 22,
+      hour: 19,
+      min: 30,
+      title: 'Freshen up',
+      alert: 1,
+      note
+    },
+    {
+      hour: 20,
+      min: 0,
       title: 'Sleep',
       alert: 3,
-      note,
+      note
     },
   ];
 

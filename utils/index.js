@@ -13,10 +13,12 @@ const getAlertColor = (alert) => {
   }
 };
 
-const getFormattedTime = (start) => {
-  const hour = start > 12 ?  start - 12 : start === 0 ? 12 : start;
-  const amPm = start < 12 ? 'am' : 'pm';
-  return `${hour}${amPm}`;
+const getFormattedTime = (hour, minutes) => {
+  console.log({ hour, minutes });
+  const hr = hour > 12 ?  hour - 12 : hour === 0 ? 12 : hour;
+  const amPm = hour < 12 ? 'am' : 'pm';
+  const min = `${minutes}`.padStart(2, '0');
+  return `${hr}:${min}${amPm}`;
 };
 
 export {

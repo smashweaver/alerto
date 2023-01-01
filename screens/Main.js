@@ -6,7 +6,7 @@ import { PermissionStatus } from 'expo-modules-core';
 import * as Notifications from 'expo-notifications';
 
 export default function Main() {
-  const { user, date, hour, active, notificationPermissions, scheduleNotification } = useContext(AuthContext);
+  const { user, date, time, active, notificationPermissions, scheduleNotification } = useContext(AuthContext);
 
   const uid = useMemo(() => {
     const u = user || { uid: null };
@@ -33,9 +33,9 @@ export default function Main() {
     if (!uid) return;
     if (!active) return;
     if (notificationPermissions !== PermissionStatus.GRANTED) return;
-    // console.log('*** hour changes: ', hour, date, uid);
-     scheduleNotification(uid, date, hour);
-  }, [active, notificationPermissions, hour, date, uid])
+    // console.log('*** hour changes: ', time, date, uid);
+     scheduleNotification(uid, date, time);
+  }, [active, notificationPermissions, time, date, uid])
 
   return (
     <NavigationContainer>

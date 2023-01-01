@@ -12,7 +12,7 @@ import { createTheme } from '../themes';
 
 export default function Home() {
   const isFocused = useIsFocused();
-  const { user, hour, date, active, colorScheme } = useContext(AuthContext)
+  const { user, time, date, active, colorScheme } = useContext(AuthContext)
   const [tasks] = useState([]);
   const [, setToggle] = useState(false);
   const [coords] = useState({});
@@ -106,19 +106,19 @@ export default function Home() {
     });
   };
 
-  const scrollToNearest = (currentHour) => {
-    const t = setTimeout(() => {
+  const scrollToNearest = (t) => {
+    const timeout = setTimeout(() => {
       if (tasks.length) {
-        console.log('*** scroll to nearest', { currentHour });
+        console.log('*** scroll to nearest', t);
         let p = null;
         for(let i = tasks.length -1 ; i >= 0; i--) {
           p = tasks[i];
-          if (p.start < currentHour) break;
+          if (p.start < t) break;
         }
         if (p) { scrollTo(p.id); }
       }
     }, 1000);
-    return t;
+    return timeout;
   };
 
   const openModal = (activity) => {
@@ -155,16 +155,16 @@ export default function Home() {
   }, [active, scrollRef]);
 
   useEffect(() => {
-    console.log('*** hour changed:', hour);
+    console.log('*** time changed:', time);
     clearTimeout(t.current);
-    t.current = scrollToNearest(hour);
-   }, [hour, scrollRef]);
+    t.current = scrollToNearest(time);
+   }, [time, scrollRef]);
 
   useEffect(() => {
     if (!isFocused) return;
     console.log('*** isFocused changed:', isFocused);
     clearTimeout(t.current);
-    t.current = scrollToNearest(hour);
+    t.current = scrollToNearest(time);
   }, [isFocused, scrollRef]);
 
   return (

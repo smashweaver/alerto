@@ -57,12 +57,12 @@ const signOutUser = async () => {
   }
 };
 
-const getEventsForNotification = async (ownerId, date, hour) => {
-  console.log({ ownerId, date, hour});
+const getEventsForNotification = async (ownerId, date, time) => {
+  console.log({ ownerId, date, time});
   const colRef = collection(db, 'events');
-  const qryRef = query(colRef, where('owner_id', '==', ownerId),  where('date', '==', date), where('start', '==', hour));
+  const qryRef = query(colRef, where('owner_id', '==', ownerId),  where('date', '==', date), where('start', '==', time));
   const snap = await getDocs(qryRef);
-  // todo: handle multiple events in the given hour
+  // todo: handle multiple events in the given time
   if (!snap.empty) {
     // we just take the first document for now
     const x = snap.docs[0];
@@ -97,8 +97,9 @@ const createScheduleFromTemplate = async (ownerId, date) => {
       // create event doc for every template
       const eventRef = collection(db, 'events');
       template.forEach(async t => {
-        console.log({ ...t, owner_id: ownerId, date })
-        await addDoc(eventRef, { ...t, owner_id: ownerId, date });
+        const start = t.hour * 60 + t.min;
+        console.log({ ...t, owner_id: ownerId, date, start })
+        await addDoc(eventRef, { ...t, owner_id: ownerId, date, start });
       });
 
       // create a log doc for the this operation

@@ -5,7 +5,7 @@ import { getAlertColor, getFormattedTime } from '../utils';
 
 const EventModal = ({ close, task }) => {
   // const note = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua';
-  const time = getFormattedTime(task.start);
+  const time = getFormattedTime(task.hour, task.minutes);
   const color = getAlertColor(task.alert);
   const title = task.title;
   const note = task.note || '';
