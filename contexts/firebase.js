@@ -64,6 +64,7 @@ const getEventsForNotification = async (ownerId, date, hour) => {
   const snap = await getDocs(qryRef);
   // todo: handle multiple events in the given hour
   if (!snap.empty) {
+    // we just take the first document for now
     const x = snap.docs[0];
     // console.log({ ... x.data(), id: x.id });
     return { ... x.data(), id: x.id };

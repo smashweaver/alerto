@@ -28,7 +28,7 @@ export const CustomLightTheme = {
 
   /** drawer content */
   DrawerContentBackgroundColor: '#E5DBFF',
-  TextColor: '#000',
+  LinkColor: '#000',
 
   /** tab */
   TabBackgroundColor: '#D0BFFF',

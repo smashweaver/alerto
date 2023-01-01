@@ -30,7 +30,22 @@ export const drawerStyle = (colorScheme = 'light') => {
       color: Theme.ButtonTextColor,
     },
     text: {
-      color: Theme.TextColor
+      color: Theme.LinkColor,
+    },
+    linkContainer: {
+      marginBottom: 16,
+      marginHorizontal: 20,
+      display: 'flex',
+      flexDirection: 'row',
+      alignContent: 'center',
+      alignItems: 'center',
+    },
+    linkText: {
+      fontSize: 24,
+      fontWeight: '500',
+      color: Theme.LinkColor,
+      marginLeft: 10,
+      textDecorationLine: 'underline',
     }
   });
 };

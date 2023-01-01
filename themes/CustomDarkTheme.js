@@ -27,7 +27,7 @@ export const CustomDarkTheme = {
 
   /** drawer content */
   DrawerContentBackgroundColor: '#101113',
-  TextColor: '#FFF',
+  LinkColor: '#FFF',
 
   /** tab */
   TabBackgroundColor: '#DEE2E6',

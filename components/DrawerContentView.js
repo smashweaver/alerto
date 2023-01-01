@@ -4,15 +4,26 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { signOutUser } from '../contexts/firebase';
 import { AuthContext } from '../contexts/Authentication';
 import { createStyle } from '../styles';
+import { createTheme } from '../themes';
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const DrawerContentView = (props) => {
+  const { colorScheme, user } = useContext(AuthContext);
+  const { navigation } = props;
   const [userName, setName] = useState('Unknown');
-  const { user } = useContext(AuthContext);
-  const { colorScheme } = useContext(AuthContext)
   const styles = createStyle('drawerContent', colorScheme);
+  const Theme = createTheme(colorScheme);
 
-  const handleLogout = async () => {
-    await signOutUser();
+  const handleLogout = () => {
+    signOutUser();
+  };
+
+  const handleRetake = () => {
+    navigation.toggleDrawer();
+  };
+
+  const handlePomodoro = () => {
+    navigation.toggleDrawer();
   };
 
   useEffect(() => {
@@ -24,7 +35,7 @@ const DrawerContentView = (props) => {
     <View style={styles.container}>
       <DrawerContentScrollView {...props}>
         <View
-          style={styles.scroll}
+          style={[styles.scroll, { marginBottom: 30 }]}
         >
           <View>
             <Text style={styles.text}>{userName}</Text>
@@ -37,7 +48,49 @@ const DrawerContentView = (props) => {
             style={styles.image}
           />
         </View>
+
+        <TouchableOpacity
+          onPress={handleRetake}
+          style={styles.linkContainer}
+        >
+          <MaterialCommunityIcons name="pencil" size={24} color={Theme.LinkColor} />
+          <Text style={styles.linkText}>Retake Survey</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handlePomodoro}
+          style={styles.linkContainer}
+        >
+          <MaterialIcons name="healing" size={24} color={Theme.LinkColor} />
+          <Text style={styles.linkText}>Self-Care</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handlePomodoro}
+          style={styles.linkContainer}
+        >
+          <MaterialCommunityIcons name="meditation" size={24} color={Theme.LinkColor} />
+          <Text style={styles.linkText}>Meditation</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handlePomodoro}
+          style={styles.linkContainer}
+        >
+          <MaterialCommunityIcons name="run" size={24} color={Theme.LinkColor} />
+          <Text style={styles.linkText}>Exercise</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handlePomodoro}
+          style={styles.linkContainer}
+        >
+          <MaterialIcons name="timer" size={24} color={Theme.LinkColor} />
+          <Text style={styles.linkText}>Pomodoro Timer</Text>
+        </TouchableOpacity>
       </DrawerContentScrollView>
+
+
 
       <TouchableOpacity
         onPress={handleLogout}

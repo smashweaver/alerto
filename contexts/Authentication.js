@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
 
     requestNotificationPermissions();
 
-    let timer = setInterval(() => {
+    const timer = setInterval(() => {
       const d = new Date();
 
       const fd = format(d, 'yyyy-MM-dd');
@@ -85,6 +85,10 @@ export const AuthProvider = ({ children }) => {
       const hr = d.getHours();
       if (hr !=- hour) setHour(hr);
     }, 60000);
+
+    return () => {
+      clearInterval(timer);
+    }
   }, []);
 
   useEffect(() => {
@@ -99,8 +103,6 @@ export const AuthProvider = ({ children }) => {
 
     return () => {
       subscription.remove()
-      clearInterval(timer);
-      timer = 0;
     }
   }, [setScheme])
 
