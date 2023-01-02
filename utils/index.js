@@ -20,8 +20,18 @@ const getFormattedTime = (hour, minutes) => {
   return `${hr}:${min}${amPm}`;
 };
 
+const isWeekEnd = (dd) => {
+  try {
+    const day = new Date(dd).getDay();
+    return day === 0 || day === 6;
+  } catch (err) {
+    return false;
+  }
+};
+
 export {
   getAlertColor,
   getFormattedTime,
-  getDaysOfWeek
+  getDaysOfWeek,
+  isWeekEnd,
 };

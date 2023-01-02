@@ -123,6 +123,18 @@ const createScheduleFromTemplate = async (ownerId, date) => {
   }
 };
 
+const createWeekendSchedule = async (date) => {
+  return [
+    {
+      title: 'Rest and Recreation',
+      hour: 8,
+      min: 0,
+      all_day: true,
+      alert: 0,
+    }
+  ];
+};
+
 export {
   getAuth,
   registerUser,
@@ -132,4 +144,5 @@ export {
   getScheduleQuery,
   getEventsForNotification,
   getEventsByDate,
+  createWeekendSchedule,
 }

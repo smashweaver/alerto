@@ -20,13 +20,13 @@ export const DateWidget = ({ isoDate, today, workingDate, setWorkingDate }) => {
 
   useEffect(() => {
     console.log('*** ', {date, isCurrent, isWorkingDate});
-    if (isCurrent) {
-      setRoundedStyle([styles.circle, styles.current]);
+    if (isWorkingDate) {
+      setRoundedStyle([styles.circle, styles.selected]);
       return;
     }
 
-    if (isWorkingDate) {
-      setRoundedStyle([styles.circle, styles.selected]);
+    if (isCurrent) {
+      setRoundedStyle([styles.circle, styles.current]);
       return;
     }
 

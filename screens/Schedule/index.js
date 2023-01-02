@@ -2,11 +2,11 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { Modal, View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../../contexts/Authentication';
-import { getDaysOfWeek } from '../../utils';
+import { getDaysOfWeek, isWeekEnd } from '../../utils';
 import { WeekStrip } from './WeekStrip';
 import { createStyle } from '../../styles';
 import { TopBar } from '../../components/TopBar';
-import { createScheduleFromTemplate, getEventsByDate } from '../../contexts/firebase';
+import { createScheduleFromTemplate, createWeekendSchedule, getEventsByDate } from '../../contexts/firebase';
 import { EventWidget } from './EventWidget';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -42,7 +42,7 @@ export default function Schedule() {
   const setupData = useCallback(() => {
     getEventsByDate(uid, workingDate)
     .then((data) => {
-      console.log('*** done reading schedule...');
+      console.log('*** done reading schedule...', workingDate);
       data.sort((x, y) => x.start - y.start);
       setEvents([...data]);
     });
@@ -51,8 +51,13 @@ export default function Schedule() {
   useEffect(() => {
     console.log('*** workingDate changed:', workingDate);
     setEvents([]);
-    createScheduleFromTemplate(user.uid, workingDate)
-    .then(setupData)
+    if (!isWeekEnd(workingDate)) {
+      createScheduleFromTemplate(user.uid, workingDate)
+      .then(setupData)
+    } else {
+      createWeekendSchedule(workingDate)
+      .then(data => setEvents([...data]));
+    }
   }, [workingDate]);
 
   return (
