@@ -57,7 +57,7 @@ export default function Schedule() {
 
   return (
     <SafeAreaView edges={[]} style={{ flex: 1 }}>
-      <TopBar date={date} />
+      <TopBar date={workingDate} />
       <WeekStrip days={days} today={date} workingDate={workingDate} setWorkingDate={handleChangeWorkingDate} />
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
