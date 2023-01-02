@@ -8,13 +8,17 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { createTheme } from '../../themes';
 
-export const EventWidget = ({ task }) => {
+export const EventWidget = ({ task, remove, edit }) => {
   const { colorScheme } = useContext(AuthContext);
   const Theme = createTheme(colorScheme);
   const styles = createStyle('eventWidget', colorScheme);
   const color = getAlertColor(task.alert);
   const isEditable = !task.all_day;
   const start = getFormattedTime(task.hour, task.min);
+
+  const handleDelete = () => remove(task);
+
+  const handleEdit = () => edit(task);
 
   return (
     <View style={styles.container}>
@@ -27,17 +31,17 @@ export const EventWidget = ({ task }) => {
       </Text>
 
       <View style={{ position: 'absolute', right: 10, top: 10}}>
-        {color && <Ionicons name="alert-circle" size={30} color={color} />}
+        {color && <Ionicons name="alert-circle" size={20} color={color} />}
       </View>
 
       {
         isEditable &&
         <View style={[styles.flexContainer, styles.buttons]}>
-          <TouchableOpacity>
-            <FontAwesome name="trash-o" size={20} color={Theme.colors.text} />
+          <TouchableOpacity onPress={handleDelete}>
+            <FontAwesome name="trash-o" size={30} color={Theme.colors.text} />
           </TouchableOpacity>
-          <TouchableOpacity>
-            <MaterialCommunityIcons name="pencil" size={20} color={Theme.colors.text} />
+          <TouchableOpacity onPress={handleEdit}>
+            <MaterialCommunityIcons name="pencil" size={30} color={Theme.colors.text} />
           </TouchableOpacity>
         </View>
       }

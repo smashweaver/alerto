@@ -77,7 +77,7 @@ export default function Home() {
   };
 
   const handleChange = (type, data) => {
-    // console.log('*** change:', { type, data });
+    console.log('*** change:', { type, id: data.id });
     if (type === 'added') return addTask(data);
     if (type === 'removed') return removeTask(data);
     if (type === 'modified') return updateTask(data);

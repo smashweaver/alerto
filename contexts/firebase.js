@@ -9,7 +9,9 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import {
+  doc,
   addDoc,
+  deleteDoc,
   collection,
   getDocs,
   getFirestore,
@@ -67,7 +69,7 @@ const getEventsByDate = async (ownerId, date) => {
     return [...data];
   }
   return [];
-}
+};
 
 const getEventsForNotification = async (ownerId, date, time) => {
   console.log({ ownerId, date, time});
@@ -135,6 +137,11 @@ const createWeekendSchedule = async (date) => {
   ];
 };
 
+const removeEventById = async (id) => {
+  console.log('*** removeEventFromSchedule:', id);
+  await deleteDoc(doc(db, 'events', id));
+}
+
 export {
   getAuth,
   registerUser,
@@ -145,4 +152,5 @@ export {
   getEventsForNotification,
   getEventsByDate,
   createWeekendSchedule,
+  removeEventById
 }

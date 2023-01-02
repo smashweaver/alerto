@@ -1,16 +1,16 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Modal, View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../../contexts/Authentication';
-import { getDaysOfWeek, isWeekEnd } from '../../utils';
+import { getFormattedTime, getDaysOfWeek, isWeekEnd,  } from '../../utils';
 import { WeekStrip } from './WeekStrip';
 import { createStyle } from '../../styles';
 import { TopBar } from '../../components/TopBar';
-import { createScheduleFromTemplate, createWeekendSchedule, getEventsByDate } from '../../contexts/firebase';
+import { removeEventById, createScheduleFromTemplate, createWeekendSchedule, getEventsByDate } from '../../contexts/firebase';
 import { EventWidget } from './EventWidget';
 import { useNavigation } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { AddModal } from './AddModal';
 
 export default function Schedule() {
   const { user, date, colorScheme } = useContext(AuthContext)
@@ -23,6 +23,43 @@ export default function Schedule() {
   const { uid } = user || {};
 
   const days = useMemo(() => getDaysOfWeek(Date.parse(date)), [date]);
+
+  const removeByIndex = (index) => {
+    const data = [...events];
+    data.splice(index, 1);
+    setEvents([...data]);
+  };
+
+  const remove = (activity) => {
+    const index = events.indexOf(activity);
+    console.log(activity);
+    const { hour, min, title, id } = activity;
+    const start = getFormattedTime(hour, min);
+    const detail = `${title} at ${start}`;
+    Alert.alert(
+      'Delete this activity?',
+      detail,
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            console.log(`Deleting ${detail}`);
+            removeEventById(activity.id)
+            .then(() => removeByIndex(index))
+            .catch(() => console.log('*** error!!!'))
+          },
+        }
+      ]
+    );
+  };
+
+  const edit = (target) => {
+    console.log('*** edit:', target.id)
+  };
 
   const handleChangeWorkingDate = (newWorkingDate) => {
     console.log('*** workingdate changed:', newWorkingDate);
@@ -70,7 +107,7 @@ export default function Schedule() {
       >
         <View style={{ marginTop: 10 }}>
           {
-            events.map(ev => <EventWidget task={ev} key={ev.id} />)
+            events.map(ev => <EventWidget task={ev} remove={remove}  edit={edit} key={ev.id} />)
           }
         </View>
       </ScrollView>
@@ -82,35 +119,7 @@ export default function Schedule() {
       </TouchableOpacity>
 
       {isAdding &&
-        <EventFormModal close={closeModal} />}
+        <AddModal close={closeModal} />}
     </SafeAreaView>
   )
 }
-
-const EventForm = () => {
-  const insets = useSafeAreaInsets();
-  console.log({insets});
-  return (
-    <View style={{
-        backgroundColor: '#FFF',
-        marginTop: insets.top,
-        flex: 1,
-      }}
-    >
-      <Text>New Activity</Text>
-    </View>
-  );
-};
-
-const EventFormModal = ({ close }) => {
-  return (
-    <Modal
-      visible={true}
-      transparent={true}
-      onRequestClose={close}
-      style={{ margin: 0}}
-    >
-      <EventForm />
-    </Modal>
-  );
-};
