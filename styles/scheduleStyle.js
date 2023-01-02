@@ -9,13 +9,14 @@ export const scheduleStyle = (colorScheme = 'light') => {
         backgroundColor: Theme.colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 4,
-        position: 'absolute',
-        bottom: 30,
-        right: 20,
+        //borderRadius: 50,
+        //position: 'absolute',
+        //bottom: 10,
+        //right: 20,
     },
     buttonText: {
-      color: Theme.colors.text
+      color: Theme.colors.text,
+      paddingHorizontal: 4
     },
   });
 };

@@ -57,6 +57,18 @@ const signOutUser = async () => {
   }
 };
 
+const getEventsByDate = async (ownerId, date) => {
+  const colRef = collection(db, 'events');
+  const qryRef = query(colRef, where('owner_id', '==', ownerId),  where('date', '==', date));
+  const snap = await getDocs(qryRef);
+  if (!snap.empty) {
+    const data = snap.docs.map(x => ({ ... x.data(), id: x.id }));
+    //console.log('*** getEventsByDate', date, docs);
+    return [...data];
+  }
+  return [];
+}
+
 const getEventsForNotification = async (ownerId, date, time) => {
   console.log({ ownerId, date, time});
   const colRef = collection(db, 'events');
@@ -119,4 +131,5 @@ export {
   createScheduleFromTemplate,
   getScheduleQuery,
   getEventsForNotification,
+  getEventsByDate,
 }

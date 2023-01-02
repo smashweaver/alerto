@@ -18,11 +18,11 @@ export default function DrawerNavigator() {
         headerTitle: 'Alerto',
         headerStyle: {
           backgroundColor: Theme.HeaderBackgroundColor,
-          elevation: 0,
-          shadowOpacity: 0,
-          borderWidth: 0,
+          // elevation: 0,
+          // shadowOpacity: 0,
+          // borderWidth: 0,
         },
-        drawerStyle: {},
+        // drawerStyle: {},
         headerTintColor: Theme.HeaderTintColor,
       }}
     >

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
-import { StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import { SafeAreaView, ScrollView } from 'react-native';
 import { onSnapshot } from "firebase/firestore";
 import { AuthContext } from '../contexts/Authentication';
 import { getScheduleQuery, createScheduleFromTemplate } from '../contexts/firebase';
@@ -40,8 +40,8 @@ export default function Home() {
     return qry;
   }, [uid, date]);
 
-  const createSchedule = async () => {
-    await createScheduleFromTemplate(user.uid, date);
+  const createSchedule = () => {
+    createScheduleFromTemplate(user.uid, date);
   };
 
   const findDataIndex = (data) => {

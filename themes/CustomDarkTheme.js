@@ -30,7 +30,7 @@ export const CustomDarkTheme = {
   LinkColor: '#FFF',
 
   /** tab */
-  TabBackgroundColor: '#DEE2E6',
+  TabBackgroundColor: '#101113',
 
   /** screen content */
   PrimaryBackgroundColor: '#DEE2E6',
@@ -38,5 +38,7 @@ export const CustomDarkTheme = {
   ShadowColor: '#000',
   CardBackgroundColor: '#5C5F66',
   CardBorderColor: '#C1C2C5',
-  CardTextColor: '#FFF'
+  CardTextColor: '#FFF',
+  DangerColor: 'red',
+
 };

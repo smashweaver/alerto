@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState  } from 'react';
-import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { AuthContext } from '../contexts/Authentication';
 import { getAlertColor, getFormattedTime } from '../utils';
@@ -27,7 +27,6 @@ const EventView = ({ openModal, coords, task }) => {
 
   return (
     <View
-      key={task.id}
       style={[styles.cardContainer, styles.cardShadow, styles.flexContainer, styles.current, focusStyle]}
       onLayout={event => {
         const layout = event.nativeEvent.layout;
