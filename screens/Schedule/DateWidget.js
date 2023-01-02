@@ -1,30 +1,45 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
 import { format, isEqual, parseISO } from 'date-fns';
 import { AuthContext } from '../../contexts/Authentication';
 import { createStyle } from '../../styles';
 
-export const DateWidget = ({ isoDate, today }) => {
-  console.log({ isoDate, today });
+export const DateWidget = ({ isoDate, today, workingDate, setWorkingDate }) => {
   const { colorScheme } = useContext(AuthContext)
   const styles = createStyle('dateWidget', colorScheme);
   const [roundedStyle, setRoundedStyle] = useState([styles.round]);
-  const [isoToday] = useState(parseISO(today));
-  const [dow] = useState(format(isoDate, 'EEEE').slice(0, 3));
-  const [isCurrent] = useState(isEqual(isoToday, isoDate));
+  const isoToday = parseISO(today);
+  const dow = format(isoDate, 'EEEE').slice(0, 3);
+  const isCurrent = isEqual(isoToday, isoDate);
+  const date = format(new Date(isoDate), 'yyyy-MM-dd');
+  const isWorkingDate = workingDate === date;
+
+  const handleTouch = () => {
+    setWorkingDate(date);
+  }
 
   useEffect(() => {
+    console.log('*** ', {date, isCurrent, isWorkingDate});
     if (isCurrent) {
       setRoundedStyle([styles.circle, styles.current]);
-    } else {
-      setRoundedStyle([styles.circle]);
+      return;
     }
-  }, [isCurrent]);
+
+    if (isWorkingDate) {
+      setRoundedStyle([styles.circle, styles.selected]);
+      return;
+    }
+
+    setRoundedStyle([styles.circle]);
+  }, [date, isCurrent, isWorkingDate]);
 
   return (
     <View style={[styles.container]}>
       <Text style={[styles.dow]}>{dow}</Text>
-      <TouchableOpacity style={roundedStyle}>
+      <TouchableOpacity
+       onPress={handleTouch}
+       style={roundedStyle}
+      >
         <Text style={[styles.text]}>{isoDate.getDate()}</Text>
       </TouchableOpacity>
     </View>

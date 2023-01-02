@@ -82,11 +82,28 @@ export const AuthProvider = ({ children }) => {
       const d = new Date();
 
       const fd = format(d, 'yyyy-MM-dd');
-      if (fd !== date) setDate(fd);
+      if (fd !== date) {
+        setDate(fd);
+        setHour(0);
+        setMinutes(0);
+        return;
+      }
 
       const hr = d.getHours();
-      if (hr !== hour) setHour(hr);
-      setMinutes(d.getMinutes());
+      let min = d.getMinutes();
+      min = min - (min % 15);
+
+      console.log('*** heartbeat', { hr, min, hour, minutes })
+
+      if (hr !== hour) {
+        setHour(hr);
+        setMinutes(0);
+        return;
+      }
+
+      if (min !== minutes) {
+        setMinutes(min);
+      }
     }, 60000);
 
     return () => {
@@ -95,7 +112,12 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    setTime((hour * 60) + minutes);
+    const min = minutes - (minutes % 15);
+    const newTime = (hour * 60) + min;
+    if (time !== newTime) {
+      console.log('*** time changed:', { hour, min, newTime });
+      setTime(newTime);
+    }
   }, [hour, minutes]);
 
   useEffect(() => {

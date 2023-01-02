@@ -1,7 +1,7 @@
 import { CustomDarkTheme } from './CustomDarkTheme';
 import { CustomLightTheme } from './CustomLightTheme';
 
-export function createTheme(scheme = 'dark') {
-  if (scheme == 'dark') return CustomDarkTheme;
-  return CustomLightTheme;
+export function createTheme(scheme = 'light') {
+  // if (scheme == 'light') return CustomLightTheme
+  return CustomDarkTheme;
 }

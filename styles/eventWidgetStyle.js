@@ -17,9 +17,11 @@ export const eventWidgetStyle = (colorScheme = 'light') => {
       flexDirection: 'row',
       alignContext: 'center',
       justifyContent: 'space-between',
+      paddingTop: 8,
     },
     buttons: {
-      marginTop: 24
+      marginTop: 16,
+      borderTopWidth: 1,
     },
     text: {
       color: Theme.CardTextColor,

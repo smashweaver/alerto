@@ -13,7 +13,7 @@ const TopBar = ({ date }) => {
     today: {
       color: Theme.PrimaryColor,
       backgroundColor: Theme.PrimaryBackgroundColor,
-      paddingHorizontal: 4,
+      paddingHorizontal: 10,
       paddingVertical: 4,
     },
   });

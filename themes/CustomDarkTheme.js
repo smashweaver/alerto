@@ -40,5 +40,5 @@ export const CustomDarkTheme = {
   CardBorderColor: '#C1C2C5',
   CardTextColor: '#FFF',
   DangerColor: 'red',
-
+  SelectedBackgroundColor: '#495057',
 };

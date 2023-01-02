@@ -25,10 +25,10 @@ export const EventWidget = ({ task }) => {
 
       <View style={[styles.flexContainer, styles.buttons]}>
         <TouchableOpacity>
-          <FontAwesome name="trash-o" size={24} color={Theme.colors.text} />
+          <FontAwesome name="trash-o" size={20} color={Theme.colors.text} />
         </TouchableOpacity>
         <TouchableOpacity>
-        <MaterialCommunityIcons name="pencil" size={24} color={Theme.colors.text} />
+          <MaterialCommunityIcons name="pencil" size={20} color={Theme.colors.text} />
         </TouchableOpacity>
       </View>
     </View>

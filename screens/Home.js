@@ -20,6 +20,7 @@ export default function Home() {
   const [visible, setVisible] = useState(false);
   const [modalData, setModalData] = useState(null);
   const Theme = createTheme(colorScheme);
+  const [loaded, setLoaded] = useState(false);
 
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
 
@@ -41,7 +42,8 @@ export default function Home() {
   }, [uid, date]);
 
   const createSchedule = () => {
-    createScheduleFromTemplate(user.uid, date);
+    createScheduleFromTemplate(user.uid, date)
+    .then(() => setLoaded(true));
   };
 
   const findDataIndex = (data) => {
@@ -107,6 +109,7 @@ export default function Home() {
   };
 
   const scrollToNearest = (t) => {
+    clearTimeout(t.current);
     const timeout = setTimeout(() => {
       if (tasks.length) {
         console.log('*** scroll to nearest', t);
@@ -155,17 +158,19 @@ export default function Home() {
   }, [active, scrollRef]);
 
   useEffect(() => {
+    if (!loaded) return;
     console.log('*** time changed:', time);
-    clearTimeout(t.current);
+    //clearTimeout(t.current);
     t.current = scrollToNearest(time);
-   }, [time, scrollRef]);
+   }, [loaded, time, scrollRef]);
 
   useEffect(() => {
+    if (!loaded) return;
     if (!isFocused) return;
     console.log('*** isFocused changed:', isFocused);
-    clearTimeout(t.current);
+    //clearTimeout(t.current);
     t.current = scrollToNearest(time);
-  }, [isFocused, scrollRef]);
+  }, [loaded, isFocused, scrollRef]);
 
   return (
     <SafeAreaView edges={[]} style={{ flex: 1 }}>
