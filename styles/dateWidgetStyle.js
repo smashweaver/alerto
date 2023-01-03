@@ -28,10 +28,10 @@ export const dateWidgetStyle = (colorScheme = 'light') => {
      color: Theme.colors.text,
     },
     current: {
-      backgroundColor: Theme.colors.primary,
+      backgroundColor: Theme.SelectedBackgroundColor,
     },
     selected: {
-      backgroundColor: Theme.SelectedBackgroundColor,
+      backgroundColor: Theme.colors.primary,
     },
   });
 };
