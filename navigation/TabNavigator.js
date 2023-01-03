@@ -15,7 +15,7 @@ const BottomTabNavigator = () => {
   const Theme = createTheme(colorScheme);
   return (
     <Nav.Navigator
-      initialRouteName="Schedule"
+      initialRouteName="Home"
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
