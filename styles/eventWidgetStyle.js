@@ -20,18 +20,18 @@ export const eventWidgetStyle = (colorScheme = 'light') => {
       paddingTop: 8,
     },
     buttons: {
-      marginTop: 16,
-      borderTopWidth: 1,
+      marginTop: 24,
+      borderTopWidth: StyleSheet.hairlineWidth,
     },
     text: {
       color: Theme.CardTextColor,
     },
     start: {
-      fontWeight: '700',
-      fontSize: 16
+      //fontWeight: '700',
+      fontSize: 14
     },
     title: {
-      fontSize: 24
+      fontSize: 20
     }
   });
 };

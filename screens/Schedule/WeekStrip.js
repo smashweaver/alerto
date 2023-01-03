@@ -3,7 +3,6 @@ import { StyleSheet, View } from 'react-native';
 import { DateWidget } from './DateWidget';
 
 export const WeekStrip = ({ days, today, workingDate, setWorkingDate }) => {
-  console.log({workingDate});
   return (
     <View
       style={[styles.container]}

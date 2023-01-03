@@ -61,13 +61,18 @@ export default function Schedule() {
     console.log('*** edit:', target.id)
   };
 
+  const submitNew = (data = {}) => {
+    console.log('*** new:', data);
+    setIsAdding(false);
+  };
+
   const handleChangeWorkingDate = (newWorkingDate) => {
     console.log('*** workingdate changed:', newWorkingDate);
     setWorkingDate(newWorkingDate);
   };
 
-  const handleAdd = () => {
-    console.log('*** add event');
+  const handleNewActivity = () => {
+    console.log('*** new activity');
     setIsAdding(true);
   };
 
@@ -107,19 +112,32 @@ export default function Schedule() {
       >
         <View style={{ marginTop: 10 }}>
           {
-            events.map(ev => <EventWidget task={ev} remove={remove}  edit={edit} key={ev.id} />)
+            events.map((activity, index) =>
+              <EventWidget
+                task={activity}
+                remove={remove}
+                edit={edit}
+                key={index} />
+            )
           }
         </View>
       </ScrollView>
 
-      <TouchableOpacity
-        onPress={handleAdd}
-        style={styles.button}>
-        <Text style={styles.buttonText}>New Activity</Text>
-      </TouchableOpacity>
+      <View style={{ padding: 10 }}>
+        <TouchableOpacity
+          onPress={handleNewActivity}
+          style={styles.button}>
+          <Text style={styles.buttonText}>New Activity</Text>
+        </TouchableOpacity>
+      </View>
+
 
       {isAdding &&
-        <AddModal close={closeModal} />}
+        <AddModal close={closeModal} ok={submitNew} />}
     </SafeAreaView>
   )
 }
+
+/*
+
+*/

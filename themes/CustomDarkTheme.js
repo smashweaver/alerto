@@ -41,4 +41,5 @@ export const CustomDarkTheme = {
   CardTextColor: '#FFF',
   DangerColor: 'red',
   SelectedBackgroundColor: '#495057',
+  ModalHeaderTextColor: '#A6A7AB',
 };
