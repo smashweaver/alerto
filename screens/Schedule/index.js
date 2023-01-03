@@ -6,9 +6,15 @@ import { getFormattedTime, getDaysOfWeek, isWeekEnd,  } from '../../utils';
 import { WeekStrip } from './WeekStrip';
 import { createStyle } from '../../styles';
 import { TopBar } from '../../components/TopBar';
-import { removeEventById, createScheduleFromTemplate, createWeekendSchedule, getEventsByDate } from '../../contexts/firebase';
 import { EventWidget } from './EventWidget';
 import { useNavigation } from '@react-navigation/native';
+import {
+  createEvent,
+  removeEventById,
+  createScheduleFromTemplate,
+  createWeekendSchedule,
+  getEventsByDate
+} from '../../contexts/firebase';
 
 import { AddModal } from './AddModal';
 
@@ -62,8 +68,13 @@ export default function Schedule() {
   };
 
   const submitNew = (data = {}) => {
-    console.log('*** new:', data);
     setIsAdding(false);
+    //console.log('*** new', data);
+    createEvent(uid, workingDate, {...data})
+    .then(() => {
+      setEvents([]);
+      setupData();
+    });
   };
 
   const handleChangeWorkingDate = (newWorkingDate) => {

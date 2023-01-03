@@ -100,6 +100,14 @@ const getLogsQuery = (ownerId, date) => {
   return  query(colRef, where('owner_id', '==', ownerId), where('date', '==', date));
 };
 
+const createEvent = async (ownerId, date, data) => {
+  const eventRef = collection(db, 'events');
+  const start = data.hour * 60 + data.min;
+  const payload = { ...data, owner_id: ownerId, date, start }
+  console.log('*** creating event:', payload);
+  return await addDoc(eventRef, payload);
+};
+
 const createScheduleFromTemplate = async (ownerId, date) => {
   if (!ownerId) return null;
 
@@ -112,7 +120,7 @@ const createScheduleFromTemplate = async (ownerId, date) => {
       const eventRef = collection(db, 'events');
       template.forEach(async t => {
         const start = t.hour * 60 + t.min;
-        console.log({ ...t, owner_id: ownerId, date, start })
+        // console.log({ ...t, owner_id: ownerId, date, start })
         await addDoc(eventRef, { ...t, owner_id: ownerId, date, start });
       });
 
@@ -152,5 +160,6 @@ export {
   getEventsForNotification,
   getEventsByDate,
   createWeekendSchedule,
-  removeEventById
+  removeEventById,
+  createEvent,
 }
