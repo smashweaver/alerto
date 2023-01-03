@@ -4,7 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { getAlertColor, getFormattedTime } from '../utils';
 
 const EventModal = ({ close, task }) => {
-  // const note = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua';
   const time = getFormattedTime(task.hour, task.min);
   const color = getAlertColor(task.alert);
   const title = task.title;
@@ -26,7 +25,7 @@ const EventModal = ({ close, task }) => {
 
           <View style={styles.body}>
             <TouchableOpacity onPress={close}>
-              <Text>{note}</Text>
+              <Text style={{minHeight: 150}}>{note}</Text>
             </TouchableOpacity>
           </View>
         </View>

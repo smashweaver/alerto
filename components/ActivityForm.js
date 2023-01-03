@@ -7,6 +7,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 // import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -16,7 +17,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { getFormattedTime } from '../utils';
-import Dialog from "react-native-dialog";
 import { InputDialog } from './InputDialog';
 import { Picker } from '@react-native-picker/picker';
 
@@ -69,7 +69,19 @@ export const ActivityForm = ({ ok, close, activity }) => {
   };
 
   const handleSubmit = () => {
-    ok({ title, note, hour, min, alert });
+    if (!title) {
+      Alert.alert(
+        'This activity is missing a title!',
+        'Put in a a short but descriptive title.',
+        [
+          {
+            text: "OK",
+          }
+        ]
+      );
+    } else {
+      ok({ title, note, hour, min, alert });
+    }
   };
 
   const handleCancel = () => close();
@@ -81,6 +93,17 @@ export const ActivityForm = ({ ok, close, activity }) => {
   const handleNote = () => {
     setPickNote(true);
   };
+
+  useEffect(() => {
+    if (note && !alert) {
+      setAlert(1);
+      return;
+    }
+
+    if (!note) {
+      setAlert(0);
+    }
+  }, [alert, note]);
 
   return (
     <View style={[styles.container, { marginTop: 0 }]}>
@@ -114,6 +137,7 @@ export const ActivityForm = ({ ok, close, activity }) => {
 
           <View style={styles.groupValue}>
             <TextInput
+              maxLength={20}
               onChangeText={setTitle}
               value={title}
               placeholder='Title'
@@ -191,7 +215,12 @@ export const ActivityForm = ({ ok, close, activity }) => {
       }
 
       {pickNote &&
-        <InputDialog title={'Write a Note'} initial={note} ok={handleChangeNote}  cancel={handleCancelChangeNote} />
+        <InputDialog
+          title={'Write a Note'}
+          initial={note}
+          ok={handleChangeNote}
+          cancel={handleCancelChangeNote}
+        />
       }
 
     </View>

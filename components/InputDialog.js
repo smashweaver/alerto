@@ -13,7 +13,7 @@ export const InputDialog = ({ title, initial, cancel, ok }) => {
   return (
     <Dialog.Container visible={true}>
       <Dialog.Title>
-        <Text>{title}</Text>
+        <Text style={{color: '#000'}}>{title}</Text>
       </Dialog.Title>
 
       <Dialog.Input
