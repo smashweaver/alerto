@@ -11,6 +11,8 @@ import {
 import {
   doc,
   addDoc,
+  getDoc,
+  updateDoc,
   deleteDoc,
   collection,
   getDocs,
@@ -100,12 +102,26 @@ const getLogsQuery = (ownerId, date) => {
   return  query(colRef, where('owner_id', '==', ownerId), where('date', '==', date));
 };
 
+const retrieveEventById = async (id) => {
+  const docRef = doc(db, 'events', id);
+  const docSnap = await getDoc(docRef);
+  return docSnap.data();
+};
+
 const createEvent = async (ownerId, date, data) => {
   const eventRef = collection(db, 'events');
   const start = data.hour * 60 + data.min;
   const payload = { ...data, owner_id: ownerId, date, start }
-  console.log('*** creating event:', payload);
-  return await addDoc(eventRef, payload);
+
+  const { id } = await addDoc(eventRef, payload);
+  const docData = await retrieveEventById(id);
+  return { ...docData, id };
+};
+
+const updateEvent = async (id, data) => {
+  const eventRef = doc(db, 'events', id);
+  console.log('*** updateEvent:', { id, data });
+  return await updateDoc(eventRef, data);
 };
 
 const createScheduleFromTemplate = async (ownerId, date) => {
@@ -162,4 +178,6 @@ export {
   createWeekendSchedule,
   removeEventById,
   createEvent,
+  updateEvent,
+  retrieveEventById,
 }

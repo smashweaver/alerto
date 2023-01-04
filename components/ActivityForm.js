@@ -27,24 +27,20 @@ const newActivity = {
   hour: 0,
   min: 0,
   note: '',
+  alert: 0,
 };
 
-export const ActivityForm = ({ ok, close, activity }) => {
-  const payload = !activity ? { ...newActivity } : { ...activity };
+export const ActivityForm = ({ activity, ok, close }) => {
+  const data = !activity ? { ...newActivity } : { ...activity };
 
-  const [title, setTitle] = useState(payload.title);
-  const [hour, setHour] = useState(payload.hour);
-  const [min, setMin] = useState(payload.min);
-  const [note, setNote] = useState(payload.note);
-  const [alert, setAlert] = useState(payload.alert);
-
-  useEffect(()=>{
-    console.log('*** activity form:', payload);
-  }, []);
-
-  const [isNew] = useState(!activity);
+  const [title, setTitle] = useState(data.title);
+  const [hour, setHour] = useState(data.hour);
+  const [min, setMin] = useState(data.min);
+  const [note, setNote] = useState(data.note);
+  const [alert, setAlert] = useState(data.alert);
   const [pickTime, setPickTime] = useState(false);
   const [pickNote, setPickNote] = useState(false);
+  const [date, setDate] = useState(new Date());
 
   const handleChangeTime = (ev, value) => {
     console.log({ value });
@@ -53,7 +49,6 @@ export const ActivityForm = ({ ok, close, activity }) => {
       const d = new Date(value);
       const newHour = d.getHours();
       const newMin = d.getMinutes();
-      console.log({ value, d, newHour, newMin });
       setHour(newHour);
       setMin(newMin);
     }
@@ -72,7 +67,7 @@ export const ActivityForm = ({ ok, close, activity }) => {
     if (!title) {
       Alert.alert(
         'This activity is missing a title!',
-        'Put in a a short but descriptive title.',
+        'Put in a short but descriptive title for this activity (20 chars max)',
         [
           {
             text: "OK",
@@ -93,6 +88,13 @@ export const ActivityForm = ({ ok, close, activity }) => {
   const handleNote = () => {
     setPickNote(true);
   };
+
+  useEffect(() => {
+    if (!activity) {
+      setHour(date.getHours());
+      setMin(0);
+    }
+  }, [activity]);
 
   useEffect(() => {
     if (note && !alert) {
@@ -193,9 +195,9 @@ export const ActivityForm = ({ ok, close, activity }) => {
               onValueChange={value => setAlert(value)}
             >
               <Picker.Item label="None" value={0} />
-              <Picker.Item label="Green" value={1} />
-              <Picker.Item label="Yellow" value={2} />
-              <Picker.Item label="Red" value={3} />
+              <Picker.Item label="Low" value={1} />
+              <Picker.Item label="Important" value={2} />
+              <Picker.Item label="Urgent" value={3} />
 
             </Picker>
           </View>
@@ -206,7 +208,7 @@ export const ActivityForm = ({ ok, close, activity }) => {
 
       {pickTime &&
         <DateTimePicker
-          value={new Date()}
+          value={date}
           mode='time'
           minuteInterval={15}
           onChange={handleChangeTime}
