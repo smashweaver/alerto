@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Alert, View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../../contexts/Authentication';
 import { getFormattedTime, getDaysOfWeek, isWeekEnd,  } from '../../utils';
 import { WeekStrip } from './WeekStrip';
@@ -10,7 +9,6 @@ import { EventWidget } from './EventWidget';
 import {
   createEvent,
   updateEvent,
-  retrieveEventById,
   removeEventById,
   createScheduleFromTemplate,
   createWeekendSchedule,
@@ -175,7 +173,7 @@ export default function Schedule() {
   }, [workingDate]);
 
   return (
-    <SafeAreaView edges={[]} style={{ flex: 1 }}>
+    <View edges={[]} style={{ flex: 1 }}>
       <TopBar date={workingDate} />
       <WeekStrip days={days} today={date} workingDate={workingDate} setWorkingDate={handleChangeWorkingDate} />
       <ScrollView
@@ -210,6 +208,6 @@ export default function Schedule() {
       {isEditing &&
         <EditModal activity={activityToEdit} close={closeModal} ok={submitActivityChanges} />}
 
-    </SafeAreaView>
+    </View>
   )
 }

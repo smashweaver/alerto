@@ -17,7 +17,7 @@ export const InputDialog = ({ title, initial, cancel, ok }) => {
       </Dialog.Title>
 
       <Dialog.Input
-        style={{color:'#000'}}
+        style={{fontSize:18, color:'#000'}}
         maxLength={200}
         value={value}
         onChangeText={setValue}

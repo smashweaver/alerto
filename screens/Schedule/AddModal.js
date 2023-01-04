@@ -15,6 +15,7 @@ export const AddModal = ({ ok, close }) => {
       style={{ margin: 0}}
     >
       <ActivityForm
+        name='New Activity'
         ok={handleSubmit}
         close={close}
       />
@@ -35,6 +36,7 @@ export const EditModal = ({ activity, ok, close }) => {
       style={{ margin: 0}}
     >
       <ActivityForm
+        name='Edit Activity'
         activity={activity}
         ok={handleSubmit}
         close={close}

@@ -6,7 +6,8 @@ export const drawerStyle = (colorScheme = 'light') => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: Theme.colors.background,
+      //backgroundColor: Theme.colors.background,
+      backgroundColor: '#373A40',
     },
     scroll: {
       flexDirection: 'row',

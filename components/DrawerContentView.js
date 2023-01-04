@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Platform, Text, TouchableOpacity, View } from 'react-native';
 import { signOutUser } from '../contexts/firebase';
 import { AuthContext } from '../contexts/Authentication';
 import { createStyle } from '../styles';
@@ -88,15 +88,17 @@ const DrawerContentView = (props) => {
           <MaterialIcons name="timer" size={24} color={Theme.LinkColor} />
           <Text style={styles.linkText}>Pomodoro Timer</Text>
         </TouchableOpacity>
+
+
       </DrawerContentScrollView>
 
-
-
       <TouchableOpacity
-        onPress={handleLogout}
-        style={styles.button}>
-        <Text style={styles.buttonText}>Logout</Text>
+          onPress={handleLogout}
+          style={styles.button}>
+          <Text style={[styles.buttonText, {fontSize:24, fontWeight: '500'}]}>Logout</Text>
       </TouchableOpacity>
+
+      <View style={{flexGrow:1, maxHeight: Platform.OS === 'ios' ? 45 : 10}}/>
     </View>
   );
 };

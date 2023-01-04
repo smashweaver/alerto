@@ -51,10 +51,11 @@ const styles = StyleSheet.create({
     elevation: 25,
   },
   content: {
-    margin: '10%',
     backgroundColor: '#ffff',
     borderBottomEndRadius: 10,
     borderBottomStartRadius: 10,
+    minWidth: '72%',
+    maxWidth: '80%',
   },
   header: {
     display: 'flex',

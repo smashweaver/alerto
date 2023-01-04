@@ -60,8 +60,8 @@ export const AuthProvider = ({ children }) => {
   const scheduleNotification = async (notifyUserId, notifyDate, notifyStart) => {
     // console.log('*** schedule:', { notifyUserId, notifyDate, notifyHour, notificationPermissions});
     if (notificationPermissions !== PermissionStatus.GRANTED) return;
-    const event = await getEventsForNotification(notifyUserId, notifyDate, notifyStart);
-    notify(event);
+    const events = await getEventsForNotification(notifyUserId, notifyDate, notifyStart);
+    events.forEach(event => notify(event));
   };
 
   useEffect(() => {

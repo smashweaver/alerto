@@ -31,11 +31,11 @@ export default function Main() {
 
   useEffect(() => {
     if (!uid) return;
-    if (!active) return;
+    //if (!active) return;
     if (notificationPermissions !== PermissionStatus.GRANTED) return;
      console.log('*** hour changes: ', time, date, uid);
      scheduleNotification(uid, date, time);
-  }, [active, notificationPermissions, time, date, uid]);
+  }, [notificationPermissions, time, date, uid]);
 
   return (
     <NavigationContainer>

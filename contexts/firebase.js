@@ -74,18 +74,17 @@ const getEventsByDate = async (ownerId, date) => {
 };
 
 const getEventsForNotification = async (ownerId, date, time) => {
-  console.log({ ownerId, date, time});
+  console.log('*** getEventsForNotification', { ownerId, date, time});
   const colRef = collection(db, 'events');
   const qryRef = query(colRef, where('owner_id', '==', ownerId),  where('date', '==', date), where('start', '==', time));
   const snap = await getDocs(qryRef);
-  // todo: handle multiple events in the given time
+
   if (!snap.empty) {
-    // we just take the first document for now
-    const x = snap.docs[0];
-    // console.log({ ... x.data(), id: x.id });
-    return { ... x.data(), id: x.id };
+    return snap.docs.map(x => {
+      return { ...x.data(), id: x.id };
+    });
   }
-  return null;
+  return [];
 };
 
 const getScheduleQuery = (ownerId, date) => {

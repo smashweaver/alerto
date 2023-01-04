@@ -38,10 +38,10 @@ export const EventWidget = ({ task, remove, edit }) => {
         isEditable &&
         <View style={[styles.flexContainer, styles.buttons]}>
           <TouchableOpacity onPress={handleDelete}>
-            <FontAwesome name="trash-o" size={20} color={Theme.colors.text} />
+            <FontAwesome name="trash-o" size={30} color={Theme.colors.text} />
           </TouchableOpacity>
           <TouchableOpacity onPress={handleEdit}>
-            <MaterialCommunityIcons name="pencil" size={20} color={Theme.colors.text} />
+            <MaterialCommunityIcons name="pencil" size={30} color={Theme.colors.text} />
           </TouchableOpacity>
         </View>
       }

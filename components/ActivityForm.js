@@ -3,22 +3,24 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
-  KeyboardAvoidingView,
   View,
   Text,
   TouchableOpacity,
   Alert,
+  Dimensions,
+  Platform,
 } from 'react-native';
-// import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { createTheme } from '../themes';
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { getFormattedTime } from '../utils';
 import { InputDialog } from './InputDialog';
-import { Picker } from '@react-native-picker/picker';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AlertPickerModal } from './AlertPickerModal';
 
 const Theme = createTheme();
 
@@ -30,9 +32,9 @@ const newActivity = {
   alert: 0,
 };
 
-export const ActivityForm = ({ activity, ok, close }) => {
+export const ActivityForm = ({ activity, ok, close, name }) => {
   const data = !activity ? { ...newActivity } : { ...activity };
-
+  const insets = useSafeAreaInsets();
   const [title, setTitle] = useState(data.title);
   const [hour, setHour] = useState(data.hour);
   const [min, setMin] = useState(data.min);
@@ -40,7 +42,17 @@ export const ActivityForm = ({ activity, ok, close }) => {
   const [alert, setAlert] = useState(data.alert);
   const [pickTime, setPickTime] = useState(false);
   const [pickNote, setPickNote] = useState(false);
+  const [pickAlert, setPickAlert] = useState(false);
   const [date, setDate] = useState(new Date());
+  const [formattedTime, setFormattedTime] = useState(getFormattedTime(hour, min));
+  const [color, setColor] = useState('black');
+
+  const handleCancel = () => close();
+  const handleCancelAlert = () => setPickAlert(false);
+  const handleCancelChangeNote = () => setPickNote(false);
+  const handleTime = () => setPickTime(true);
+  const handleNote = () => setPickNote(true);
+  const handleAlert = () => setPickAlert(true);
 
   const handleChangeTime = (ev, value) => {
     console.log({ value });
@@ -52,10 +64,6 @@ export const ActivityForm = ({ activity, ok, close }) => {
       setHour(newHour);
       setMin(newMin);
     }
-  };
-
-  const handleCancelChangeNote = () => {
-    setPickNote(false);
   };
 
   const handleChangeNote = (value) => {
@@ -79,54 +87,69 @@ export const ActivityForm = ({ activity, ok, close }) => {
     }
   };
 
-  const handleCancel = () => close();
-
-  const handleTime = () => {
-    setPickTime(true);
+  const handleChangeAlert = (level) => {
+    console.log('*** chnage alert:', level)
+    setAlert(level);
+    setPickAlert(false);
   };
 
-  const handleNote = () => {
-    setPickNote(true);
+  const normalizeMin = (m) => {
+    if (m >= 45) return 45;
+    if (m >= 30) return 30;
+    if (m >= 15) return 15;
+    return 0;
+  };
+
+  const normalizeDate = (h, m) => {
+    const d = new Date();
+    d.setHours(h);
+    d.setMinutes(normalizeMin(m));
+    return d;
   };
 
   useEffect(() => {
     if (!activity) {
       setHour(date.getHours());
-      setMin(0);
+      let m = normalizeMin(date.getMinutes());
+      setMin(m);
     }
   }, [activity]);
 
   useEffect(() => {
-    if (note && !alert) {
-      setAlert(1);
-      return;
-    }
+    if (alert === 0) setColor('#1A1B1E');
+    if (alert === 1) setColor('green');
+    if (alert === 2) setColor('yellow');
+    if (alert === 3) setColor('red');
+  }, [alert]);
 
-    if (!note) {
-      setAlert(0);
-    }
-  }, [alert, note]);
+  useEffect(() => {
+    if (!note && alert>0) setAlert(0);
+    if (note && alert===0) setAlert(1);
+  }, [note, alert]);
+
+  useEffect(() => {
+    setFormattedTime(getFormattedTime(hour, min));
+    setDate(normalizeDate(hour, min))
+  }, [hour, min]);
 
   return (
-    <View style={[styles.container, { marginTop: 0 }]}>
+    <View style={[styles.container, { marginTop: Platform.OS === 'ios' ? insets.top : 0 }]}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={handleCancel}
         >
-          <Feather name="x" size={26} color={Theme.ModalHeaderTextColor}  />
+          <Feather name="x" size={36} color={Theme.ModalHeaderTextColor}  />
         </TouchableOpacity>
 
-        <Text style={[styles.text, { fontSize: 18, marginLeft: 20 }]}>New Activity</Text>
+        <Text style={[styles.text, { fontSize:30, marginLeft: 20 }]}>{name}</Text>
 
         <TouchableOpacity
           onPress={handleSubmit}
           style={{ marginLeft: 'auto'}}
         >
-          <Ionicons name="checkmark" size={26} color={Theme.ModalHeaderTextColor} />
+          <Ionicons name="checkmark" size={36} color={Theme.ModalHeaderTextColor} />
         </TouchableOpacity>
       </View>
-
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.bottom}>
 
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, padding: 20 }}
@@ -134,7 +157,7 @@ export const ActivityForm = ({ activity, ok, close }) => {
       >
         <View style={styles.group}>
           <View style={styles.groupIcon}>
-            <MaterialIcons name="title" size={20} color='red' />
+            <MaterialIcons name="title" size={24} color='red' />
           </View>
 
           <View style={styles.groupValue}>
@@ -145,66 +168,66 @@ export const ActivityForm = ({ activity, ok, close }) => {
               placeholder='Title'
               placeholderTextColor={'#F8F9FA'}
               color='#FFF'
+              style={{fontSize: 24}}
             />
           </View>
         </View>
 
         <View style={styles.group}>
           <View style={styles.groupIcon}>
-            <Ionicons name="time-outline" size={20} color='gray' />
+            <Ionicons name="time-outline" size={24} color='gray' />
           </View>
 
           <View style={styles.groupValue}>
             <TouchableOpacity
               onPressOut={handleTime}
             >
-              <Text style={{color:'#F8F9FA'}}>{getFormattedTime(hour, min)}</Text>
+              <Text style={{fontSize: 24, color:'#F8F9FA'}}>{formattedTime}</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.group}>
           <View style={styles.groupIcon}>
-            <Entypo name="text" size={20} color='gray' />
+            <Entypo name="text" size={24} color='gray' />
           </View>
 
           <View style={styles.groupValue}>
             <TouchableOpacity
               onPress={handleNote}
             >
-              <Text style={{color:'#F8F9FA', maxHeight: 20, maxWidth: '100%'}}>{note || 'Note'}</Text>
+              <Text style={{fontSize: 24, maxHeight: 36, color:'#F8F9FA'}}>{note || 'Note'}</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.group}>
           <View style={styles.groupIcon}>
-            <Feather name="bell" size={20} color='gray' />
+            <Feather name="bell" size={24} color='gray' />
           </View>
 
           <View style={styles.groupValue}>
-            <Picker
-              style={{
-                margin: -8,
-                color: '#F8F9FA',
-                height: 0,
-                width: '100%',
-              }}
-              mode={'dialog'}
-              selectedValue={alert}
-              onValueChange={value => setAlert(value)}
+            <TouchableOpacity
+              onPress={handleAlert}
             >
-              <Picker.Item label="None" value={0} />
-              <Picker.Item label="Low" value={1} />
-              <Picker.Item label="Important" value={2} />
-              <Picker.Item label="Urgent" value={3} />
+              <View style={{flexDirection: 'row', justifyContent:'space-between'}}>
+                <Text style={{fontSize: 24, color:'#F8F9FA'}}>Alert</Text>
+                <FontAwesome name="bell-o" size={24} color={color} />
+              </View>
 
-            </Picker>
+            </TouchableOpacity>
           </View>
         </View>
 
       </ScrollView>
-      </KeyboardAvoidingView>
+
+      {pickAlert &&
+        <AlertPickerModal
+          initial={alert}
+          close={handleCancelAlert}
+          onChange={handleChangeAlert}
+        />
+      }
 
       {pickTime &&
         <DateTimePicker
@@ -212,7 +235,9 @@ export const ActivityForm = ({ activity, ok, close }) => {
           mode='time'
           minuteInterval={15}
           onChange={handleChangeTime}
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           positiveButton={{label: 'OK', textColor: 'green'}}
+          style={{backgroundColor: "white"}}
         />
       }
 
@@ -224,7 +249,6 @@ export const ActivityForm = ({ activity, ok, close }) => {
           cancel={handleCancelChangeNote}
         />
       }
-
     </View>
   );
 };
@@ -233,9 +257,6 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: Theme.ContainerBackgroundColor,
-		//color: "#FFF",
-		//padding: 30,
-		//width: Dimensions.get("window").width
 	},
   group: {
     display: 'flex',
@@ -243,6 +264,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignItems: 'center',
     paddingBottom: 24,
+    width: '100%',
   },
 
    groupIcon: {
@@ -287,7 +309,6 @@ const styles = StyleSheet.create({
 	}
 });
 
-
 /*
   <View style={{ maxHeight: 100 }}>
     <TextInput
@@ -300,11 +321,24 @@ const styles = StyleSheet.create({
     />
   </View>
 
-  <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.bottom}>
-    <Button title='Save' style={styles.button} appearance="filled" onPress={saveNote} />
-  </KeyboardAvoidingView>
+  <Picker
+    style={{
+      margin: -8,
+      color: '#F8F9FA',
+      height: 0,
+      width: '100%',
+    }}
+    mode={'dialog'}
+    selectedValue={alert}
+    onValueChange={value => setAlert(value)}
+  >
+    <Picker.Item label="None" value={0} />
+    <Picker.Item label="Low" value={1} />
+    <Picker.Item label="Important" value={2} />
+    <Picker.Item label="Urgent" value={3} />
 
-<TouchableOpacity>
-  <Text style={{color:'#F8F9FA'}}>Alert</Text>
-</TouchableOpacity>
+  </Picker>
+
+  <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.bottom}>
+  </KeyboardAvoidingView>
 */
