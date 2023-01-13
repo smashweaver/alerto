@@ -1,30 +1,28 @@
 import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
 import { SafeAreaView, ScrollView } from 'react-native';
-import { onSnapshot } from "firebase/firestore";
 import { AuthContext } from '../contexts/Authentication';
-import { getScheduleQuery, createScheduleFromTemplate } from '../contexts/firebase';
 import { EventListView } from '../components/EventListView';
 import { TopBar } from '../components/TopBar';
-import { useIsFocused } from '@react-navigation/native';
 import { EventModal } from '../components/EventModal';
 import { debounce } from 'lodash';
-import { createTheme } from '../themes';
+import { useFocusEffect } from '@react-navigation/native';
+import { useTasks } from '../hooks';
 
 export default function Home() {
-  const isFocused = useIsFocused();
-  const { user, time, date, active, colorScheme } = useContext(AuthContext)
-  const [tasks] = useState([]);
-  const [, setToggle] = useState(false);
+  // const isFocused = useIsFocused();
+  const { user, time, date, active, api, stream } = useContext(AuthContext)
   const [coords] = useState({});
   const [scrollRef, setScrollRef] = useState(null);
   const [visible, setVisible] = useState(false);
   const [modalData, setModalData] = useState(null);
-  const Theme = createTheme(colorScheme);
-  const [loaded, setLoaded] = useState(false);
+  const [scheduleIsLoaded, setLoaded] = useState(false);
 
+  const [, setToggle] = useState(false);
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
+  const [tasks, tasksReducer] = useTasks(reRender);
 
-  const t = useRef(null);
+  const finder = useRef(null);
+  const unsubscribe = useRef(() => {});
 
   const uid = useMemo(() => {
     const u = user || { uid: null };
@@ -35,67 +33,20 @@ export default function Home() {
   const qryEvents = useMemo(() => {
     let qry = null;
     if (uid) {
-      qry = getScheduleQuery(uid, date);
+      qry = api.getScheduleQuery(uid, date);
     }
     // console.log('*** memoizing qryEvents', { uid, date, qryEvents: qry });
     return qry;
   }, [uid, date]);
-
-  const createSchedule = () => {
-    createScheduleFromTemplate(user.uid, date)
-    .then(() => setLoaded(true));
-  };
-
-  const findDataIndex = (data) => {
-    return tasks.findIndex(task => task.id === data.id);
-  };
 
   const sortTasks = () => {
     tasks.sort((x, y) => x.start - y.start);
     reRender();
   };
 
-  const addTask = (data) => {
-    tasks.push(data);
-    reRender();
-  };
-
-  const removeTask = (data) => {
-    const index = findDataIndex(data);
-    if (index >= 0) {
-      tasks.splice(index, 1);
-      reRender();
-    }
-  };
-
-  const updateTask = (data) => {
-    const index = findDataIndex(data);
-    if (index >= 0) {
-      tasks[index] = data;
-      reRender();
-    }
-  };
-
-  const handleChange = (type, data) => {
-    console.log('*** change:', { type, id: data.id });
-    if (type === 'added') return addTask(data);
-    if (type === 'removed') return removeTask(data);
-    if (type === 'modified') return updateTask(data);
-  };
-
-  const listenToEvents = (qryRef) => {
-    if (!qryRef) return () => {};
-
-    const unsubscribe = onSnapshot(qryRef, (snapshot) => {
-      snapshot.docChanges().forEach(change => {
-        const { type } = change;
-        const { id } = change.doc;
-        const data = { ...change.doc.data(), id };
-        handleChange(type, data);
-      })
-      sortTasks();
-    });
-    return unsubscribe;
+  const createSchedule = () => {
+    api.createScheduleFromTemplate(user.uid, date)
+    .then(() => setLoaded(true));
   };
 
   const scrollTo = (id) => {
@@ -108,20 +59,19 @@ export default function Home() {
     });
   };
 
-  const scrollToNearest = (t) => {
-    clearTimeout(t.current);
-    const timeout = setTimeout(() => {
+  const scrollToNearest = (start) => {
+    if (!scheduleIsLoaded) return;
+    clearTimeout(finder.current);
+    finder.current = setTimeout(() => {
       if (tasks.length) {
-        console.log('*** scroll to nearest', t);
         let p = null;
         for(let i = tasks.length -1 ; i >= 0; i--) {
           p = tasks[i];
-          if (p.start < t) break;
+          if (p.start < start) break;
         }
         if (p) { scrollTo(p.id); }
       }
     }, 1000);
-    return timeout;
   };
 
   const openModal = (activity) => {
@@ -139,7 +89,12 @@ export default function Home() {
   useEffect(() => {
     console.log('*** mounting Home');
     tasks.splice(0, tasks.length);
-    return () => clearTimeout(t.current);
+
+    return () => {
+      console.log('*** unmounting Home');
+      clearTimeout(finder.current);
+      unsubscribe.current();
+    }
   }, []);
 
   useEffect(() => {
@@ -148,29 +103,29 @@ export default function Home() {
   }, [date]);
 
   useEffect(() => {
-    const unsubscribe = listenToEvents(qryEvents);
-    return () => unsubscribe();
+    if (!qryEvents) return;
+    console.log('*** observing stream', qryEvents);
+    unsubscribe.current = stream.observer(
+      qryEvents,
+      tasksReducer,
+      sortTasks,
+    );
   }, [qryEvents]);
 
-   useEffect(() => {
+  /* useEffect(() => {
     console.log('*** active changed:', active)
     if (active) scrollTo(active);
-  }, [active, scrollRef]);
+  }, [active, scrollRef]); */
 
   useEffect(() => {
-    if (!loaded) return;
     console.log('*** time changed:', time);
-    //clearTimeout(t.current);
-    t.current = scrollToNearest(time);
-   }, [loaded, time, scrollRef]);
+    scrollToNearest(time);
+   }, [time]);
 
-  useEffect(() => {
-    if (!loaded) return;
-    if (!isFocused) return;
-    console.log('*** isFocused changed:', isFocused);
-    //clearTimeout(t.current);
-    t.current = scrollToNearest(time);
-  }, [loaded, isFocused, scrollRef]);
+  useFocusEffect(() => {
+    console.log('*** screen changed: Home');
+    scrollToNearest(time);
+  });
 
   return (
     <SafeAreaView edges={[]} style={{ flex: 1 }}>

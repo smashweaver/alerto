@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Keyboard
 } from 'react-native';
-import { signInUser } from '../contexts/firebase';
 import { useIsFocused } from '@react-navigation/native';
 import { createStyle } from '../styles';
 import { AuthContext } from '../contexts/Authentication';
@@ -23,7 +22,7 @@ export default function Login() {
   const [disabled, setDisabled] = useState(true);
   const [busy, setBusy] = useState(false);
   const [buttonText, setButtonText] = useState(null);
-  const { colorScheme } = useContext(AuthContext)
+  const { colorScheme, auth } = useContext(AuthContext)
   const styles = createStyle('login', colorScheme);
   const Theme = createTheme(colorScheme);
 
@@ -39,7 +38,7 @@ export default function Login() {
     setBusy(true);
 
     try {
-      await signInUser(email, password);
+      await auth.signInUser(email, password);
     } catch(error) {
       setErrorMessage(error.message);
     } finally {
@@ -71,7 +70,7 @@ export default function Login() {
   }, [email, password]);
 
   return (
-    <View style={styles.container}>
+    <View edges={[]} style={styles.container}>
       {errorMessage &&
         <View style={styles.error}>
           <Text style={styles.message}>{errorMessage}</Text>

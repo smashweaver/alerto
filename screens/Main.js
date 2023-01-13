@@ -2,40 +2,42 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import DrawerNavigator from '../navigation/DrawerNavigator';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthContext } from '../contexts/Authentication';
-import { PermissionStatus } from 'expo-modules-core';
-import * as Notifications from 'expo-notifications';
+// import { PermissionStatus } from 'expo-modules-core';
+// import * as Notifications from 'expo-notifications';
+import { useNotification } from '../hooks';
 
 export default function Main() {
-  const { user, date, time, active, notificationPermissions, scheduleNotification } = useContext(AuthContext);
+  const scheduleNotification = useNotification();
+  const { user, date, time } = useContext(AuthContext);
 
   const uid = useMemo(() => {
     const u = user || { uid: null };
-    console.log('*** memoizing uid:', { uid: u.uid });
+    // console.log('*** memoizing uid:', { uid: u.uid });
     return u.uid;
   }, [user]);
 
-  const handleNotification = (notification) => {
+  /* const handleNotification = (notification) => {
     console.log('*** fire notification:', notification.request.content.body);
-  };
+  }; */
 
   useEffect(() => {
     console.log('*** mounting Main');
+
+    return () => console.log('*** unmounting Main');
   }, []);
 
-  useEffect(() => {
+  /* useEffect(() => {
     console.log('*** permission changes:', notificationPermissions)
     if (notificationPermissions !== PermissionStatus.GRANTED) return;
     const listener = Notifications.addNotificationReceivedListener(handleNotification);
     return () => listener.remove();
-  }, [notificationPermissions]);
+  }, [notificationPermissions]); */
 
   useEffect(() => {
     if (!uid) return;
-    //if (!active) return;
-    if (notificationPermissions !== PermissionStatus.GRANTED) return;
      console.log('*** hour changes: ', time, date, uid);
      scheduleNotification(uid, date, time);
-  }, [notificationPermissions, time, date, uid]);
+  }, [time, date, uid]);
 
   return (
     <NavigationContainer>

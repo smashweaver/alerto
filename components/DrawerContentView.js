@@ -1,21 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import { Image, Platform, Text, TouchableOpacity, View } from 'react-native';
-import { signOutUser } from '../contexts/firebase';
 import { AuthContext } from '../contexts/Authentication';
 import { createStyle } from '../styles';
 import { createTheme } from '../themes';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const DrawerContentView = (props) => {
-  const { colorScheme, user } = useContext(AuthContext);
+  const { colorScheme, user, auth } = useContext(AuthContext);
   const { navigation } = props;
   const [userName, setName] = useState('Unknown');
   const styles = createStyle('drawerContent', colorScheme);
   const Theme = createTheme(colorScheme);
 
   const handleLogout = () => {
-    signOutUser();
+    auth.signOutUser();
   };
 
   const handleRetake = () => {

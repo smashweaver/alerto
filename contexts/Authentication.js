@@ -1,83 +1,51 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { format } from 'date-fns';
-import { getAuth, getEventsForNotification } from './firebase';
-import { PermissionStatus } from 'expo-modules-core';
-// import { debounce } from 'lodash';
-import * as Notifications from 'expo-notifications';
-import { Appearance, useColorScheme } from 'react-native';
-// import { Appearance } from 'react-native-appearance';
+import { Appearance } from 'react-native';
+import { useApi, useAuth, useNotification, useFirebase } from '../hooks';
+import { firebaseConfig } from '../constants';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const today = new Date();
   const [colorScheme, setScheme] = useState(Appearance.getColorScheme());
   const [user, setUser] = useState(null);
-  const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
-  const [hour, setHour] = useState(new Date().getHours());
-  const [minutes, setMinutes] = useState(new Date().getMinutes());
+  const [date, setDate] = useState(format(today, 'yyyy-MM-dd'));
+  const [hour, setHour] = useState(today.getHours());
+  const [minutes, setMinutes] = useState(today.getMinutes());
   const [time, setTime] = useState(0);
   const [active, setActive] = useState(null);
-  const [notificationPermissions, setNotificationPermissions] = useState(PermissionStatus.UNDETERMINED);
 
-  const requestNotificationPermissions = () => {
-    const setStatus = p => {
-      setNotificationPermissions(p.status);
-    };
-    Notifications.requestPermissionsAsync().then(setStatus);
-  };
+  const {
+    app,
+    db,
+    observer,
+  } = useFirebase(firebaseConfig);
 
-  const notify = (data) => {
-    if (!data) return;
+  const {
+    createScheduleFromTemplate,
+    getScheduleQuery,
+    getEventsForNotification,
+    getEventsByDate,
+    createWeekendSchedule,
+    removeEventById,
+    createEvent,
+    updateEvent,
+    retrieveEventById,
+  } = useApi(db);
 
-    let title = 'REMINDER';
-    switch (data.alert) {
-      case 1:
-        title = 'ATTENTION';
-        break;
-      case 2:
-        title = 'IMPORTANT';
-        break;
-      case 3:
-        title = 'URGENT';
-        break;
-      default:
-        break;
-    }
+  const {
+    registerUser,
+    signInUser,
+    signOutUser,
+  } = useAuth({ setUser });
 
-    const body = data.title;
-    const sound = true;
-    const priority = Notifications.AndroidNotificationPriority.HIGH
-
-    const schedulingOptions = {
-      content: { title, body, sound, priority },
-      trigger: { seconds: 2 },
-    };
-
-    Notifications.scheduleNotificationAsync(schedulingOptions);
-  };
-
-  // todo: this should be a background task
-  const scheduleNotification = async (notifyUserId, notifyDate, notifyStart) => {
-    // console.log('*** schedule:', { notifyUserId, notifyDate, notifyHour, notificationPermissions});
-    if (notificationPermissions !== PermissionStatus.GRANTED) return;
-    const events = await getEventsForNotification(notifyUserId, notifyDate, notifyStart);
-    events.forEach(event => notify(event));
+  const phoneThemeChanged = (theme) => {
+    // console.log('*** Appearance.changeListener\n', JSON.stringify(theme, null, 2));
+    setScheme(theme.colorScheme);
   };
 
   useEffect(() => {
-    const auth = getAuth();
-    auth.onAuthStateChanged(u => {
-      // console.log('*** onAuthStateChanged\n', JSON.stringify(u, null, 2));
-      if (!u) {
-        console.log('*** user is signed out');
-      } else {
-        console.log('*** user is signed in');
-      }
-      setUser(u);
-    });
-
-    requestNotificationPermissions();
-
     const timer = setInterval(() => {
       const d = new Date();
 
@@ -121,22 +89,14 @@ export const AuthProvider = ({ children }) => {
   }, [hour, minutes]);
 
   useEffect(() => {
-    console.log('*** setup Appearance listener');
-    const subscription = Appearance.addChangeListener(
-      (p) => {
-        console.log('*** Appearance.changeListener\n', JSON.stringify(p, null, 2));
-        const { colorScheme: scheme } = p;
-        setScheme(scheme);
-      },
-    );
-
+    const subscription = Appearance.addChangeListener(phoneThemeChanged);
     return () => {
       subscription.remove()
     }
   }, [setScheme])
 
   useEffect(() => {
-    console.log('***', { colorScheme });
+    console.log('*** phone theme changed:', { colorScheme });
   }, [colorScheme]);
 
   const value = {
@@ -144,10 +104,30 @@ export const AuthProvider = ({ children }) => {
     time,
     date,
     active,
-    notificationPermissions,
     colorScheme,
     setActive,
-    scheduleNotification,
+
+    auth: {
+      registerUser,
+      signInUser,
+      signOutUser,
+    },
+
+    api: {
+      createScheduleFromTemplate,
+      getScheduleQuery,
+      getEventsForNotification,
+      getEventsByDate,
+      createWeekendSchedule,
+      removeEventById,
+      createEvent,
+      updateEvent,
+      retrieveEventById,
+    },
+
+    stream: {
+      observer,
+    }
   };
 
   return (

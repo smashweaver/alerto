@@ -6,12 +6,13 @@ import { createTheme } from '../themes';
 import { AuthContext } from '../contexts/Authentication';
 
 const Drawer = createDrawerNavigator();
+const { Navigator, Screen } = Drawer;
 
 export default function DrawerNavigator() {
   const { colorScheme } = useContext(AuthContext)
   const Theme = createTheme(colorScheme);
   return (
-    <Drawer.Navigator
+    <Navigator
       drawerContent={(props) => <DrawerContentView {...props} />}
       screenOptions={{
         headerShown: true,
@@ -26,7 +27,7 @@ export default function DrawerNavigator() {
         headerTintColor: Theme.HeaderTintColor,
       }}
     >
-      <Drawer.Screen name="Tab" component={TabNavigator} />
-    </Drawer.Navigator>
+      <Screen name="Tab" component={TabNavigator} />
+    </Navigator>
   );
 }

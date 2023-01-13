@@ -19,7 +19,7 @@ const EventView = ({ openModal, coords, task }) => {
     if (start === time) {
       console.log('*** event activated:', task.id);
       setFocusStyle(styles.active);
-      setTimeout(() => setActive(task.id), 150);
+      // setTimeout(() => setActive(task.id), 150);
     } else {
       setFocusStyle(styles.normal);
     }

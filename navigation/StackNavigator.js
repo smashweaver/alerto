@@ -14,6 +14,7 @@ const AuthStackNavigator = () => {
   const Theme = createTheme(colorScheme);
   return (
     <Stack.Navigator
+      theme={Theme}
       screenOptions={{
         headerShown: true,
         headerStyle: {
@@ -24,9 +25,11 @@ const AuthStackNavigator = () => {
         headerTintColor: Theme.HeaderTintColor,
         headerShadowVisible: true,
       }}
+      sceneContainerStyle={{
+        backgroundColor: Theme.ContainerBackgroundColor,
+      }}
     >
-      <Stack.Screen name="Login" component={Login}
-      />
+      <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Register" component={Register} />
     </Stack.Navigator>
   )

@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-// import { useNavigation } from '@react-navigation/native';
 import {
   ActivityIndicator,
   Text,
@@ -8,14 +7,12 @@ import {
   TouchableOpacity,
   Keyboard,
 } from 'react-native';
-import { registerUser } from '../contexts/firebase';
 import { useIsFocused } from '@react-navigation/native';
 import { createStyle } from '../styles';
 import { AuthContext } from '../contexts/Authentication';
 
 export default function Login() {
   const isFocused = useIsFocused();
-  // const navigation = useNavigation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +20,7 @@ export default function Login() {
   const [disabled, setDisabled] = useState(true);
   const [busy, setBusy] = useState(false);
   const [buttonText, setButtonText] = useState(null);
-  const { colorScheme } = useContext(AuthContext)
+  const { colorScheme, auth } = useContext(AuthContext)
   const styles = createStyle('register', colorScheme);
 
   const clear = () => {
@@ -40,7 +37,7 @@ export default function Login() {
     setBusy(true);
 
     try {
-      await registerUser(email, password, name);
+      await auth.registerUser(email, password, name);
     } catch(error) {
       setErrorMessage(error.message);
     } finally {
@@ -67,7 +64,7 @@ export default function Login() {
   }, [name, email, password]);
 
   return (
-    <View style={styles.container}>
+    <View edges={[]} style={styles.container}>
       {errorMessage &&
         <View style={styles.error}>
           <Text style={styles.message}>{errorMessage}</Text>

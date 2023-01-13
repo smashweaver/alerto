@@ -15,7 +15,7 @@ const BottomTabNavigator = () => {
   const Theme = createTheme(colorScheme);
   return (
     <Nav.Navigator
-      initialRouteName="Home"
+      initialRouteName="Settings"
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
@@ -29,6 +29,16 @@ const BottomTabNavigator = () => {
       }}
     >
       <Nav.Screen
+        name="Schedule"
+        component={Schedule}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Octicons name="calendar" color={color} size={size} />
+          ),
+        }}
+      />
+
+      <Nav.Screen
         name="Home"
         component={Home}
         options={{
@@ -37,12 +47,13 @@ const BottomTabNavigator = () => {
           ),
         }}
       />
+
       <Nav.Screen
-        name="Schedule"
-        component={Schedule}
+        name="Settings"
+        component={Settings}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Octicons name="calendar" color={color} size={size} />
+            <MaterialIcons name="settings" color={color} size={size} />
           ),
         }}
       />
@@ -61,15 +72,7 @@ const BottomTabNavigator = () => {
         }}
       />
 
-      <Nav.Screen
-        name="Settings"
-        component={Settings}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="settings" color={color} size={size} />
-          ),
-        }}
-      />
+
 */
 
 export default BottomTabNavigator;
