@@ -5,12 +5,12 @@ import Register from '../screens/Register';
 // import { createStackNavigator } from '@react-navigation/stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { createTheme } from '../themes';
-import { AuthContext } from '../contexts/Authentication';
+import { AppContext } from '../contexts/appContext';
 
 const Stack = createNativeStackNavigator();
 
 const AuthStackNavigator = () => {
-  const { colorScheme } = useContext(AuthContext)
+  const { colorScheme } = useContext(AppContext)
   const Theme = createTheme(colorScheme);
   return (
     <Stack.Navigator

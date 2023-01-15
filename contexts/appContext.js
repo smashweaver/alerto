@@ -1,12 +1,14 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { Appearance } from 'react-native';
-import { useApi, useAuth, useNotification, useFirebase } from '../hooks';
-import { firebaseConfig } from '../constants';
+import { useApi, useAuth, useFirebase, useNotification } from '../hooks';
+import constants from '../constants';
 
-export const AuthContext = createContext();
+const { cycles } = constants;
 
-export const AuthProvider = ({ children }) => {
+export const AppContext = createContext();
+
+export const AppProvider = ({ children }) => {
   const today = new Date();
   const [colorScheme, setScheme] = useState(Appearance.getColorScheme());
   const [user, setUser] = useState(null);
@@ -14,13 +16,10 @@ export const AuthProvider = ({ children }) => {
   const [hour, setHour] = useState(today.getHours());
   const [minutes, setMinutes] = useState(today.getMinutes());
   const [time, setTime] = useState(0);
-  const [active, setActive] = useState(null);
+  const [profile, setProfile] = useState(null);
+  // const [active, setActive] = useState(null);
 
-  const {
-    app,
-    db,
-    observer,
-  } = useFirebase(firebaseConfig);
+  const { db, observer  } = useFirebase();
 
   const {
     createScheduleFromTemplate,
@@ -32,13 +31,33 @@ export const AuthProvider = ({ children }) => {
     createEvent,
     updateEvent,
     retrieveEventById,
+    saveProfile,
+    getProfile,
   } = useApi(db);
+
+  const notify = useNotification({ getEventsForNotification });
+
+  const setupUser = async (userData) => {
+    const { uid } = userData;
+    console.log('*** user id:', uid);
+
+    let userProfile = await getProfile(uid);
+    if (!userProfile.schedule) {
+      await saveProfile(uid, { schedule: 'bi', events: [...cycles.bi] })
+      userProfile = await getProfile(uid);
+    }
+    console.log('*** profile: ', userProfile);
+
+    setProfile(userProfile);
+
+    setUser(userData);
+  };
 
   const {
     registerUser,
     signInUser,
     signOutUser,
-  } = useAuth({ setUser });
+  } = useAuth(setupUser);
 
   const phoneThemeChanged = (theme) => {
     // console.log('*** Appearance.changeListener\n', JSON.stringify(theme, null, 2));
@@ -90,9 +109,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const subscription = Appearance.addChangeListener(phoneThemeChanged);
-    return () => {
-      subscription.remove()
-    }
+    return () => subscription.remove();
   }, [setScheme])
 
   useEffect(() => {
@@ -101,11 +118,10 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
+    profile,
     time,
     date,
-    active,
     colorScheme,
-    setActive,
 
     auth: {
       registerUser,
@@ -116,23 +132,23 @@ export const AuthProvider = ({ children }) => {
     api: {
       createScheduleFromTemplate,
       getScheduleQuery,
-      getEventsForNotification,
       getEventsByDate,
       createWeekendSchedule,
       removeEventById,
       createEvent,
       updateEvent,
       retrieveEventById,
+      saveProfile,
     },
 
-    stream: {
-      observer,
-    }
+    phone: { notify },
+
+    stream: { observer  }
   };
 
   return (
-    <AuthContext.Provider value={{...value}}>
+    <AppContext.Provider value={value}>
       {children}
-    </AuthContext.Provider>
+    </AppContext.Provider>
   );
 };

@@ -6,12 +6,12 @@ import Settings from '../screens/Settings';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
 import { createTheme } from '../themes';
-import { AuthContext } from '../contexts/Authentication';
+import { AppContext } from '../contexts/appContext';
 
 const Nav = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
-  const { colorScheme } = useContext(AuthContext)
+  const { colorScheme } = useContext(AppContext)
   const Theme = createTheme(colorScheme);
   return (
     <Nav.Navigator
@@ -57,11 +57,7 @@ const BottomTabNavigator = () => {
           ),
         }}
       />
-    </Nav.Navigator>
-  );
-};
 
-/*
       <Nav.Screen
         name="Profile"
         component={Profile}
@@ -71,8 +67,8 @@ const BottomTabNavigator = () => {
           ),
         }}
       />
-
-
-*/
+    </Nav.Navigator>
+  );
+};
 
 export default BottomTabNavigator;

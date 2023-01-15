@@ -8,14 +8,14 @@ import {
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 
-export default function useAuth({ setUser }) {
+export default function useAuth(callback) {
   const registerUser = async (email, password, name) => {
     const auth = getAuth();
     try {
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
       auth.currentUser.displayName = name;
       await updateProfile(user, { displayName: name });
-      setUser(userCredential.user);
+      callback(userCredential.user);
     } catch(error) {
       throw error;
     }
@@ -49,7 +49,7 @@ export default function useAuth({ setUser }) {
       } else {
         console.log('*** user is signed in');
       }
-      setUser(u);
+      callback(u);
     });
   }, []);
 

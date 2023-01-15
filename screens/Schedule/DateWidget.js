@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { Text, View, TouchableOpacity, StyleSheet } from 'react-native';
 import { format, isEqual, parseISO } from 'date-fns';
-import { AuthContext } from '../../contexts/Authentication';
+import { AppContext } from '../../contexts/appContext';
 import { createStyle } from '../../styles';
 
 export const DateWidget = ({ isoDate, today, workingDate, setWorkingDate }) => {
-  const { colorScheme } = useContext(AuthContext)
+  const { colorScheme } = useContext(AppContext)
   const styles = createStyle('dateWidget', colorScheme);
   const [roundedStyle, setRoundedStyle] = useState([styles.round]);
   const isoToday = parseISO(today);

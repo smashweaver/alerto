@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { createStyle } from '../styles';
-import { AuthContext } from '../contexts/Authentication';
+import { AppContext } from '../contexts/appContext';
 import { createTheme } from '../themes';
 
 export default function Login() {
@@ -22,7 +22,7 @@ export default function Login() {
   const [disabled, setDisabled] = useState(true);
   const [busy, setBusy] = useState(false);
   const [buttonText, setButtonText] = useState(null);
-  const { colorScheme, auth } = useContext(AuthContext)
+  const { colorScheme, auth } = useContext(AppContext)
   const styles = createStyle('login', colorScheme);
   const Theme = createTheme(colorScheme);
 

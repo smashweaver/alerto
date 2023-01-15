@@ -2,6 +2,7 @@ import {
   doc,
   addDoc,
   getDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   collection,
@@ -9,8 +10,6 @@ import {
   query,
   where,
 } from 'firebase/firestore';
-
-import { template } from '../constants';
 
 export default function useApi(db) {
   const getEventsByDate = async (ownerId, date) => {
@@ -75,23 +74,24 @@ export default function useApi(db) {
     return await updateDoc(eventRef, data);
   };
 
-  const createScheduleFromTemplate = async (ownerId, date) => {
+  const createScheduleFromTemplate = async (profile, ownerId, date) => {
     if (!ownerId) return null;
 
     const qryLogs = getLogsQuery(ownerId, date);
     try {
-      // check log entry before generating event docs from our template
+      // check log entry before generating event docs from schedule
       const snapshot = await getDocs(qryLogs);
       if (!snapshot.size) {
-        // create event doc for every template
+        // create event doc for every activity in the given schedule
+        const { events } = profile;
         const eventRef = collection(db, 'events');
-        template.forEach(async t => {
+        events.forEach(async t => {
           const start = t.hour * 60 + t.min;
           // console.log({ ...t, owner_id: ownerId, date, start })
           await addDoc(eventRef, { ...t, owner_id: ownerId, date, start });
         });
 
-        // create a log doc for the this operation
+        // create a log entry
         const logRef = collection(db, 'logs');
         await addDoc(logRef, { owner_id: ownerId, date });
       }
@@ -117,6 +117,40 @@ export default function useApi(db) {
     await deleteDoc(doc(db, 'events', id));
   };
 
+  /* const retrieveProfile = async (id) => {
+    const docRef = doc(db, 'profiles', id);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? docSnap.data() : null;
+  };
+
+  const initProfile = async (id) => {
+    console.log('*** init profile: ', id);
+    await setDoc(doc(db, 'profiles', id), {
+      mode: false
+    });
+  }; */
+
+  const saveProfile = async (id, payload) => {
+    return await updateDoc(doc(db, 'profiles', id), {
+      ...payload
+    });
+  };
+
+  const getProfile = async (id) => {
+    const docRef = doc(db, 'profiles', id);
+    let docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) {
+      // initialize user profile
+      await setDoc(doc(db, 'profiles', id), {
+        schedule: false,
+        events: [],
+      });
+      // read it again
+      docSnap = await getDoc(docRef);
+    }
+    return  docSnap.data();
+  };
+
   return {
     createScheduleFromTemplate,
     getScheduleQuery,
@@ -127,5 +161,7 @@ export default function useApi(db) {
     createEvent,
     updateEvent,
     retrieveEventById,
+    saveProfile,
+    getProfile,
   };
 }

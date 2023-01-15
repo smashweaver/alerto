@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Alert, View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { AuthContext } from '../../contexts/Authentication';
+import { AppContext } from '../../contexts/appContext';
 import { getFormattedTime, getDaysOfWeek, isWeekEnd,  } from '../../utils';
 import { WeekStrip } from './WeekStrip';
 import { createStyle } from '../../styles';
@@ -10,7 +10,7 @@ import { debounce } from 'lodash';
 import { AddModal, EditModal } from './AddModal';
 
 export default function Schedule() {
-  const { user, date, colorScheme, api } = useContext(AuthContext)
+  const { user, profile, date, colorScheme, api } = useContext(AppContext)
   const [events, setEvents] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -156,7 +156,7 @@ export default function Schedule() {
     console.log('*** workingDate changed:', workingDate);
     setEvents([]);
     if (!isWeekEnd(workingDate)) {
-      api.createScheduleFromTemplate(user.uid, workingDate)
+      api.createScheduleFromTemplate(profile, user.uid, workingDate)
       .then(setupData)
     } else {
       api.createWeekendSchedule(workingDate)

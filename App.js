@@ -1,22 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { AuthContext, AuthProvider } from './contexts/Authentication';
+import { AppContext, AppProvider } from './contexts/appContext';
 import Auth from './screens/Auth';
 import Main from './screens/Main';
 import * as SplashScreen from 'expo-splash-screen';
-import * as Notifications from 'expo-notifications';
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
 
 const Screen = () => {
   const [view, setView] = useState(null);
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(AppContext);
 
   useEffect(() => {
     SplashScreen.preventAutoHideAsync();
@@ -37,9 +28,9 @@ const Screen = () => {
 
 export default function App() {
   return (
-    <AuthProvider>
+    <AppProvider>
       <StatusBar style='light' />
       <Screen/>
-    </AuthProvider>
+    </AppProvider>
   )
 }

@@ -3,13 +3,13 @@ import TabNavigator from "./TabNavigator";
 import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
 import { DrawerContentView } from "../components/DrawerContentView";
 import { createTheme } from '../themes';
-import { AuthContext } from '../contexts/Authentication';
+import { AppContext } from '../contexts/appContext';
 
 const Drawer = createDrawerNavigator();
 const { Navigator, Screen } = Drawer;
 
 export default function DrawerNavigator() {
-  const { colorScheme } = useContext(AuthContext)
+  const { colorScheme } = useContext(AppContext)
   const Theme = createTheme(colorScheme);
   return (
     <Navigator

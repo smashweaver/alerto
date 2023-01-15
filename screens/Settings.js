@@ -2,11 +2,11 @@ import React, { useContext, useMemo } from 'react';
 import { Text, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
-import { AuthContext } from '../contexts/Authentication';
+import { AppContext } from '../contexts/appContext';
 import { TopBar } from '../components/TopBar';
 
 export default function Settings() {
-  const { date } = useContext(AuthContext);
+  const { date } = useContext(AppContext);
 
   return (
     <SafeAreaView edges={[]} style={styles.container}>

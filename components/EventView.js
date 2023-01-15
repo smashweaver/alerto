@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useMemo, useState  } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { AuthContext } from '../contexts/Authentication';
+import { AppContext } from '../contexts/appContext';
 import { getAlertColor, getFormattedTime } from '../utils';
 import { createStyle } from '../styles';
 
 const EventView = ({ openModal, coords, task }) => {
-  const { time, setActive, colorScheme } = useContext(AuthContext);
+  const { time, colorScheme } = useContext(AppContext);
   const styles = createStyle('eventViewStyle', colorScheme);
   const color = useMemo(() => getAlertColor(task.alert), [task.alert]);
   const formattedTime = useMemo(() => getFormattedTime(task.hour, task.min), [task.hour, task.min]);

@@ -2,7 +2,15 @@ import { useEffect, useState, useMemo } from "react";
 import { PermissionStatus } from 'expo-modules-core';
 import * as Notifications from 'expo-notifications';
 
-export default function useNotification() {
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
+export default function useNotification({ getEventsForNotification }) {
   const [notificationPermissions, setNotificationPermissions] = useState(PermissionStatus.UNDETERMINED);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
 
@@ -16,9 +24,9 @@ export default function useNotification() {
     .then(setStatus);
   };
 
-  const notify = (data) => {
+  const createNotification = (data) => {
     if (!data) return;
-    console.log('*** notify', { data });
+    console.log('*** createNotification', { data });
 
     let title = 'REMINDER';
     switch (data.alert) {
@@ -52,11 +60,11 @@ export default function useNotification() {
   };
 
   // todo: this should be a background task
-  const scheduleNotification = async (notifyUserId, notifyDate, notifyStart) => {
+  const notify = async (notifyUserId, notifyDate, notifyStart) => {
     // console.log('*** schedule:', { notifyUserId, notifyDate, notifyHour, notificationPermissions});
     if (!isNotificationEnabled) return;
     const events = await getEventsForNotification(notifyUserId, notifyDate, notifyStart);
-    events.forEach(event => notify(event));
+    events.forEach(event => createNotification(event));
   };
 
   useEffect(() => {
@@ -71,5 +79,5 @@ export default function useNotification() {
     setIsNotificationEnabled(notificationPermissions === PermissionStatus.GRANTED);
   }, [notificationPermissions]);
 
-  return scheduleNotification;
+  return notify;
 }

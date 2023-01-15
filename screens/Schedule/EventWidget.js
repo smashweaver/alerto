@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { AuthContext } from '../../contexts/Authentication';
+import { AppContext } from '../../contexts/appContext';
 import { createStyle } from '../../styles';
 import { getFormattedTime, getAlertColor} from '../../utils';
 import { FontAwesome } from '@expo/vector-icons';
@@ -9,7 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { createTheme } from '../../themes';
 
 export const EventWidget = ({ task, remove, edit }) => {
-  const { colorScheme } = useContext(AuthContext);
+  const { colorScheme } = useContext(AppContext);
   const Theme = createTheme(colorScheme);
   const styles = createStyle('eventWidget', colorScheme);
   const color = getAlertColor(task.alert);

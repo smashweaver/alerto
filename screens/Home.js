@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
 import { SafeAreaView, ScrollView } from 'react-native';
-import { AuthContext } from '../contexts/Authentication';
+import { AppContext } from '../contexts/appContext';
 import { EventListView } from '../components/EventListView';
 import { TopBar } from '../components/TopBar';
 import { EventModal } from '../components/EventModal';
@@ -9,8 +9,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useTasks } from '../hooks';
 
 export default function Home() {
-  // const isFocused = useIsFocused();
-  const { user, time, date, active, api, stream } = useContext(AuthContext)
+  const { user, profile, time, date, api, stream } = useContext(AppContext)
   const [coords] = useState({});
   const [scrollRef, setScrollRef] = useState(null);
   const [visible, setVisible] = useState(false);
@@ -45,7 +44,7 @@ export default function Home() {
   };
 
   const createSchedule = () => {
-    api.createScheduleFromTemplate(user.uid, date)
+    api.createScheduleFromTemplate(profile, user.uid, date)
     .then(() => setLoaded(true));
   };
 
@@ -105,17 +104,13 @@ export default function Home() {
   useEffect(() => {
     if (!qryEvents) return;
     console.log('*** observing stream', qryEvents);
+    unsubscribe.current();
     unsubscribe.current = stream.observer(
       qryEvents,
       tasksReducer,
       sortTasks,
     );
   }, [qryEvents]);
-
-  /* useEffect(() => {
-    console.log('*** active changed:', active)
-    if (active) scrollTo(active);
-  }, [active, scrollRef]); */
 
   useEffect(() => {
     console.log('*** time changed:', time);
@@ -141,8 +136,7 @@ export default function Home() {
           list={[...tasks]} />
       </ScrollView>
 
-      {visible &&
-        <EventModal close={closeModal} task={modalData} />}
+      {visible ? <EventModal close={closeModal} task={modalData} /> : null}
     </SafeAreaView>
   )
 }

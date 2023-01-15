@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import { Image, Platform, Text, TouchableOpacity, View } from 'react-native';
-import { AuthContext } from '../contexts/Authentication';
+import { AppContext } from '../contexts/appContext';
 import { createStyle } from '../styles';
 import { createTheme } from '../themes';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const DrawerContentView = (props) => {
-  const { colorScheme, user, auth } = useContext(AuthContext);
+  const { colorScheme, user, auth } = useContext(AppContext);
   const { navigation } = props;
   const [userName, setName] = useState('Unknown');
   const styles = createStyle('drawerContent', colorScheme);
