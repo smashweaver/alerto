@@ -36,7 +36,7 @@ const polyPhasic = {
   // This schedule consists of one longer core sleep period of 3-4 hours at night, and three 20-minute naps throughout the day.
   everyman: [
     {
-      hour: 12,        // 12am
+      hour: 0,        // 12am
       min: 0,
       duration: 240,  // 3-4 hours
       title: 'Sleep',

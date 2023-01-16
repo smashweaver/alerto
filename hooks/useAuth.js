@@ -15,7 +15,6 @@ export default function useAuth(callback) {
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
       auth.currentUser.displayName = name;
       await updateProfile(user, { displayName: name });
-      callback(userCredential.user);
     } catch(error) {
       throw error;
     }

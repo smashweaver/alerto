@@ -115,10 +115,9 @@ export default function Schedule() {
   const submitNewActivity = (payload = {}) => {
     closeModal();
     api.createEvent(uid, workingDate, {...payload})
-    .then((payload) => {
+    .then((data) => {
       // todo: notify success via toaster
-      console.log(payload);
-      events.push({ ...payload });
+      events.push({ ...data });
       sortEvents().then(reRender);
     })
     .catch(() => {
@@ -195,7 +194,7 @@ export default function Schedule() {
 
 
       {isAdding &&
-        <AddModal close={closeModal} ok={submitNewActivity} />}
+        <AddModal workingDate={workingDate} close={closeModal} ok={submitNewActivity} />}
 
       {isEditing &&
         <EditModal activity={activityToEdit} close={closeModal} ok={submitActivityChanges} />}

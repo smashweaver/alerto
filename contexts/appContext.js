@@ -2,9 +2,6 @@ import React, { createContext, useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { Appearance } from 'react-native';
 import { useApi, useAuth, useFirebase, useNotification } from '../hooks';
-import constants from '../constants';
-
-const { cycles } = constants;
 
 export const AppContext = createContext();
 
@@ -33,22 +30,25 @@ export const AppProvider = ({ children }) => {
     retrieveEventById,
     saveProfile,
     getProfile,
+    setProfileSchedule,
   } = useApi(db);
 
   const notify = useNotification({ getEventsForNotification });
 
   const setupUser = async (userData) => {
-    const { uid } = userData;
-    console.log('*** user id:', uid);
+    if (userData) {
+      const { uid } = userData;
+      console.log('*** user id:', uid);
 
-    let userProfile = await getProfile(uid);
-    if (!userProfile.schedule) {
-      await saveProfile(uid, { schedule: 'bi', events: [...cycles.bi] })
-      userProfile = await getProfile(uid);
+      const userProfile = await getProfile(uid);
+      /* if (!userProfile.schedule) {
+        setProfileSchedule(uid, 'everyman');
+        userProfile = await getProfile(uid);
+      } */
+      console.log('*** profile: ', userProfile);
+
+      setProfile(userProfile);
     }
-    console.log('*** profile: ', userProfile);
-
-    setProfile(userProfile);
 
     setUser(userData);
   };

@@ -10,11 +10,13 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { createTheme } from '../themes';
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { getFormattedTime } from '../utils';
@@ -22,27 +24,24 @@ import { InputDialog } from './InputDialog';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AlertPickerModal } from './AlertPickerModal';
 
+import { normalizeMin, normalizeDate } from '../utils';
+
 const Theme = createTheme();
 
-const newActivity = {
-  title: '',
-  hour: 0,
-  min: 0,
-  note: '',
-  alert: 0,
-};
-
 export const ActivityForm = ({ activity, ok, close, name }) => {
-  const data = !activity ? { ...newActivity } : { ...activity };
+  const data = { ...activity };
+  console.log('*** edit activity', activity);
   const insets = useSafeAreaInsets();
   const [title, setTitle] = useState(data.title);
   const [hour, setHour] = useState(data.hour);
-  const [min, setMin] = useState(data.min);
+  const [min, setMin] = useState(normalizeMin(data.min));
+  const [duration, setDuration] = useState(data.duration);
   const [note, setNote] = useState(data.note);
   const [alert, setAlert] = useState(data.alert);
   const [pickTime, setPickTime] = useState(false);
   const [pickNote, setPickNote] = useState(false);
   const [pickAlert, setPickAlert] = useState(false);
+  const [pickDuration, setPickDuration] = useState(false);
   const [date, setDate] = useState(new Date());
   const [formattedTime, setFormattedTime] = useState(getFormattedTime(hour, min));
   const [color, setColor] = useState('black');
@@ -53,17 +52,25 @@ export const ActivityForm = ({ activity, ok, close, name }) => {
   const handleTime = () => setPickTime(true);
   const handleNote = () => setPickNote(true);
   const handleAlert = () => setPickAlert(true);
+  const handleDuration = () => setPickDuration(true);
 
-  const handleChangeTime = (ev, value) => {
-    console.log({ value });
+  const handleDurationChange = (newDate) => {
+    const hrs = newDate.getHours();
+    const mins = newDate.getMinutes();
+    const value = hrs * 60 + mins;
+    console.log('*** change duration:', value);
+    setDuration(value);
+    setPickDuration(false);
+  };
+
+  const handleTimeChange = (newDate) => {
+    const newHour = newDate.getHours();
+    const newMin = newDate.getMinutes();
+    console.log('*** change time:', getFormattedTime(newHour, newMin));
+    setHour(newHour);
+    setMin(newMin);
     setPickTime(false);
-    if (ev.type === 'set') {
-      const d = new Date(value);
-      const newHour = d.getHours();
-      const newMin = d.getMinutes();
-      setHour(newHour);
-      setMin(newMin);
-    }
+
   };
 
   const handleChangeNote = (value) => {
@@ -83,7 +90,7 @@ export const ActivityForm = ({ activity, ok, close, name }) => {
         ]
       );
     } else {
-      ok({ title, note, hour, min, alert });
+      ok({ title, note, hour, min, alert, duration, custom: true });
     }
   };
 
@@ -91,20 +98,6 @@ export const ActivityForm = ({ activity, ok, close, name }) => {
     console.log('*** chnage alert:', level)
     setAlert(level);
     setPickAlert(false);
-  };
-
-  const normalizeMin = (m) => {
-    if (m >= 45) return 45;
-    if (m >= 30) return 30;
-    if (m >= 15) return 15;
-    return 0;
-  };
-
-  const normalizeDate = (h, m) => {
-    const d = new Date();
-    d.setHours(h);
-    d.setMinutes(normalizeMin(m));
-    return d;
   };
 
   useEffect(() => {
@@ -138,16 +131,16 @@ export const ActivityForm = ({ activity, ok, close, name }) => {
         <TouchableOpacity
           onPress={handleCancel}
         >
-          <Feather name="x" size={36} color={Theme.ModalHeaderTextColor}  />
+          <Feather name="x" size={28} color={Theme.ModalHeaderTextColor}  />
         </TouchableOpacity>
 
-        <Text style={[styles.text, { fontSize:30, marginLeft: 20 }]}>{name}</Text>
+        <Text style={[styles.text, { fontSize:24, marginLeft: 20 }]}>{name}</Text>
 
         <TouchableOpacity
           onPress={handleSubmit}
           style={{ marginLeft: 'auto'}}
         >
-          <Ionicons name="checkmark" size={36} color={Theme.ModalHeaderTextColor} />
+          <Ionicons name="checkmark" size={28} color={Theme.ModalHeaderTextColor} />
         </TouchableOpacity>
       </View>
 
@@ -157,7 +150,7 @@ export const ActivityForm = ({ activity, ok, close, name }) => {
       >
         <View style={styles.group}>
           <View style={styles.groupIcon}>
-            <MaterialIcons name="title" size={24} color='red' />
+            <MaterialIcons name="title" size={20} color='red' />
           </View>
 
           <View style={styles.groupValue}>
@@ -168,51 +161,65 @@ export const ActivityForm = ({ activity, ok, close, name }) => {
               placeholder='Title'
               placeholderTextColor={'#F8F9FA'}
               color='#FFF'
-              style={{fontSize: 24}}
+              style={{fontSize: 20}}
             />
           </View>
         </View>
 
         <View style={styles.group}>
           <View style={styles.groupIcon}>
-            <Ionicons name="time-outline" size={24} color='gray' />
+            <Ionicons name="time-outline" size={20} color='gray' />
           </View>
 
           <View style={styles.groupValue}>
             <TouchableOpacity
               onPressOut={handleTime}
             >
-              <Text style={{fontSize: 24, color:'#F8F9FA'}}>{formattedTime}</Text>
+              <Text style={{fontSize: 20, color:'#F8F9FA'}}>{formattedTime}</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.group}>
           <View style={styles.groupIcon}>
-            <Entypo name="text" size={24} color='gray' />
+            <MaterialCommunityIcons name="timer-sand" size={20} color="gray" />
+          </View>
+
+          <View style={styles.groupValue}>
+            <TouchableOpacity
+              onPressOut={handleDuration}
+            >
+              <Text style={{fontSize: 20, color:'#F8F9FA'}}>{duration} minutes</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.group}>
+          <View style={styles.groupIcon}>
+            <Entypo name="text" size={20} color='gray' />
           </View>
 
           <View style={styles.groupValue}>
             <TouchableOpacity
               onPress={handleNote}
             >
-              <Text style={{fontSize: 24, maxHeight: 36, color:'#F8F9FA'}}>{note || 'Note'}</Text>
+              <Text style={{fontSize: 20, maxHeight: 36, color:'#F8F9FA'}}>{note || 'Note'}</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.group}>
           <View style={styles.groupIcon}>
-            <Feather name="bell" size={24} color='gray' />
+            <Feather name="bell" size={20} color='gray' />
           </View>
 
           <View style={styles.groupValue}>
             <TouchableOpacity
               onPress={handleAlert}
             >
-              <View style={{flexDirection: 'row', justifyContent:'space-between'}}>
-                <Text style={{fontSize: 24, color:'#F8F9FA'}}>Alert</Text>
-                <FontAwesome name="bell-o" size={24} color={color} />
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent:'space-between'}}>
+                <Text style={{fontSize: 20, color:'#F8F9FA'}}>Alert</Text>
+                <FontAwesome name="bell-o" size={20} color={color} />
               </View>
 
             </TouchableOpacity>
@@ -229,24 +236,31 @@ export const ActivityForm = ({ activity, ok, close, name }) => {
         />
       }
 
-      {pickTime &&
-        <DateTimePicker
-          value={date}
-          mode='time'
-          minuteInterval={15}
-          onChange={handleChangeTime}
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          positiveButton={{label: 'OK', textColor: 'green'}}
-          style={{backgroundColor: "white"}}
-        />
-      }
+      <DateTimePickerModal
+        isVisible={pickTime}
+        date={date}
+        mode='time'
+        minuteInterval={5}
+        onConfirm={handleTimeChange}
+        onCancel={() => setPickTime(false)}
+      />
+
+      <DateTimePickerModal
+        isVisible={pickDuration}
+        date={new Date(new Date().setHours(0, duration, 0, 0))}
+        mode='time'
+        minuteInterval={5}
+        locale='en_GB'
+        onConfirm={handleDurationChange}
+        onCancel={() => setPickDuration(false)}
+      />
 
       {pickNote &&
         <InputDialog
           title={'Write a Note'}
           initial={note}
           ok={handleChangeNote}
-          cancel={handleCancelChangeNote}
+          cancel={(handleCancelChangeNote)}
         />
       }
     </View>

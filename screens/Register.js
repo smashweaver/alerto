@@ -39,6 +39,7 @@ export default function Login() {
     try {
       await auth.registerUser(email, password, name);
     } catch(error) {
+      console.log('*** error registration:', error.message);
       setErrorMessage(error.message);
     } finally {
       setBusy(false);

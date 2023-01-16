@@ -26,7 +26,7 @@ export const InputDialog = ({ title, initial, cancel, ok }) => {
       />
 
       <Dialog.Button label="Cancel" onPress={cancel} />
-      <Dialog.Button label="Ok" onPress={handleOk} />
+      <Dialog.Button label="Confirm" onPress={handleOk} />
     </Dialog.Container>
   )
 };

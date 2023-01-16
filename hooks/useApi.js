@@ -11,6 +11,11 @@ import {
   where,
 } from 'firebase/firestore';
 
+import uuid from 'react-native-uuid';
+import constants from '../constants';
+
+const { cycles } = constants;
+
 export default function useApi(db) {
   const getEventsByDate = async (ownerId, date) => {
     const colRef = collection(db, 'events');
@@ -61,7 +66,8 @@ export default function useApi(db) {
   const createEvent = async (ownerId, date, data) => {
     const eventRef = collection(db, 'events');
     const start = data.hour * 60 + data.min;
-    const payload = { ...data, owner_id: ownerId, date, start }
+    const ts =  uuid.v4();
+    const payload = { ...data, owner_id: ownerId, date, start, ts }
 
     const { id } = await addDoc(eventRef, payload);
     const docData = await retrieveEventById(id);
@@ -151,6 +157,11 @@ export default function useApi(db) {
     return  docSnap.data();
   };
 
+  setProfileSchedule = async (id, schedule = 'everyman') => {
+    const events = cycles[schedule].map(event => ({ ...event, ts: uuid.v4()}));
+    await saveProfile(id, { schedule, events });
+  };
+
   return {
     createScheduleFromTemplate,
     getScheduleQuery,
@@ -163,5 +174,6 @@ export default function useApi(db) {
     retrieveEventById,
     saveProfile,
     getProfile,
+    setProfileSchedule,
   };
 }
