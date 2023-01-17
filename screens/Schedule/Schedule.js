@@ -2,12 +2,14 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 import { Alert, View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { getFormattedTime, getDaysOfWeek, isWeekEnd,  } from '../../utils';
-import { WeekStrip } from './WeekStrip';
+import { WeekStrip } from '../../components/WeekStrip/WeekStrip';
 import { createStyle } from '../../styles';
 import { TopBar } from '../../components/TopBar';
-import { EventWidget } from './EventWidget';
+//import { EventWidget } from '../../components/Activities/EventWidget';
 import { debounce } from 'lodash';
 import { AddModal, EditModal } from './AddModal';
+import { Activities } from '../../components/Activities';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function Schedule() {
   const { user, profile, date, colorScheme, api } = useContext(AppContext)
@@ -163,6 +165,10 @@ export default function Schedule() {
     }
   }, [workingDate]);
 
+  useFocusEffect(() => {
+    console.log('*** screen changed: Schedule');
+  });
+
   return (
     <View edges={[]} style={{ flex: 1 }}>
       <TopBar date={workingDate} />
@@ -172,15 +178,11 @@ export default function Schedule() {
         keyboardShouldPersistTaps='handled'
       >
         <View style={{ marginTop: 10 }}>
-          {
-            events.map((activity, index) =>
-              <EventWidget
-                task={activity}
-                remove={handleRemoveActivity}
-                edit={handleEditActivity}
-                key={index} />
-            )
-          }
+          <Activities
+            events={events}
+            onDelete={handleRemoveActivity}
+            onEdit={handleEditActivity}
+          />
         </View>
       </ScrollView>
 

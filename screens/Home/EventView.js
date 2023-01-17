@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useMemo, useState  } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { AppContext } from '../contexts/appContext';
-import { getAlertColor, getFormattedTime } from '../utils';
-import { createStyle } from '../styles';
+import { AppContext } from '../../contexts/appContext';
+import { getAlertColor, getFormattedTime } from '../../utils';
+import { createStyle } from '../../styles';
 
 const EventView = ({ openModal, coords, task }) => {
   const { time, colorScheme } = useContext(AppContext);
@@ -13,10 +13,11 @@ const EventView = ({ openModal, coords, task }) => {
   const start = useMemo(() => task.hour*60+task.min, [task.hour, task.min]);
   const [focusStyle, setFocusStyle] = useState(styles.normal);
 
-  const onPress = () => openModal(task);
+  const handlePress = () => openModal(task);
 
   useEffect(() => {
-    if (start === time) {
+    console.log(task)
+    if (time >= start && time <= start+task.duration ) {
       console.log('*** event activated:', task.id);
       setFocusStyle(styles.active);
       // setTimeout(() => setActive(task.id), 150);
@@ -42,7 +43,7 @@ const EventView = ({ openModal, coords, task }) => {
       </Text>
 
       {color &&
-        <TouchableOpacity style={{ marginLeft: 'auto' }} onPress={onPress}>
+        <TouchableOpacity style={{ marginLeft: 'auto' }} onPress={handlePress}>
           <Ionicons name="alert-circle" size={30} color={color} />
         </TouchableOpacity>}
     </View>

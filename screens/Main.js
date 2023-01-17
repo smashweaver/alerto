@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { AppContext } from '../contexts/appContext';
 
 export default function Main() {
-  const { user, date, time, phone } = useContext(AppContext);
+  const { user, date, time, phone, profile } = useContext(AppContext);
 
   const uid = useMemo(() => {
     const u = user || { uid: null };
@@ -14,14 +14,14 @@ export default function Main() {
 
   useEffect(() => {
     console.log('*** mounting Main');
-
     return () => console.log('*** unmounting Main');
   }, []);
 
   useEffect(() => {
     if (!uid) return;
-     console.log('*** notify: ', time, date, uid);
-     phone.notify(uid, date, time);
+    if (!profile.schedule) return;
+    console.log('*** notify: ', time, date, uid);
+    phone.notify(uid, date, time);
   }, [time, date, uid]);
 
   return (

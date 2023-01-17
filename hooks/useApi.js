@@ -32,7 +32,11 @@ export default function useApi(db) {
   const getEventsForNotification = async (ownerId, date, time) => {
     console.log('*** getEventsForNotification', { ownerId, date, time});
     const colRef = collection(db, 'events');
-    const qryRef = query(colRef, where('owner_id', '==', ownerId),  where('date', '==', date), where('start', '==', time));
+    const qryRef = query(colRef,
+      where('owner_id', '==', ownerId),
+      where('date', '==', date),
+      where('start', '==', time)
+    );
     const snap = await getDocs(qryRef);
 
     if (!snap.empty) {

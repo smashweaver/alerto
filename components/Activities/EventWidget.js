@@ -7,6 +7,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { createTheme } from '../../themes';
+import { Switch, IconButton } from 'react-native-paper';
 
 export const EventWidget = ({ task, remove, edit }) => {
   const { colorScheme } = useContext(AppContext);
@@ -22,27 +23,23 @@ export const EventWidget = ({ task, remove, edit }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.start, styles.text]}>
-        {start}
-      </Text>
+      <View style={[styles.flexContainer, { justifyContent:'flex-start' }]}>
+        {color && <Ionicons name="alert-circle" size={20} color={color} style={{marginRight: 4}} />}
+        <Text style={[styles.start, styles.text]}>
+          {start} - {task.duration} min
+        </Text>
+      </View>
 
       <Text style={[styles.title, styles.text]}>
         {task.title}
       </Text>
 
-      <View style={{ position: 'absolute', right: 10, top: 10}}>
-        {color && <Ionicons name="alert-circle" size={20} color={color} />}
-      </View>
 
       {
         isEditable &&
-        <View style={[styles.flexContainer, styles.buttons]}>
-          <TouchableOpacity onPress={handleDelete}>
-            <FontAwesome name="trash-o" size={30} color={Theme.colors.text} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleEdit}>
-            <MaterialCommunityIcons name="pencil" size={30} color={Theme.colors.text} />
-          </TouchableOpacity>
+        <View style={[styles.flexContainer, styles.actionGroup,  { paddingHorizontal:4, marginTop:24 }]}>
+          <IconButton iconColor={Theme.colors.text} containerColor={Theme.colors.primary} size={16}  icon="delete-outline" mode="contained" onPress={handleDelete} />
+          <IconButton  iconColor={Theme.colors.text} containerColor={Theme.colors.primary} size={16} icon="pencil" mode="contained" onPress={handleEdit} />
         </View>
       }
     </View>

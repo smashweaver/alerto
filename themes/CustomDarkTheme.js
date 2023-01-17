@@ -35,8 +35,8 @@ export const CustomDarkTheme = {
   /** screen content */
   PrimaryBackgroundColor: '#DEE2E6',
   PrimaryColor: '#000',
-  ShadowColor: '#000',
-  CardBackgroundColor: '#5C5F66',
+  ShadowColor: '#ADB5BD',
+  CardBackgroundColor: '#495057',
   CardBorderColor: '#C1C2C5',
   CardTextColor: '#FFF',
   DangerColor: 'red',

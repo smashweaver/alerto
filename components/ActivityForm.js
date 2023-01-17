@@ -7,7 +7,6 @@ import {
   Text,
   TouchableOpacity,
   Alert,
-  Dimensions,
   Platform,
 } from 'react-native';
 // import DateTimePicker from '@react-native-community/datetimepicker';
@@ -280,11 +279,9 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     width: '100%',
   },
-
-   groupIcon: {
+  groupIcon: {
     marginRight: 20,
   },
-
   groupValue: {
     flex: 1,
     borderBottomColor: 'gray',
@@ -292,7 +289,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     marginTop: 6,
   },
-
   header: {
     backgroundColor: Theme.HeaderBackgroundColor,
     justifyContent: 'flex-start',
@@ -307,52 +303,4 @@ const styles = StyleSheet.create({
   text: {
     color: '#A6A7AB'
   },
-  input: {
-    backgroundColor: '#FFF',
-    //padding: 10,
-    //color: '#FFF',
-    height: 92,
-  },
-	bottom: {
-		flex: 1,
-		justifyContent: "flex-end",
-		marginBottom: 36
-	},
-	button: {
-		marginBottom: 30
-	}
 });
-
-/*
-  <View style={{ maxHeight: 100 }}>
-    <TextInput
-      placeholder="Enter here"
-      multiline={true}
-      maxLength={500}
-      maxHeight={200}
-      textAlignVertical="top"
-      style={styles.input}
-    />
-  </View>
-
-  <Picker
-    style={{
-      margin: -8,
-      color: '#F8F9FA',
-      height: 0,
-      width: '100%',
-    }}
-    mode={'dialog'}
-    selectedValue={alert}
-    onValueChange={value => setAlert(value)}
-  >
-    <Picker.Item label="None" value={0} />
-    <Picker.Item label="Low" value={1} />
-    <Picker.Item label="Important" value={2} />
-    <Picker.Item label="Urgent" value={3} />
-
-  </Picker>
-
-  <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.bottom}>
-  </KeyboardAvoidingView>
-*/

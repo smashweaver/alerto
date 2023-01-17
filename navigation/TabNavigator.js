@@ -12,7 +12,7 @@ import { Pressable } from "react-native";
 const Nav = createBottomTabNavigator();
 
 const DisabledTabBarButton = ({ style, ...props }) => (
-  <Pressable disabled style={[{ opacity: 0.2 }, style]} {...props} />
+  <Pressable disabled style={[{ opacity: 0.3 }, style]} {...props} />
 );
 
 const EnabledTabBarButton = ({ style, ...props }) => (

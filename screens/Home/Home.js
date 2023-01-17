@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
 import { SafeAreaView, ScrollView } from 'react-native';
-import { AppContext } from '../contexts/appContext';
-import { EventListView } from '../components/EventListView';
-import { TopBar } from '../components/TopBar';
-import { EventModal } from '../components/EventModal';
+import { AppContext } from '../../contexts/appContext';
+import { EventListView } from './EventListView';
+import { TopBar } from '../../components/TopBar';
+import { EventModal } from './EventModal';
 import { debounce } from 'lodash';
 import { useFocusEffect } from '@react-navigation/native';
-import { useTasks } from '../hooks';
+import { useTasks } from '../../hooks';
 
 export default function Home() {
   const { user, profile, time, date, api, stream } = useContext(AppContext)

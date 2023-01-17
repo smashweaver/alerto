@@ -35,6 +35,11 @@ export const AppProvider = ({ children }) => {
 
   const notify = useNotification({ getEventsForNotification });
 
+  const refreshProfile = async () => {
+    const userProfile = await getProfile(uid);
+    setProfile(userProfile);
+  };
+
   const setupUser = async (userData) => {
     if (userData) {
       const { uid } = userData;
@@ -78,7 +83,7 @@ export const AppProvider = ({ children }) => {
 
       const hr = d.getHours();
       let min = d.getMinutes();
-      min = min - (min % 15);
+      min = min - (min % 10);
 
       console.log('*** heartbeat', { hr, min, hour, minutes })
 
@@ -139,6 +144,7 @@ export const AppProvider = ({ children }) => {
       updateEvent,
       retrieveEventById,
       saveProfile,
+      refreshProfile,
     },
 
     phone: { notify },
