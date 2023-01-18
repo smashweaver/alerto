@@ -42,6 +42,11 @@ export const AppProvider = ({ children }) => {
     setProfile(userProfile);
   };
 
+  const updateProfileSchedule = (uid, code) => {
+    setProfileSchedule(uid, code);
+    refreshProfile(uid);
+  }
+
   const setupUser = async (userData) => {
     if (userData) {
       const { uid } = userData;
@@ -152,6 +157,7 @@ export const AppProvider = ({ children }) => {
       refreshProfile,
       setProfileSchedule,
       updateProfileEvents,
+      updateProfileSchedule,
     },
 
     phone: { notify },
