@@ -2,7 +2,8 @@ import React, { useContext, useMemo } from "react";
 import Home from '../screens/Home';
 import Profile from '../screens/Profile';
 import Schedule from '../screens/Schedule';
-import Settings from '../screens/Settings';
+// import Settings from '../screens/Settings';
+import { SettingStackNavigator } from './StackNavigator';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
 import { createTheme } from '../themes';
@@ -62,7 +63,7 @@ const BottomTabNavigator = () => {
 
       <Nav.Screen
         name="Settings"
-        component={Settings}
+        component={SettingStackNavigator}
         options={{
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="settings" color={color} size={size} />

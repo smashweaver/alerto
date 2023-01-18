@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { createStyle } from '../../styles';
 import { getFormattedTime, getAlertColor} from '../../utils';
-import { Ionicons } from '@expo/vector-icons';
 import { createTheme } from '../../themes';
-import { Switch, IconButton } from 'react-native-paper';
-
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export const EventWidget = ({ task, remove, edit }) => {
   const { colorScheme } = useContext(AppContext);
@@ -26,7 +25,7 @@ export const EventWidget = ({ task, remove, edit }) => {
   };
 
   useEffect(() => {
-    console.log({ disabled });
+    // console.log({ disabled });
     task.disabled = disabled;
   }, [disabled]);
 
@@ -34,31 +33,33 @@ export const EventWidget = ({ task, remove, edit }) => {
   const paddingHorizontal = 10;
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.flexContainer, { justifyContent:'flex-start' }]}>
-        {color && <Ionicons name="alert-circle" size={20} color={color} style={{marginRight: 4}} />}
-        <Text style={[styles.start, styles.text]}>
-          {start} - {task.duration} min
-        </Text>
+    <TouchableOpacity
+      activeOpacity={0.6}
+      onLongPress={handleEdit}
+      style={[styles.container]}
+    >
+      <View style={[styles.flexContainer]}>
+        <View style={[styles.flexContainer, { justifyContent: 'flex-start'}]}>
+          <Text style={[styles.start, styles.text]}>
+          <Ionicons name="time-outline" size={16} color='gray' /> {start} - {task.duration} min
+          </Text>
+        </View>
+
+        {color && <Ionicons name="alert-circle" size={20} color={color} />}
       </View>
 
       <Text style={[styles.title, styles.text]}>
         {task.title}
       </Text>
 
-      <View style={{ position: 'absolute', right: 10, top: 10}}>
 
-      </View>
-
-      <View style={[styles.actionGroup, styles.flexContainer, styles.actionGroup, { paddingHorizontal, paddingVertical,  marginVertical: 10 }]}>
-        <Text style={{color: Theme.colors.text}}>{statusText}</Text>
-        <Switch color={Theme.colors.primary}  value={!disabled} onValueChange={toggleDisabled} />
-      </View>
-
-      <View style={[styles.flexContainer, styles.actionGroup, { paddingHorizontal:4 }]}>
-        <IconButton iconColor={Theme.colors.text} containerColor={Theme.colors.primary} size={16}  icon="delete-outline" mode="contained" onPress={handleDelete} />
-        <IconButton  iconColor={Theme.colors.text} containerColor={Theme.colors.primary} size={16} icon="pencil" mode="contained" onPress={handleEdit} />
-      </View>
-    </View>
+    </TouchableOpacity>
   )
 }
+
+/*
+<View style={[styles.actionGroup, styles.flexContainer, styles.actionGroup, { paddingHorizontal, paddingVertical,  marginVertical: 10 }]}>
+  <Text style={{color: Theme.colors.text}}>{statusText}</Text>
+  <Switch color={Theme.colors.primary}  value={!disabled} onValueChange={toggleDisabled} />
+</View>
+*/

@@ -47,6 +47,13 @@ const normalizeDate = (h, m) => {
   return d;
 };
 
+
+const calcStart = (activity, data) => {
+  const hour = ('hour' in data) ? data.hour : activity.hour;
+  const min = ('min' in data) ? data.min : activity.min;
+  return hour * 60 + min;
+};
+
 export {
   getAlertColor,
   getFormattedTime,
@@ -55,4 +62,5 @@ export {
   formatDate,
   normalizeMin,
   normalizeDate,
+  calcStart,
 };

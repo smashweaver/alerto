@@ -7,9 +7,15 @@ import { createStyle } from '../../styles';
 import { TopBar } from '../../components/TopBar';
 //import { EventWidget } from '../../components/Activities/EventWidget';
 import { debounce } from 'lodash';
-import { AddModal, EditModal } from './AddModal';
+import { AddModal } from './AddModal';
+import { EditModal } from './EditModal';
 import { Activities } from '../../components/Activities';
 import { useFocusEffect } from '@react-navigation/native';
+import { Button } from 'react-native-paper';
+import { createTheme } from '../../themes';
+import { calcStart } from '../../utils';
+
+const Theme = createTheme();
 
 export default function Schedule() {
   const { user, profile, date, colorScheme, api } = useContext(AppContext)
@@ -38,6 +44,8 @@ export default function Schedule() {
 
   const removeActivity = (activity) => {
     const index = findDataIndex(activity)
+    setIsEditing(false);
+
     api.removeEventById(activity.id)
     .then(() => removeByIndex(index))
     .catch(() => {
@@ -68,13 +76,6 @@ export default function Schedule() {
   const handleEditActivity = (activity) => {
     setActivityToEdit(activity)
     setIsEditing(true);
-  };
-
-  // todo: move this to firebase.js
-  const calcStart = (activity, data) => {
-    const hour = ('hour' in data) ? data.hour : activity.hour;
-    const min = ('min' in data) ? data.min : activity.min;
-    return hour * 60 + min;
   };
 
   // todo: move this to firebase.js
@@ -116,15 +117,33 @@ export default function Schedule() {
 
   const submitNewActivity = (payload = {}) => {
     closeModal();
-    api.createEvent(uid, workingDate, {...payload})
+    const {
+      title,
+      hour,
+      min,
+      duration,
+      note,
+      alert,
+      custom
+    } = payload;
+
+    api.createEvent(uid, workingDate, {
+      title,
+      hour,
+      min,
+      duration,
+      note,
+      alert,
+      custom,
+    })
     .then((data) => {
       // todo: notify success via toaster
       events.push({ ...data });
       sortEvents().then(reRender);
     })
-    .catch(() => {
+    .catch((error) => {
       // todo: notify failure via toaster
-      console.log('*** creating new activity failed!');
+      console.log('*** creating new activity failed:', error.message);
     });
   };
 
@@ -186,21 +205,26 @@ export default function Schedule() {
         </View>
       </ScrollView>
 
-      <View style={{ padding: 10 }}>
-        <TouchableOpacity
-          onPress={handleNewActivity}
-          style={styles.button}>
-          <Text style={styles.buttonText}>New Activity</Text>
-        </TouchableOpacity>
+      <View style={{ margin: 10 }}>
+        <Button mode='text' textColor={Theme.colors.primary} onPress={handleNewActivity}>
+          New Activity
+        </Button>
       </View>
 
+      <AddModal
+        visible={isAdding}
+        workingDate={workingDate}
+        close={closeModal}
+        ok={submitNewActivity}
+      />
 
-      {isAdding &&
-        <AddModal workingDate={workingDate} close={closeModal} ok={submitNewActivity} />}
-
-      {isEditing &&
-        <EditModal activity={activityToEdit} close={closeModal} ok={submitActivityChanges} />}
-
+      <EditModal
+        visible={isEditing}
+        activity={activityToEdit}
+        close={closeModal}
+        ok={submitActivityChanges}
+        onDelete={handleRemoveActivity}
+      />
     </View>
   )
 }

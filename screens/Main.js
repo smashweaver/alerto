@@ -22,7 +22,7 @@ export default function Main() {
     if (!profile.schedule) return;
     console.log('*** notify: ', time, date, uid);
     phone.notify(uid, date, time);
-  }, [time, date, uid]);
+  }, [time, date, uid, profile.schedule]);
 
   return (
     <NavigationContainer>

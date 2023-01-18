@@ -31,12 +31,14 @@ export const AppProvider = ({ children }) => {
     saveProfile,
     getProfile,
     setProfileSchedule,
+    updateProfileEvents,
   } = useApi(db);
 
   const notify = useNotification({ getEventsForNotification });
 
-  const refreshProfile = async () => {
+  const refreshProfile = async (uid) => {
     const userProfile = await getProfile(uid);
+    console.log('*** user profile refreshed:', userProfile);
     setProfile(userProfile);
   };
 
@@ -46,11 +48,13 @@ export const AppProvider = ({ children }) => {
       console.log('*** user id:', uid);
 
       const userProfile = await getProfile(uid);
-      /* if (!userProfile.schedule) {
+      /*
+      if (!userProfile.schedule) {
         setProfileSchedule(uid, 'everyman');
         userProfile = await getProfile(uid);
-      } */
+      }
       console.log('*** profile: ', userProfile);
+      */
 
       setProfile(userProfile);
     }
@@ -83,7 +87,7 @@ export const AppProvider = ({ children }) => {
 
       const hr = d.getHours();
       let min = d.getMinutes();
-      min = min - (min % 10);
+      min = min - (min % 5);
 
       console.log('*** heartbeat', { hr, min, hour, minutes })
 
@@ -104,8 +108,9 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const min = minutes - (minutes % 15);
+    const min = minutes - (minutes % 5);
     const newTime = (hour * 60) + min;
+
     if (time !== newTime) {
       console.log('*** time changed:', { hour, min, newTime });
       setTime(newTime);
@@ -145,6 +150,8 @@ export const AppProvider = ({ children }) => {
       retrieveEventById,
       saveProfile,
       refreshProfile,
+      setProfileSchedule,
+      updateProfileEvents,
     },
 
     phone: { notify },

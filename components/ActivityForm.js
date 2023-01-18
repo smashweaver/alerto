@@ -22,14 +22,14 @@ import { getFormattedTime } from '../utils';
 import { InputDialog } from './InputDialog';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AlertPickerModal } from './AlertPickerModal';
+import { Button } from 'react-native-paper';
 
 import { normalizeMin, normalizeDate } from '../utils';
 
 const Theme = createTheme();
 
-export const ActivityForm = ({ activity, ok, close, name }) => {
+export const ActivityForm = ({ activity, ok, close, name, onDelete }) => {
   const data = { ...activity };
-  console.log('*** edit activity', activity);
   const insets = useSafeAreaInsets();
   const [title, setTitle] = useState(data.title);
   const [hour, setHour] = useState(data.hour);
@@ -37,6 +37,12 @@ export const ActivityForm = ({ activity, ok, close, name }) => {
   const [duration, setDuration] = useState(data.duration);
   const [note, setNote] = useState(data.note);
   const [alert, setAlert] = useState(data.alert);
+
+  // valid only in profile.events
+  const [custom, setCustom ] = useState(data.custom);
+  const [occurence] = useState(data.occurence || false);
+  const [disable, setDisable] = useState(data.disable || false);
+
   const [pickTime, setPickTime] = useState(false);
   const [pickNote, setPickNote] = useState(false);
   const [pickAlert, setPickAlert] = useState(false);
@@ -69,7 +75,6 @@ export const ActivityForm = ({ activity, ok, close, name }) => {
     setHour(newHour);
     setMin(newMin);
     setPickTime(false);
-
   };
 
   const handleChangeNote = (value) => {
@@ -89,7 +94,17 @@ export const ActivityForm = ({ activity, ok, close, name }) => {
         ]
       );
     } else {
-      ok({ title, note, hour, min, alert, duration, custom: true });
+      ok({
+        title,
+        note,
+        hour,
+        min,
+        alert,
+        duration,
+        custom,
+        occurence,
+        disable
+      });
     }
   };
 
@@ -98,6 +113,9 @@ export const ActivityForm = ({ activity, ok, close, name }) => {
     setAlert(level);
     setPickAlert(false);
   };
+
+  const marginTop = Platform.OS === 'ios' ? insets.top : 0;
+  const marginBottom = Platform.OS === 'ios' ? insets.bottom + 10: 20;
 
   useEffect(() => {
     if (!activity) {
@@ -125,7 +143,7 @@ export const ActivityForm = ({ activity, ok, close, name }) => {
   }, [hour, min]);
 
   return (
-    <View style={[styles.container, { marginTop: Platform.OS === 'ios' ? insets.top : 0 }]}>
+    <View style={[styles.container, { marginTop }]}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={handleCancel}
@@ -135,10 +153,7 @@ export const ActivityForm = ({ activity, ok, close, name }) => {
 
         <Text style={[styles.text, { fontSize:24, marginLeft: 20 }]}>{name}</Text>
 
-        <TouchableOpacity
-          onPress={handleSubmit}
-          style={{ marginLeft: 'auto'}}
-        >
+        <TouchableOpacity onPress={handleSubmit}>
           <Ionicons name="checkmark" size={28} color={Theme.ModalHeaderTextColor} />
         </TouchableOpacity>
       </View>
@@ -227,6 +242,15 @@ export const ActivityForm = ({ activity, ok, close, name }) => {
 
       </ScrollView>
 
+      {
+        onDelete && custom &&
+        <View style={{ marginBottom }}>
+          <Button mode='text' textColor={Theme.colors.primary} onPress={onDelete}>
+            Delete
+          </Button>
+        </View>
+      }
+
       {pickAlert &&
         <AlertPickerModal
           initial={alert}
@@ -290,15 +314,14 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   header: {
-    backgroundColor: Theme.HeaderBackgroundColor,
-    justifyContent: 'flex-start',
+    display: 'flex',
+    justifyContent: 'space-between',
     flexDirection: 'row',
-    paddingVertical: 10,
-    paddingHorizontal: 10,
     alignItems: 'center',
     alignContent: 'center',
-    display: 'flex',
-    paddingBottom: 16
+    backgroundColor: Theme.HeaderBackgroundColor,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
   },
   text: {
     color: '#A6A7AB'

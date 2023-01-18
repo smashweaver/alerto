@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Text, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { createTheme } from '../../themes';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Octicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
-import { ActivitiesModal } from './ActivitiesModal';
+import { useNavigation } from '@react-navigation/native';
 
 const Theme = createTheme();
 
@@ -13,24 +12,18 @@ const sleepCycle = (code) => {
   if (!code) return 'Set your schedule';
 
   const map = {
-    'mono': 'Monophasic Schedule',
-    'bi': 'Biphasic Schedule',
-    'everyman': 'Everyman Schedule',
-    'uberman': 'Uberman Schedule',
-    'dymaxion': 'Dymaxion Schedule',
+    'mono': 'Monophasic',
+    'bi': 'Biphasic',
+    'everyman': 'Everyman',
+    'uberman': 'Uberman',
+    'dymaxion': 'Dymaxion',
   }
   return map[code];
 };
 
 export default function Settings() {
   const { profile } = useContext(AppContext);
-  const [events, setEvents] = useState([...profile.events]);
-  const [isAdding, setIsAdding] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [activityToEdit, setActivityToEdit] = useState(null);
-
-  const [isPickSchedule, setPickSchedule] = useState(false);
-  const [isManageActivities, setManageActivities] = useState(false);
+  const navigation = useNavigation();
 
   const disabledGroup = [styles.groupValue, { opacity: 0.3 }];
   const enabledGroup = [styles.groupValue];
@@ -40,21 +33,12 @@ export default function Settings() {
 
   const scheduleText = sleepCycle(profile.schedule);
 
-  const pickSchedule = () => setPickSchedule(true);
-  const manageActivities = () => setManageActivities(true);
+  const manageActivities = () => {
+    navigation.navigate('SettingActivities');
+  }
 
-  const closeActivities = () => setManageActivities(false);
-
-  const deleteActivity = (activity) => {
-    console.log('*** delete activity', activity)
-  };
-
-  const editActivity = (activity) => {
-    console.log('*** edit activity', activity)
-  };
-
-  const addActivity = () => {
-    console.log('*** add activity');
+  const manageSchedule = () => {
+    // navigation.navigate('SettingSchedule');
   };
 
   useEffect(() => {
@@ -77,37 +61,30 @@ export default function Settings() {
   });
 
   return (
-    <View edges={[]} style={{ flex: 1, padding: 20 }}>
-      <View style={styles.group}>
-        <View style={styles.groupIcon}>
-          <MaterialIcons name="schedule" size={20} color="gray" />
+    <View edges={[]} style={styles.container}>
+      <View style={{ padding: 20 }}>
+        <View style={styles.group}>
+          <View style={styles.groupIcon}>
+            <MaterialIcons name="schedule" size={20} color="gray" />
+          </View>
+          <View style={enabledGroup}>
+            <TouchableOpacity onPressOut={manageSchedule}>
+              <Text style={{fontSize: 20, color:'#F8F9FA'}}>{scheduleText}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={enabledGroup}>
-          <TouchableOpacity onPressOut={pickSchedule}>
-            <Text style={{fontSize: 20, color:'#F8F9FA'}}>{scheduleText}</Text>
-          </TouchableOpacity>
+
+        <View style={styles.group}>
+          <View style={styles.groupIcon}>
+            <MaterialIcons name="event-available" size={20} color="gray" />
+          </View>
+          <View style={activitiesGroupStyle}>
+            <TouchableOpacity disabled={isActivitiesDisabled} onPressOut={manageActivities}>
+              <Text style={{fontSize: 20, color:'#F8F9FA'}}>{'Manage your activities'}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-
-      <View style={styles.group}>
-        <View style={styles.groupIcon}>
-          <MaterialIcons name="event-available" size={20} color="gray" />
-        </View>
-        <View style={activitiesGroupStyle}>
-          <TouchableOpacity disabled={isActivitiesDisabled} onPressOut={manageActivities}>
-            <Text style={{fontSize: 20, color:'#F8F9FA'}}>{'Manage your activities'}</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <ActivitiesModal
-        visible={isManageActivities}
-        events={events}
-        close={closeActivities}
-        onDelete={deleteActivity}
-        onEdit={editActivity}
-        onAdd={addActivity}
-      />
     </View>
   )
 }

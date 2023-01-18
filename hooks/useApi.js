@@ -70,8 +70,8 @@ export default function useApi(db) {
   const createEvent = async (ownerId, date, data) => {
     const eventRef = collection(db, 'events');
     const start = data.hour * 60 + data.min;
-    const ts =  uuid.v4();
-    const payload = { ...data, owner_id: ownerId, date, start, ts }
+    // const ts =  uuid.v4();
+    const payload = { ...data, owner_id: ownerId, date, start }
 
     const { id } = await addDoc(eventRef, payload);
     const docData = await retrieveEventById(id);
@@ -95,10 +95,31 @@ export default function useApi(db) {
         // create event doc for every activity in the given schedule
         const { events } = profile;
         const eventRef = collection(db, 'events');
-        events.forEach(async t => {
-          const start = t.hour * 60 + t.min;
-          // console.log({ ...t, owner_id: ownerId, date, start })
-          await addDoc(eventRef, { ...t, owner_id: ownerId, date, start });
+        events.forEach(async data => {
+          // todo: guard for occurence
+          if (data.disabled) return;
+          const {
+            title,
+            hour,
+            min,
+            duration,
+            note,
+            alert,
+            custom,
+          } = data;
+          const start = hour * 60 + min;
+          await addDoc(eventRef, {
+            owner_id: ownerId,
+            title,
+            hour,
+            min,
+            duration,
+            note,
+            alert,
+            custom,
+            date,
+            start
+          });
         });
 
         // create a log entry
@@ -161,9 +182,23 @@ export default function useApi(db) {
     return  docSnap.data();
   };
 
-  setProfileSchedule = async (id, schedule = 'everyman') => {
-    const events = cycles[schedule].map(event => ({ ...event, ts: uuid.v4()}));
-    await saveProfile(id, { schedule, events });
+  const setProfileSchedule = async (id, schedule = 'everyman') => {
+    const occurence = {
+      mon: true,
+      tue: true,
+      wed: true,
+      thu: true,
+      fri: true,
+    };
+    const custom = false;
+    const disable = false;
+    // const ts =  uuid.v4();
+    const events = cycles[schedule].map(event => ({ ...event, custom, occurence, disable }));
+    return await saveProfile(id, { schedule, events });
+  };
+
+  const updateProfileEvents = async (id, events) => {
+    return await saveProfile(id, events);
   };
 
   return {
@@ -179,5 +214,6 @@ export default function useApi(db) {
     saveProfile,
     getProfile,
     setProfileSchedule,
+    updateProfileEvents,
   };
 }

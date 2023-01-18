@@ -1,30 +1,37 @@
 import { Modal } from 'react-native';
 import { ActivityForm } from '../../components/ActivityForm';
 
-export const AddModal = ({ visible, workingDate, ok, close }) => {
+export const AddModal = ({  visible, ok, close, }) => {
   const today = new Date();
-  const date = workingDate;
   const hour = today.getHours();
   const min = today.getMinutes();
   const duration = 60;
   const note = '';
   const title = '';
   const alert = 0;
-  const custom= true;
+  const custom = true;
+  const disable = false;
+  const occurence = {
+    mon: true,
+    tue: true,
+    wed: true,
+    thu: true,
+    fri: true,
+  };
 
   const activity = {
     title,
-    date,
     hour,
     min,
     duration,
     note,
     alert,
     custom,
+    occurence,
+    disable,
   };
 
   const handleSubmit = (payload) => {
-    console.log('*** ',payload)
     ok(payload);
   };
 
@@ -36,7 +43,7 @@ export const AddModal = ({ visible, workingDate, ok, close }) => {
       style={{ margin: 0}}
     >
       <ActivityForm
-        name='New Activity'
+        name='Add Activity'
         activity={activity}
         ok={handleSubmit}
         close={close}
