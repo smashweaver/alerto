@@ -92,10 +92,6 @@ export default function ManageActivities() {
     setActivityToEdit(null);
   };
 
-  const updateProfileSchedule = () => {
-    console.log('*** updating profile schedule');
-  };
-
   useEffect(() => {
     console.log('*** mounting ManageActivities');
     // setTimeout(() => setEvents([...profile.events]), 500);

@@ -38,7 +38,7 @@ export default function Settings() {
   }
 
   const manageSchedule = () => {
-    // navigation.navigate('SettingSchedule');
+    navigation.navigate('SettingSchedule');
   };
 
   useEffect(() => {
