@@ -2,10 +2,9 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { createStyle } from '../../styles';
-import { getFormattedTime, getAlertColor} from '../../utils';
+import { calcStart, getFormattedTime, getFormattedEndTime, getAlertColor} from '../../utils';
 import { createTheme } from '../../themes';
 import { Ionicons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export const EventWidget = ({ task, remove, edit }) => {
   const { colorScheme } = useContext(AppContext);
@@ -24,13 +23,10 @@ export const EventWidget = ({ task, remove, edit }) => {
     setDisabled(prev => !prev);
   };
 
-  useEffect(() => {
-    // console.log({ disabled });
-    task.disabled = disabled;
-  }, [disabled]);
-
   const paddingVertical = Platform.OS === 'ios' ? 5 : 0;
   const paddingHorizontal = 10;
+
+  const endTime = getFormattedEndTime(calcStart(task), task.duration);
 
   return (
     <TouchableOpacity
@@ -41,7 +37,7 @@ export const EventWidget = ({ task, remove, edit }) => {
       <View style={[styles.flexContainer]}>
         <View style={[styles.flexContainer, { justifyContent: 'flex-start'}]}>
           <Text style={[styles.start, styles.text]}>
-          <Ionicons name="time-outline" size={16} color='gray' /> {start} - {task.duration} min
+          <Ionicons name="time-outline" size={16} color='gray' /> {start} - {endTime}
           </Text>
         </View>
 

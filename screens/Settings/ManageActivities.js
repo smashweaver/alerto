@@ -104,7 +104,13 @@ export default function ManageActivities() {
 
   useEffect(() => {
     console.log('*** refreshing profile events');
-    setTimeout(() => setEvents([...profile.events]), 500);
+    const tasks = [...profile.events];
+    tasks.sort((x, y) => {
+      const xs = calcStart(x);
+      const ys = calcStart(y);
+      return xs - ys;
+    });
+    setTimeout(() => setEvents([...tasks]), 500);
   }, [profile.events])
 
   return (

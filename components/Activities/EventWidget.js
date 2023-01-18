@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { createStyle } from '../../styles';
-import { getFormattedTime, getAlertColor} from '../../utils';
+import { calcStart, getFormattedEndTime, getFormattedTime, getAlertColor} from '../../utils';
 import { Ionicons } from '@expo/vector-icons';
 import { createTheme } from '../../themes';
 
@@ -17,6 +17,8 @@ export const EventWidget = ({ task, remove, edit }) => {
   const handleDelete = () => remove(task);
   const handleEdit = () => edit(task);
 
+  const endTime = getFormattedEndTime(calcStart(task), task.duration);
+
   return (
     <TouchableOpacity
       activeOpacity={0.6}
@@ -25,7 +27,7 @@ export const EventWidget = ({ task, remove, edit }) => {
     >
       <View style={[styles.flexContainer]}>
         <Text style={[styles.start, styles.text]}>
-          {start} - {task.duration} min
+          {start} - {endTime}
         </Text>
 
         {color && <Ionicons name="alert-circle" size={20} color={color} style={{marginRight: 4}} />}

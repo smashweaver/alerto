@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { addMinutes, format } from 'date-fns';
 import getDaysOfWeek from './getDaysOfWeek';
 
 const getAlertColor = (alert) => {
@@ -21,6 +21,12 @@ const getFormattedTime = (hour, minutes) => {
   const amPm = hour < 12 ? 'am' : 'pm';
   const min = `${minutes}`.padStart(2, '0');
   return `${hr}:${min}${amPm}`;
+};
+
+const getFormattedEndTime = (start, duration) => {
+  const st = new Date(new Date().setHours(0,start,0,0));
+  const d = addMinutes(st, duration)
+  return getFormattedTime(d.getHours(), d.getMinutes());
 };
 
 const isWeekEnd = (dd) => {
@@ -47,8 +53,7 @@ const normalizeDate = (h, m) => {
   return d;
 };
 
-
-const calcStart = (activity, data) => {
+const calcStart = (activity, data = {}) => {
   const hour = ('hour' in data) ? data.hour : activity.hour;
   const min = ('min' in data) ? data.min : activity.min;
   return hour * 60 + min;
@@ -63,4 +68,5 @@ export {
   normalizeMin,
   normalizeDate,
   calcStart,
+  getFormattedEndTime,
 };

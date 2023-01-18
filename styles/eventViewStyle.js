@@ -11,17 +11,17 @@ export const eventViewStyle = (colorScheme = 'light') => {
     normal: {
     },
     flexContainer: {
-      flex: 1,
+      display: 'flex',
       flexDirection: 'row',
       alignContext: 'center',
-      justifyContent: 'flex-start',
+      justifyContent: 'space-between',
     },
     cardContainer: {
       backgroundColor: Theme.CardBackgroundColor,
       padding: 10,
       borderRadius: 10,
       marginBottom: 10,
-      minHeight: 150,
+      minHeight: 140,
     },
     text: {
       fontSize: 18,
@@ -29,8 +29,7 @@ export const eventViewStyle = (colorScheme = 'light') => {
       color: Theme.CardTextColor,
     },
     titleText: {
-      marginLeft: 10,
-      textDecorationLine: 'underline',
+      fontSize: 32
     },
     cardShadow: {
       shadowColor: Theme.ShadowColor,
