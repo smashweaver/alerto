@@ -4,7 +4,7 @@ import { createTheme } from '../../themes';
 
 const Theme = createTheme();
 
-export default function Activities({ Widget=EventWidget, events=[], onDelete=()=>{}, onEdit=()=>{} }) {
+export default function Activities({ isEditable=true, Widget=EventWidget, events=[], onDelete=()=>{}, onEdit=()=>{} }) {
   return (
     <ScrollView
       style={{marginTop: 1}}
@@ -14,6 +14,7 @@ export default function Activities({ Widget=EventWidget, events=[], onDelete=()=
       {
         events.map((activity, index) =>
           <Widget
+            isEditable={isEditable}
             task={activity}
             remove={onDelete}
             edit={onEdit}

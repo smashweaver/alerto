@@ -41,7 +41,8 @@ export default function Schedule() {
 
   const styles = createStyle('schedule', colorScheme);
 
-  console.log({ date });
+  const isToday = useMemo(() => workingDate === date, [workingDate, date]);
+  console.log({ date, isToday });
 
   const findDataIndex = (data) => events.findIndex(task => task.id === data.id);
 
@@ -192,6 +193,8 @@ export default function Schedule() {
     if (!isWeekEnd(workingDate) && (workingDate === date)) {
       createScheduleFromTemplate(profile, user.uid, workingDate)
       .then(setupData)
+    } else {
+      setupData();
     }
   }, [workingDate]);
 
@@ -206,16 +209,20 @@ export default function Schedule() {
       <WeekStrip days={days} today={date} workingDate={workingDate} setWorkingDate={handleChangeWorkingDate} />
 
       <Activities
+        isEditable={isToday}
         events={events}
         onDelete={handleRemoveActivity}
         onEdit={handleEditActivity}
       />
 
-      <View style={{ margin: 10 }}>
-        <Button mode='text' textColor={Theme.colors.primary} onPress={handleNewActivity}>
-          New Activity
-        </Button>
+      {
+        isToday &&
+        <View style={{ margin: 10 }}>
+          <Button mode='text' textColor={Theme.colors.primary} onPress={handleNewActivity}>
+            New Activity
+          </Button>
       </View>
+      }
 
       <AddModal
         visible={isAdding}

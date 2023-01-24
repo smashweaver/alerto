@@ -6,12 +6,11 @@ import { calcStart, getFormattedEndTime, getFormattedTime, getAlertColor} from '
 import { Ionicons } from '@expo/vector-icons';
 import { createTheme } from '../../themes';
 
-export const EventWidget = ({ task, remove, edit }) => {
+export const EventWidget = ({ isEditable=true, task, remove, edit }) => {
   const { colorScheme } = useContext(AppContext);
   const Theme = createTheme(colorScheme);
   const styles = createStyle('eventWidget', colorScheme);
   const color = getAlertColor(task.alert);
-  const isEditable = !task.all_day;
   const start = getFormattedTime(task.hour, task.min);
 
   const handleDelete = () => remove(task);
@@ -21,6 +20,7 @@ export const EventWidget = ({ task, remove, edit }) => {
 
   return (
     <TouchableOpacity
+      disabled={!isEditable}
       activeOpacity={0.6}
       onLongPress={handleEdit}
       style={[styles.container]}

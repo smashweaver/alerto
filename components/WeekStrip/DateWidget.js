@@ -14,12 +14,13 @@ export const DateWidget = ({ isoDate, today, workingDate, setWorkingDate }) => {
   const date = format(new Date(isoDate), 'yyyy-MM-dd');
   const isWorkingDate = workingDate === date;
 
+  console.log('*** ', {date, workingDate, today, isCurrent, isWorkingDate});
+
   const handleTouch = () => {
     setWorkingDate(date);
   }
 
   useEffect(() => {
-    console.log('*** ', {date, isCurrent, isWorkingDate});
     if (isWorkingDate) {
       setRoundedStyle([styles.circle, styles.selected]);
       return;

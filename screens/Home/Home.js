@@ -117,6 +117,11 @@ export default function Home() {
     scrollToNearest(time);
   }, [time]);
 
+  useFocusEffect(() => {
+    console.log('*** screen changed: Home');
+    scrollToNearest(time);
+  });
+
   return (
     <View edges={[]} style={{ flex: 1 }}>
       <Toolbar />
