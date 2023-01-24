@@ -78,6 +78,7 @@ export const AppProvider = ({ children }) => {
     setScheme(theme.colorScheme);
   };
 
+  // todo: this must be a background task
   useEffect(() => {
     const timer = setInterval(() => {
       const d = new Date();

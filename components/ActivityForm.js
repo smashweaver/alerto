@@ -196,7 +196,7 @@ export const ActivityForm = ({ activity, ok, close, name, onDelete }) => {
 
         <View style={styles.group}>
           <View style={styles.groupIcon}>
-            <MaterialCommunityIcons name="timer-sand" size={20} color="gray" />
+            <MaterialCommunityIcons name="timer-sand" size={20} color='gray' />
           </View>
 
           <View style={styles.groupValue}>
@@ -269,6 +269,7 @@ export const ActivityForm = ({ activity, ok, close, name, onDelete }) => {
       />
 
       <DateTimePickerModal
+        is24hour={true}
         isVisible={pickDuration}
         date={new Date(new Date().setHours(0, duration, 0, 0))}
         mode='time'
@@ -293,7 +294,7 @@ export const ActivityForm = ({ activity, ok, close, name, onDelete }) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: Theme.ContainerBackgroundColor,
+		backgroundColor: Theme.colors.background,
 	},
   group: {
     display: 'flex',

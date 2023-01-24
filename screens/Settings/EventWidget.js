@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { createStyle } from '../../styles';
@@ -17,14 +17,15 @@ export const EventWidget = ({ task, remove, edit }) => {
 
   const statusText = useMemo(() => disabled ? 'Disabled' : 'Enabled', [disabled]);
 
-  const handleDelete = () => remove(task);
   const handleEdit = () => edit(task);
-  const toggleDisabled = () => {
-    setDisabled(prev => !prev);
-  };
 
-  const paddingVertical = Platform.OS === 'ios' ? 5 : 0;
-  const paddingHorizontal = 10;
+  // const handleDelete = () => remove(task);
+  // const toggleDisabled = () => {
+  //   setDisabled(prev => !prev);
+  // };
+
+  // const paddingVertical = Platform.OS === 'ios' ? 5 : 0;
+  // const paddingHorizontal = 10;
 
   const endTime = getFormattedEndTime(calcStart(task), task.duration);
 

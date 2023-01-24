@@ -17,6 +17,8 @@ export const AddModal = ({  visible, ok, close, }) => {
     wed: true,
     thu: true,
     fri: true,
+    sat: false,
+    sun: false,
   };
 
   const activity = {

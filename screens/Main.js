@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import DrawerNavigator from '../navigation/DrawerNavigator';
 import { NavigationContainer } from '@react-navigation/native';
 import { AppContext } from '../contexts/appContext';
+import { createTheme } from '../themes';
 
 export default function Main() {
   const { user, date, time, phone, profile } = useContext(AppContext);
+  const theme = createTheme();
 
   const uid = useMemo(() => {
     const u = user || { uid: null };
@@ -25,7 +27,7 @@ export default function Main() {
   }, [time, date, uid, profile.schedule]);
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={theme}>
       <DrawerNavigator />
     </NavigationContainer>
   )

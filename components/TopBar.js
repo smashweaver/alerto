@@ -11,8 +11,8 @@ const TopBar = ({ date }) => {
 
   const styles = StyleSheet.create({
     today: {
-      color: Theme.PrimaryColor,
-      backgroundColor: Theme.PrimaryBackgroundColor,
+      color: Theme.colors.text,
+      backgroundColor: Theme.colors.background,
       paddingHorizontal: 10,
       paddingVertical: 4,
     },

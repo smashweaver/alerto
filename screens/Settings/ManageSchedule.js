@@ -1,10 +1,11 @@
 import { useContext, useState } from 'react';
-import { TouchableOpacity, StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native';
+import { ImageBackground, TouchableOpacity, StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { createTheme } from '../../themes';
-import { Button, Card } from 'react-native-paper';
-import constants from '../../constants';
 import { useNavigation } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Button } from 'react-native-paper';
+import { createTheme } from '../../themes';
+import constants from '../../constants';
 import { AppContext } from '../../contexts/appContext';
 
 const { phasic  } = constants;
@@ -37,39 +38,36 @@ export default function ManageSchedule() {
 
   return (
     <View style={styles.container}>
-        <View style={[styles.header, styles.flex, {justifyContent:'space-between'}]}>
-          <TouchableOpacity onPress={handleBack}>
-            <Ionicons name="arrow-back" size={28} color={Theme.ModalHeaderTextColor} />
-          </TouchableOpacity>
+      <View style={[styles.header, styles.flex, {justifyContent:'space-between'}]}>
+        <TouchableOpacity onPress={handleBack}>
+          <Ionicons name="arrow-back" size={28} color={Theme.ModalHeaderTextColor} />
+        </TouchableOpacity>
 
-          <Text style={[styles.text, { fontSize:24, marginLeft: 20 }]}>{'Manage Schedule'}</Text>
+        <Text style={[styles.text, { fontSize:24, marginLeft: 20 }]}>{'Manage Schedule'}</Text>
 
-          <View>
-            <Ionicons name="checkmark" size={28} color={'transparent'} />
-          </View>
+        <View>
+          <Ionicons name="checkmark" size={28} color={'transparent'} />
         </View>
+      </View>
 
-        <ScrollView
-          keyboardShouldPersistTaps='handled'
-          horizontal={true}
-          pagingEnabled={true}
-          showsHorizontalScrollIndicator={false}
-          onMomentumScrollEnd={handleScroll}
-        >
-          {
-            phasic.map(cycle => <CycleView selected={profile.schedule} cycle={cycle} key={cycle.code} />)
-          }
-        </ScrollView>
+      <ScrollView
+        keyboardShouldPersistTaps='handled'
+        horizontal={true}
+        pagingEnabled={true}
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={handleScroll}
+      >
+        {
+          phasic.map(cycle => <CycleView selected={profile.schedule} cycle={cycle} key={cycle.code} />)
+        }
+      </ScrollView>
 
-        <Button
-          mode='text'
-          style={{ margin:10, width: '100%'}}
-          textColor={Theme.colors.primary}
-          onPress={handleApply}
-        >
+      <View style={{ margin: 10 }}>
+        <Button mode='text' textColor={Theme.colors.primary} onPress={handleApply}>
           Apply
         </Button>
       </View>
+    </View>
   )
 }
 
@@ -84,9 +82,16 @@ const CycleView = ({ selected, cycle }) => {
   return (
     <View style={{width}}>
       <View style={style}>
-        <Card.Cover  resizeMode="cover" source={{ uri: cycle.uri }} />
-        <Text style={[styles.title, {marginTop:10}]}>{cycle.title}</Text>
-        <Text style={[styles.description]}>{cycle.description}</Text>
+        <ImageBackground source={{ uri: cycle.uri }} style={{resize:'cover', height: 200 }}>
+          <LinearGradient
+            colors={['rgba(0,0,0,0.01)', '#212529']}
+            style={{height : '100%', width : '100%'}}
+          />
+        </ImageBackground>
+        <View style={{padding: 10}}>
+          <Text style={[styles.title, {marginTop:10}]}>{cycle.title}</Text>
+          <Text style={[styles.description]}>{cycle.description}</Text>
+        </View>
       </View>
     </View>
   );
@@ -95,7 +100,7 @@ const CycleView = ({ selected, cycle }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.ContainerBackgroundColor,
+    backgroundColor: Theme.colors.background,
   },
   flex: {
     display: 'flex',
@@ -118,24 +123,20 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: '#ADB5BD',
   },
-  fullWidth: {
-    //backgroundColor: 'red',
-    width
-  },
-  fillerUp: {
-    flexDirection: 'column',
-    flexGrow: 1,
-    justifyContent: 'space-between'
-  },
   cycleContainer: {
     flexGrow:1,
-    marginHorizontal: 10,
-    padding: 20,
-    borderRadius:4,
+    //marginHorizontal: 10,
+    //padding: 20,
+    //borderRadius:4,
     backgroundColor: '#212529',
   },
   selected: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: Theme.CardBorderColor,
+    borderWidth: 1,
+    borderColor: Theme.colors.primary,
   }
 });
+
+
+/*
+<Card.Cover  resizeMode="cover" source={{ uri: cycle.uri }} />
+*/

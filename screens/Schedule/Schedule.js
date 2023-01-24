@@ -1,11 +1,10 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Alert, View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, View, ScrollView } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { getFormattedTime, getDaysOfWeek, isWeekEnd,  } from '../../utils';
 import { WeekStrip } from '../../components/WeekStrip/WeekStrip';
 import { createStyle } from '../../styles';
 import { TopBar } from '../../components/TopBar';
-//import { EventWidget } from '../../components/Activities/EventWidget';
 import { debounce } from 'lodash';
 import { AddModal } from './AddModal';
 import { EditModal } from './EditModal';
@@ -23,19 +22,30 @@ export default function Schedule() {
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [activityToEdit, setActivityToEdit] = useState(null);
-  const styles = createStyle('schedule', colorScheme);
-
   const [workingDate, setWorkingDate] = useState(date);
-  const { uid } = user || {};
+  const [, setToggle] = useState(false);
 
+  const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
   const days = useMemo(() => getDaysOfWeek(Date.parse(date)), [date]);
 
-  const [, setToggle] = useState(false);
-  const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
+  const {
+    removeEventById,
+    updateEvent,
+    createEvent,
+    getEventsByDate,
+    createScheduleFromTemplate,
+    createWeekendSchedule,
+  } = api;
+
+  const { uid } = user || {};
+
+  const styles = createStyle('schedule', colorScheme);
+
+  console.log({ date });
 
   const findDataIndex = (data) => events.findIndex(task => task.id === data.id);
 
-  // fyi: manual removal from list for now
+  // todo: use streaming
   const removeByIndex = (index) => {
     const data = [...events];
     data.splice(index, 1);
@@ -46,7 +56,7 @@ export default function Schedule() {
     const index = findDataIndex(activity)
     setIsEditing(false);
 
-    api.removeEventById(activity.id)
+    removeEventById(activity.id)
     .then(() => removeByIndex(index))
     .catch(() => {
       console.log('*** deleting activity failed!')
@@ -102,7 +112,7 @@ export default function Schedule() {
   const submitActivityChanges = async (activity, data) => {
     closeModal();
     const [id, payload] = createUpdatePayload(activity, data);
-    api.updateEvent(id, payload)
+    updateEvent(id, payload)
     .then(() => {
       // todo: notify success via toaster
       const index = findDataIndex(activity);
@@ -127,7 +137,7 @@ export default function Schedule() {
       custom
     } = payload;
 
-    api.createEvent(uid, workingDate, {
+    createEvent(uid, workingDate, {
       title,
       hour,
       min,
@@ -164,7 +174,7 @@ export default function Schedule() {
   };
 
   const setupData = useCallback(() => {
-    api.getEventsByDate(uid, workingDate)
+    getEventsByDate(uid, workingDate)
     .then((data) => {
       console.log('*** done reading schedule...', workingDate);
       data.sort((x, y) => x.start - y.start);
@@ -176,10 +186,10 @@ export default function Schedule() {
     console.log('*** workingDate changed:', workingDate);
     setEvents([]);
     if (!isWeekEnd(workingDate)) {
-      api.createScheduleFromTemplate(profile, user.uid, workingDate)
+      createScheduleFromTemplate(profile, user.uid, workingDate)
       .then(setupData)
     } else {
-      api.createWeekendSchedule(workingDate)
+      createWeekendSchedule(workingDate)
       .then(data => setEvents([...data]));
     }
   }, [workingDate]);
@@ -192,18 +202,11 @@ export default function Schedule() {
     <View edges={[]} style={{ flex: 1 }}>
       <TopBar date={workingDate} />
       <WeekStrip days={days} today={date} workingDate={workingDate} setWorkingDate={handleChangeWorkingDate} />
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps='handled'
-      >
-        <View style={{ marginTop: 10 }}>
-          <Activities
-            events={events}
-            onDelete={handleRemoveActivity}
-            onEdit={handleEditActivity}
-          />
-        </View>
-      </ScrollView>
+      <Activities
+          events={events}
+          onDelete={handleRemoveActivity}
+          onEdit={handleEditActivity}
+      />
 
       <View style={{ margin: 10 }}>
         <Button mode='text' textColor={Theme.colors.primary} onPress={handleNewActivity}>

@@ -23,6 +23,11 @@ export default function Home() {
   const finder = useRef(null);
   const unsubscribe = useRef(() => {});
 
+  const {
+    getScheduleQuery,
+    createScheduleFromTemplate,
+  } = api;
+
   const uid = useMemo(() => {
     const u = user || { uid: null };
     // console.log('*** memoizing uid:', { uid: u.uid });
@@ -32,7 +37,7 @@ export default function Home() {
   const qryEvents = useMemo(() => {
     let qry = null;
     if (uid) {
-      qry = api.getScheduleQuery(uid, date);
+      qry = getScheduleQuery(uid, date);
     }
     // console.log('*** memoizing qryEvents', { uid, date, qryEvents: qry });
     return qry;
@@ -44,7 +49,7 @@ export default function Home() {
   };
 
   const createSchedule = () => {
-    api.createScheduleFromTemplate(profile, user.uid, date)
+    createScheduleFromTemplate(profile, user.uid, date)
     .then(() => setLoaded(true));
   };
 

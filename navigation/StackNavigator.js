@@ -7,6 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 //import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { createTheme } from '../themes';
 import { AppContext } from '../contexts/appContext';
+import { StyleSheet } from "react-native";
 
 const AuthNav= createStackNavigator();
 
@@ -20,19 +21,17 @@ const AuthStackNavigator = () => {
         headerShown: true,
         headerStyle: {
           backgroundColor: Theme.HeaderBackgroundColor,
-          borderBottomColor: Theme.colors.border,
-          borderBottomWidth: 1,
+          borderWidth: 0,
         },
         cardStyle: {
           backgroundColor: Theme.HeaderBackgroundColor,
-          borderBottomColor: Theme.colors.border,
-          borderBottomWidth: 1,
+          borderWidth: 0.
         },
         headerTintColor: Theme.HeaderTintColor,
         headerShadowVisible: true,
       }}
       sceneContainerStyle={{
-        backgroundColor: Theme.ContainerBackgroundColor,
+        backgroundColor: Theme.colors.background,
       }}
     >
       <AuthNav.Screen name="Login" component={Login} />
@@ -53,25 +52,22 @@ const SettingStackNavigator = () => {
       headerShown: false,
       headerStyle: {
         backgroundColor: Theme.HeaderBackgroundColor,
-        borderBottomColor: Theme.colors.border,
-        borderBottomWidth: 1,
+        borderWidth: 0,
       },
       cardStyle: {
         backgroundColor: Theme.HeaderBackgroundColor,
-        borderBottomColor: Theme.colors.border,
-        borderBottomWidth: 1,
+        borderWidth: 0,
       },
       headerTintColor: Theme.HeaderTintColor,
       headerShadowVisible: true,
     }}
     sceneContainerStyle={{
-      backgroundColor: Theme.ContainerBackgroundColor,
+      backgroundColor: Theme.colors.background,
     }}
     >
       <SettingNav.Screen name='SettingIndex' component={Setting} />
       <SettingNav.Screen name='SettingActivities' component={ManageActivities} />
       <SettingNav.Screen name='SettingSchedule' component={ManageSchedule} />
-
     </SettingNav.Navigator>
   )
 };

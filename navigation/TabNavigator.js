@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
 import { createTheme } from '../themes';
 import { AppContext } from '../contexts/appContext';
-import { Pressable } from "react-native";
+import { Pressable, StyleSheet} from "react-native";
 
 const Nav = createBottomTabNavigator();
 
@@ -31,12 +31,14 @@ const BottomTabNavigator = () => {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: Theme.TabBackgroundColor,
+          backgroundColor: Theme.colors.background,
+          borderWidth: 0,
         },
         // tabBarActiveTintColor: Theme.colors.primary,
       }}
       sceneContainerStyle={{
-        backgroundColor: Theme.ContainerBackgroundColor,
+        backgroundColor: Theme.colors.background,
+        borderWidth: 0,
       }}
     >
       <Nav.Screen

@@ -1,18 +1,23 @@
 import { useContext, useEffect, useState } from 'react';
-import { Alert,  View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button  } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { AppContext } from '../../contexts/appContext';
 import { createTheme } from '../../themes';
-import { ActivitiesModal } from './ActivitiesModal';
+import { Activities } from '../../components/Activities';
+import { getFormattedTime } from '../../utils';
+import { calcStart } from '../../utils';
+import { EventWidget } from './EventWidget';
 import { EditModal } from './EditModal';
 import { AddModal } from './AddModal';
-import { getFormattedTime } from '../../utils';
-import { useNavigation } from '@react-navigation/native';
-import { calcStart } from '../../utils';
 
 const Theme = createTheme();
 
 export default function ManageActivities() {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   const {
     user,
@@ -111,12 +116,31 @@ export default function ManageActivities() {
 
   return (
     <View style={{flex:1}}>
-      <ActivitiesModal
-        events={events}
-        close={goBack}
-        onEdit={editActivity}
-        onAdd={addActivity}
-      />
+      <View style={styles.container}>
+        <View style={[styles.header, styles.flex]}>
+          <TouchableOpacity onPress={goBack}>
+            <Ionicons name="arrow-back" size={28} color={Theme.ModalHeaderTextColor} />
+          </TouchableOpacity>
+
+          <Text style={[styles.text, { fontSize:24, marginLeft: 20 }]}>{'Manage Activities'}</Text>
+
+          <View>
+            <Ionicons name="checkmark" size={28} color={'transparent'} />
+          </View>
+        </View>
+
+        <Activities
+          Widget={EventWidget}
+          events={events}
+          onEdit={editActivity}
+        />
+
+        <View style={{ margin: 10 }}>
+          <Button mode='text' textColor={Theme.colors.primary} onPress={addActivity}>
+            New Activity
+          </Button>
+        </View>
+      </View>
 
       <EditModal
         visible={isEditing}
@@ -134,3 +158,26 @@ export default function ManageActivities() {
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Theme.colors.background,
+  },
+  flex: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'space-between',
+  },
+  header: {
+    //backgroundColor: Theme.HeaderBackgroundColor,
+    paddingTop: 20,
+    paddingBottom: 10,
+    paddingHorizontal: 10,
+  },
+  text: {
+    color: '#A6A7AB'
+  },
+});

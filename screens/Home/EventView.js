@@ -22,7 +22,6 @@ const EventView = ({ openModal, coords, task }) => {
     if (time >= start && time <= start+task.duration ) {
       console.log('*** event activated:', task.id);
       setFocusStyle(styles.active);
-      // setTimeout(() => setActive(task.id), 150);
     } else {
       setFocusStyle(styles.normal);
     }
@@ -30,7 +29,7 @@ const EventView = ({ openModal, coords, task }) => {
 
   return (
     <View
-      style={[styles.cardContainer, styles.cardShadow, styles.current, focusStyle]}
+      style={[styles.cardContainer, focusStyle]}
       onLayout={event => {
         const layout = event.nativeEvent.layout;
         coords[task.id] = layout.y;

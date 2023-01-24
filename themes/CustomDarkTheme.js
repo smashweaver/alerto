@@ -6,6 +6,7 @@ export const CustomDarkTheme = {
   colors: {
     ...DarkTheme.colors,
     background: '#101113',
+    primary: '#845EF7',
   },
   HeaderBackgroundColor: '#343A40',
   HeaderTintColor: '#F8F9FA',
@@ -35,7 +36,7 @@ export const CustomDarkTheme = {
   /** screen content */
   PrimaryBackgroundColor: '#DEE2E6',
   PrimaryColor: '#000',
-  ShadowColor: '#ADB5BD',
+  ShadowColor: '#373A40',
   CardBackgroundColor: '#495057',
   CardBorderColor: '#C1C2C5',
   CardTextColor: '#FFF',

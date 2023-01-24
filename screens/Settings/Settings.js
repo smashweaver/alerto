@@ -65,7 +65,7 @@ export default function Settings() {
       <View style={{ padding: 20 }}>
         <View style={styles.group}>
           <View style={styles.groupIcon}>
-            <MaterialIcons name="schedule" size={20} color="gray" />
+            <MaterialIcons name="schedule" size={20} color='gray' />
           </View>
           <View style={enabledGroup}>
             <TouchableOpacity onPressOut={manageSchedule}>
@@ -76,7 +76,7 @@ export default function Settings() {
 
         <View style={styles.group}>
           <View style={styles.groupIcon}>
-            <MaterialIcons name="event-available" size={20} color="gray" />
+            <MaterialIcons name="event-available" size={20} color='gray' />
           </View>
           <View style={activitiesGroupStyle}>
             <TouchableOpacity disabled={isActivitiesDisabled} onPressOut={manageActivities}>
@@ -92,7 +92,7 @@ export default function Settings() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: Theme.ContainerBackgroundColor,
+		backgroundColor: Theme.colors.background,
 	},
   group: {
     display: 'flex',

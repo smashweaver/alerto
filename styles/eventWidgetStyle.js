@@ -5,13 +5,9 @@ export const eventWidgetStyle = (colorScheme = 'light') => {
   const Theme = createTheme(colorScheme);
   return StyleSheet.create({
     container: {
-      marginBottom: 10,
-      marginHorizontal: 10,
+      marginBottom: 1,
       padding: 10,
       backgroundColor: Theme.CardBackgroundColor,
-      borderRadius: 8,
-      borderTopWidth: StyleSheet.hairlineWidth,
-      //minHeight: 150,
     },
     flexContainer: {
       flex: 1,

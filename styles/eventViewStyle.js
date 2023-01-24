@@ -5,8 +5,8 @@ export const eventViewStyle = (colorScheme = 'light') => {
   const Theme = createTheme(colorScheme);
   return StyleSheet.create({
     active: {
-      borderColor: Theme.CardBorderColor,
-      borderWidth: 2,
+      borderColor: Theme.colors.primary,
+      borderWidth: 3,
     },
     normal: {
     },
@@ -19,8 +19,8 @@ export const eventViewStyle = (colorScheme = 'light') => {
     cardContainer: {
       backgroundColor: Theme.CardBackgroundColor,
       padding: 10,
-      borderRadius: 10,
-      marginBottom: 10,
+      borderRadius: 0,
+      marginBottom: 1,
       minHeight: 140,
     },
     text: {
@@ -33,7 +33,6 @@ export const eventViewStyle = (colorScheme = 'light') => {
     },
     cardShadow: {
       shadowColor: Theme.ShadowColor,
-      elevation: 1,
       shadowOffset: {
         width: 0,
         height: 3,
