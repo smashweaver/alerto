@@ -21,7 +21,7 @@ export const eventViewStyle = (colorScheme = 'light') => {
       padding: 10,
       borderRadius: 0,
       marginBottom: 1,
-      minHeight: 140,
+      minHeight: 100,
     },
     text: {
       fontSize: 18,

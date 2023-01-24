@@ -7,7 +7,8 @@ const Theme = createTheme();
 export default function Activities({ Widget=EventWidget, events=[], onDelete=()=>{}, onEdit=()=>{} }) {
   return (
     <ScrollView
-      contentContainerStyle={{ backgroundColor: Theme.colors.background }}
+      style={{marginTop: 1}}
+      contentContainerStyle={{ borderWidth:0, backgroundColor: Theme.colors.background }}
       keyboardShouldPersistTaps='handled'
     >
       {

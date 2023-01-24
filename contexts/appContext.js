@@ -16,7 +16,7 @@ export const AppProvider = ({ children }) => {
   const [profile, setProfile] = useState(null);
   // const [active, setActive] = useState(null);
 
-  const { db, observer  } = useFirebase();
+  const { db, createStream  } = useFirebase();
 
   const {
     createScheduleFromTemplate,
@@ -163,7 +163,7 @@ export const AppProvider = ({ children }) => {
 
     phone: { notify },
 
-    stream: { observer  }
+    stream: { createStream  }
   };
 
   return (

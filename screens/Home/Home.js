@@ -1,27 +1,37 @@
 import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
-import { SafeAreaView, ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { EventListView } from './EventListView';
 import { DateBar } from '../../components/DateBar';
 import { EventModal } from './EventModal';
-import { debounce } from 'lodash';
+//import { debounce } from 'lodash';
 import { useFocusEffect } from '@react-navigation/native';
-import { useTasks } from '../../hooks';
+import { useStream } from '../../hooks';
+import { createTheme } from '../../themes';
+import { Toolbar } from './Toolbar';
+
+const debounce = (func, delay = 1000) => {
+  let debounceTimer
+  return function() {
+    const context = this
+    const args = arguments
+    clearTimeout(debounceTimer)
+    debounceTimer = setTimeout(() => func.apply(context, args), delay)
+  }
+}
+
+const Theme = createTheme();
 
 export default function Home() {
-  const { user, profile, time, date, api, stream } = useContext(AppContext)
+  const { user, profile, time, date, api, stream } = useContext(AppContext);
   const [coords] = useState({});
   const [scrollRef, setScrollRef] = useState(null);
   const [visible, setVisible] = useState(false);
   const [modalData, setModalData] = useState(null);
   const [scheduleIsLoaded, setLoaded] = useState(false);
-
   const [, setToggle] = useState(false);
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
-  const [tasks, tasksReducer] = useTasks(reRender);
-
   const finder = useRef(null);
-  const unsubscribe = useRef(() => {});
 
   const {
     getScheduleQuery,
@@ -43,12 +53,10 @@ export default function Home() {
     return qry;
   }, [uid, date]);
 
-  const sortTasks = () => {
-    tasks.sort((x, y) => x.start - y.start);
-    reRender();
-  };
+  const [tasks] = useStream(qryEvents, reRender, stream.createStream);
 
   const createSchedule = () => {
+    setLoaded(false);
     createScheduleFromTemplate(profile, user.uid, date)
     .then(() => setLoaded(true));
   };
@@ -92,12 +100,10 @@ export default function Home() {
 
   useEffect(() => {
     console.log('*** mounting Home');
-    tasks.splice(0, tasks.length);
 
     return () => {
       console.log('*** unmounting Home');
       clearTimeout(finder.current);
-      unsubscribe.current();
     }
   }, []);
 
@@ -107,30 +113,18 @@ export default function Home() {
   }, [date]);
 
   useEffect(() => {
-    if (!qryEvents) return;
-    console.log('*** observing stream', qryEvents);
-    unsubscribe.current();
-    unsubscribe.current = stream.observer(
-      qryEvents,
-      tasksReducer,
-      sortTasks,
-    );
-  }, [qryEvents]);
-
-  useEffect(() => {
     console.log('*** time changed:', time);
     scrollToNearest(time);
-   }, [time]);
-
-  useFocusEffect(() => {
-    console.log('*** screen changed: Home');
-    scrollToNearest(time);
-  });
+  }, [time]);
 
   return (
-    <SafeAreaView edges={[]} style={{ flex: 1 }}>
+    <View edges={[]} style={{ flex: 1 }}>
+      <Toolbar />
       <DateBar date={date} />
+      <View style={{ minHeight: 10, backgroundColor: Theme.HeaderBackgroundColor }}/>
+
       <ScrollView
+        style={{marginTop: 1}}
         ref={ref => setScrollRef(ref)}
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps='handled'
@@ -138,10 +132,10 @@ export default function Home() {
         <EventListView
           openModal={openModal}
           coords={coords}
-          list={[...tasks]} />
+          list={tasks} />
       </ScrollView>
 
       {visible ? <EventModal close={closeModal} task={modalData} /> : null}
-    </SafeAreaView>
+    </View>
   )
 }

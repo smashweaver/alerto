@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Alert, View, ScrollView } from 'react-native';
+import { Alert, View, StyleSheet } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { getFormattedTime, getDaysOfWeek, isWeekEnd,  } from '../../utils';
 import { WeekStrip } from '../../components/WeekStrip/WeekStrip';
@@ -8,6 +8,7 @@ import { DateBar } from '../../components/DateBar';
 import { debounce } from 'lodash';
 import { AddModal } from './AddModal';
 import { EditModal } from './EditModal';
+import { Toolbar } from './Toolbar';
 import { Activities } from '../../components/Activities';
 import { useFocusEffect } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
@@ -34,7 +35,6 @@ export default function Schedule() {
     createEvent,
     getEventsByDate,
     createScheduleFromTemplate,
-    createWeekendSchedule,
   } = api;
 
   const { uid } = user || {};
@@ -180,8 +180,7 @@ export default function Schedule() {
 
   const setupData = useCallback(() => {
     getEventsByDate(uid, workingDate)
-    .then((data) => {
-      console.log('*** done reading schedule...', workingDate);
+    .then(data => {
       data.sort((x, y) => x.start - y.start);
       setEvents([...data]);
     });
@@ -190,12 +189,9 @@ export default function Schedule() {
   useEffect(() => {
     console.log('*** workingDate changed:', workingDate);
     setEvents([]);
-    if (!isWeekEnd(workingDate)) {
+    if (!isWeekEnd(workingDate) && (workingDate === date)) {
       createScheduleFromTemplate(profile, user.uid, workingDate)
       .then(setupData)
-    } else {
-      createWeekendSchedule(workingDate)
-      .then(data => setEvents([...data]));
     }
   }, [workingDate]);
 
@@ -205,12 +201,14 @@ export default function Schedule() {
 
   return (
     <View edges={[]} style={{ flex: 1 }}>
+      <Toolbar />
       <DateBar date={workingDate} />
       <WeekStrip days={days} today={date} workingDate={workingDate} setWorkingDate={handleChangeWorkingDate} />
+
       <Activities
-          events={events}
-          onDelete={handleRemoveActivity}
-          onEdit={handleEditActivity}
+        events={events}
+        onDelete={handleRemoveActivity}
+        onEdit={handleEditActivity}
       />
 
       <View style={{ margin: 10 }}>

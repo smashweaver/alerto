@@ -7,11 +7,11 @@ export const WeekStrip = ({ days, today, workingDate, setWorkingDate }) => {
 
   const styles = StyleSheet.create({
     container: {
+      display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
       paddingHorizontal: 10,
-      paddingTop: 0,
-      paddingBottom: 8,
+      paddingVertical: 10,
       backgroundColor: Theme.HeaderBackgroundColor,
     }
   });

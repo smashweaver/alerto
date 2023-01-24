@@ -11,7 +11,7 @@ import {
   where,
 } from 'firebase/firestore';
 
-import uuid from 'react-native-uuid';
+// import uuid from 'react-native-uuid';
 import constants from '../constants';
 
 const { cycles } = constants;
@@ -96,6 +96,7 @@ export default function useApi(db) {
         const { events } = profile;
         const eventRef = collection(db, 'events');
 
+        console.log('*** createScheduleFromTemplate', {events});
         events.forEach(async data => {
           // todo: guard for occurence
           if (data.disabled) return;
@@ -151,19 +152,6 @@ export default function useApi(db) {
     console.log('*** removeEventFromSchedule:', id);
     await deleteDoc(doc(db, 'events', id));
   };
-
-  /* const retrieveProfile = async (id) => {
-    const docRef = doc(db, 'profiles', id);
-    const docSnap = await getDoc(docRef);
-    return docSnap.exists() ? docSnap.data() : null;
-  };
-
-  const initProfile = async (id) => {
-    console.log('*** init profile: ', id);
-    await setDoc(doc(db, 'profiles', id), {
-      mode: false
-    });
-  }; */
 
   const saveProfile = async (id, payload) => {
     return await updateDoc(doc(db, 'profiles', id), {

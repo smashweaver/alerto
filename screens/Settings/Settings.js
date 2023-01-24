@@ -5,6 +5,7 @@ import { createTheme } from '../../themes';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
+import { Toolbar } from './Toolbar';
 
 const Theme = createTheme();
 
@@ -47,6 +48,7 @@ export default function Settings() {
   }, []);
 
   useEffect(() => {
+    console.log('*** profile has changed', profile);
     if (profile.schedule) {
       setActivitiesGroupStyle(enabledGroup);
       setIsActivitiesDisabled(false);
@@ -54,7 +56,7 @@ export default function Settings() {
       setActivitiesGroupStyle(disabledGroup);
       setIsActivitiesDisabled(true);
     }
-  }, [profile.schedule]);
+  }, [profile]);
 
   useFocusEffect(() => {
     console.log('*** screen changed: Settings');
@@ -62,6 +64,7 @@ export default function Settings() {
 
   return (
     <View edges={[]} style={styles.container}>
+      <Toolbar />
       <View style={{ padding: 20 }}>
         <View style={styles.group}>
           <View style={styles.groupIcon}>

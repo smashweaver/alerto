@@ -22,7 +22,8 @@ export default function useFirebase() {
     };
   }, []);
 
-  const observer = (qryRef, handleChange, callback = () => {}) => {
+  const createStream = (qryRef, handleChange, callback = () => {}) => {
+    console.log('*** observing')
     const onNext = (snapshot) => {
       snapshot.docChanges().forEach(change => {
         const { type } = change;
@@ -37,5 +38,5 @@ export default function useFirebase() {
     return unsubscribe;
   };
 
-  return { db, observer };
+  return { db, createStream };
 }
