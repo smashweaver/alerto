@@ -106,10 +106,11 @@ export default function useApi(db) {
             note,
             alert,
             custom,
+            disable,
+            occurence,
           } = data;
           const start = hour * 60 + min;
           await addDoc(eventRef, {
-            owner_id: ownerId,
             title,
             hour,
             min,
@@ -117,6 +118,9 @@ export default function useApi(db) {
             note,
             alert,
             custom,
+            disable,
+            occurence,
+            owner_id: ownerId,
             date,
             start
           });
