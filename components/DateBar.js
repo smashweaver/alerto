@@ -12,7 +12,7 @@ const DateBar = ({ date }) => {
     container: {
       backgroundColor: Theme.HeaderBackgroundColor,
       paddingHorizontal: 10,
-      //paddingVertical: 50,
+      paddingVertical: 10,
     },
   });
 

@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     backgroundColor: Theme.HeaderBackgroundColor,
     paddingVertical: 10,
     paddingHorizontal: 10,
-    //borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
 
   },
   text: {

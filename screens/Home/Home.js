@@ -126,7 +126,6 @@ export default function Home() {
     <View edges={[]} style={{ flex: 1 }}>
       <Toolbar />
       <DateBar date={date} />
-      <View style={{ minHeight: 10, backgroundColor: Theme.HeaderBackgroundColor }}/>
 
       <ScrollView
         style={{marginTop: 1}}
