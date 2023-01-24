@@ -80,7 +80,7 @@ export default function Settings() {
           </View>
           <View style={activitiesGroupStyle}>
             <TouchableOpacity disabled={isActivitiesDisabled} onPressOut={manageActivities}>
-              <Text style={{fontSize: 20, color:'#F8F9FA'}}>{'Manage your activities'}</Text>
+              <Text style={{fontSize: 20, color:'#F8F9FA'}}>{'Set your default activities'}</Text>
             </TouchableOpacity>
           </View>
         </View>

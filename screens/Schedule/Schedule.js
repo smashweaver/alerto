@@ -90,16 +90,17 @@ export default function Schedule() {
 
   // todo: move this to firebase.js
   const createUpdatePayload = (activity = {}, data = {}) => {
-    const { title, hour, min, note, alert, id, duration, occurence, disable } = activity;
+    const { title, hour, min, note, alert, id, duration, occurence, disable, is_done } = activity;
     const payload = {};
     if (title !== data.title) { payload['title'] = data.title; }
     if (hour != data.hour)    { payload['hour'] = data.hour; }
     if (min != data.min)      { payload['min'] = data.min; }
     if (note != data.note)    { payload['note'] = data.note; }
     if (alert != data.alert)  { payload['alert'] = data.alert; }
-    if (duration != data.duration) { payload['duration'] = data.duration }
-    if (disable != data.disable)  { payload['disable'] = data.alert; }
+    if (duration != data.duration)    { payload['duration'] = data.duration }
+    if (disable != data.disable)      { payload['disable'] = data.alert; }
     if (occurence != data.occurence)  { payload['occurence'] = data.occurence; }
+    if (is_done != data.is_done)      { payload['is_done'] = data.is_done }
 
     const start = calcStart(activity, data);
     if (start !== activity.start) { payload['start'] = start; }
@@ -148,6 +149,7 @@ export default function Schedule() {
       note,
       alert,
       custom,
+      is_done: false,
     })
     .then((data) => {
       // todo: notify success via toaster

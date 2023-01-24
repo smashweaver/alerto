@@ -95,6 +95,7 @@ export default function useApi(db) {
         // create event doc for every activity in the given schedule
         const { events } = profile;
         const eventRef = collection(db, 'events');
+
         events.forEach(async data => {
           // todo: guard for occurence
           if (data.disabled) return;
@@ -107,7 +108,6 @@ export default function useApi(db) {
             alert,
             custom,
             disable,
-            occurence,
           } = data;
           const start = hour * 60 + min;
           await addDoc(eventRef, {
@@ -119,8 +119,8 @@ export default function useApi(db) {
             alert,
             custom,
             disable,
-            occurence,
             owner_id: ownerId,
+            is_done: false,
             date,
             start
           });
