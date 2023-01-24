@@ -119,7 +119,7 @@ export default function ManageActivities() {
       <View style={styles.container}>
         <View style={[styles.header, styles.flex]}>
           <TouchableOpacity onPress={goBack}>
-            <Ionicons name="arrow-back" size={28} color={Theme.ModalHeaderTextColor} />
+            <Ionicons name="arrow-back" size={28} color={Theme.colors.text} />
           </TouchableOpacity>
 
           <Text style={[styles.text, { fontSize:24, marginLeft: 20 }]}>{'Manage Activities'}</Text>
@@ -172,12 +172,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   header: {
-    //backgroundColor: Theme.HeaderBackgroundColor,
-    paddingTop: 20,
-    paddingBottom: 10,
+    backgroundColor: Theme.HeaderBackgroundColor,
+    paddingVertical: 10,
     paddingHorizontal: 10,
   },
   text: {
-    color: '#A6A7AB'
+    color: Theme.colors.text,
   },
 });

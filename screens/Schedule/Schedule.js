@@ -4,7 +4,7 @@ import { AppContext } from '../../contexts/appContext';
 import { getFormattedTime, getDaysOfWeek, isWeekEnd,  } from '../../utils';
 import { WeekStrip } from '../../components/WeekStrip/WeekStrip';
 import { createStyle } from '../../styles';
-import { TopBar } from '../../components/TopBar';
+import { DateBar } from '../../components/DateBar';
 import { debounce } from 'lodash';
 import { AddModal } from './AddModal';
 import { EditModal } from './EditModal';
@@ -90,13 +90,16 @@ export default function Schedule() {
 
   // todo: move this to firebase.js
   const createUpdatePayload = (activity = {}, data = {}) => {
-    const { title, hour, min, note, alert, id } = activity;
+    const { title, hour, min, note, alert, id, duration, occurence, disable } = activity;
     const payload = {};
     if (title !== data.title) { payload['title'] = data.title; }
     if (hour != data.hour)    { payload['hour'] = data.hour; }
     if (min != data.min)      { payload['min'] = data.min; }
     if (note != data.note)    { payload['note'] = data.note; }
     if (alert != data.alert)  { payload['alert'] = data.alert; }
+    if (duration != data.duration) { payload['duration'] = data.duration }
+    if (disable != data.disable)  { payload['disable'] = data.alert; }
+    if (occurence != data.occurence)  { payload['occurence'] = data.occurence; }
 
     const start = calcStart(activity, data);
     if (start !== activity.start) { payload['start'] = start; }
@@ -200,7 +203,7 @@ export default function Schedule() {
 
   return (
     <View edges={[]} style={{ flex: 1 }}>
-      <TopBar date={workingDate} />
+      <DateBar date={workingDate} />
       <WeekStrip days={days} today={date} workingDate={workingDate} setWorkingDate={handleChangeWorkingDate} />
       <Activities
           events={events}

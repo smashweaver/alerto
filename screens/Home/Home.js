@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
 import { SafeAreaView, ScrollView } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { EventListView } from './EventListView';
-import { TopBar } from '../../components/TopBar';
+import { DateBar } from '../../components/DateBar';
 import { EventModal } from './EventModal';
 import { debounce } from 'lodash';
 import { useFocusEffect } from '@react-navigation/native';
@@ -129,7 +129,7 @@ export default function Home() {
 
   return (
     <SafeAreaView edges={[]} style={{ flex: 1 }}>
-      <TopBar date={date} />
+      <DateBar date={date} />
       <ScrollView
         ref={ref => setScrollRef(ref)}
         contentContainerStyle={{ flexGrow: 1 }}

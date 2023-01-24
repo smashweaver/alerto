@@ -5,8 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Button } from 'react-native-paper';
 import { createTheme } from '../../themes';
-import constants from '../../constants';
 import { AppContext } from '../../contexts/appContext';
+import constants from '../../constants';
 
 const { phasic  } = constants;
 
@@ -40,7 +40,7 @@ export default function ManageSchedule() {
     <View style={styles.container}>
       <View style={[styles.header, styles.flex, {justifyContent:'space-between'}]}>
         <TouchableOpacity onPress={handleBack}>
-          <Ionicons name="arrow-back" size={28} color={Theme.ModalHeaderTextColor} />
+          <Ionicons name="arrow-back" size={28} color={Theme.colors.text} />
         </TouchableOpacity>
 
         <Text style={[styles.text, { fontSize:24, marginLeft: 20 }]}>{'Manage Schedule'}</Text>
@@ -109,11 +109,12 @@ const styles = StyleSheet.create({
     alignContent: 'center',
   },
   header: {
+    backgroundColor: Theme.HeaderBackgroundColor,
     paddingVertical: 10,
     paddingHorizontal: 10,
   },
   text: {
-    color: '#A6A7AB'
+    color: Theme.colors.text,
   },
   title: {
     fontSize: 20,
@@ -124,10 +125,7 @@ const styles = StyleSheet.create({
     color: '#ADB5BD',
   },
   cycleContainer: {
-    flexGrow:1,
-    //marginHorizontal: 10,
-    //padding: 20,
-    //borderRadius:4,
+    flexGrow: 1,
     backgroundColor: '#212529',
   },
   selected: {
@@ -135,8 +133,3 @@ const styles = StyleSheet.create({
     borderColor: Theme.colors.primary,
   }
 });
-
-
-/*
-<Card.Cover  resizeMode="cover" source={{ uri: cycle.uri }} />
-*/

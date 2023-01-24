@@ -4,23 +4,21 @@ import { format } from 'date-fns';
 import { AppContext } from '../contexts/appContext';
 import { createTheme } from '../themes';
 
-const TopBar = ({ date }) => {
+const DateBar = ({ date }) => {
   const today = useMemo(() => format(new Date(date), 'EEEE, PPP'), [date]);
   const { colorScheme } = useContext(AppContext)
   const Theme = createTheme(colorScheme);
 
   const styles = StyleSheet.create({
-    today: {
+    container: {
       color: Theme.colors.text,
-      backgroundColor: Theme.colors.background,
+      backgroundColor: Theme.HeaderBackgroundColor,
       paddingHorizontal: 10,
-      paddingVertical: 4,
+      paddingVertical: 10,
     },
   });
 
-  return (
-    <Text style={styles.today}>{today}</Text>
-  )
+  return <Text style={styles.container}>{today}</Text>;
 };
 
-export { TopBar };
+export { DateBar };
