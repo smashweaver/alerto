@@ -41,8 +41,8 @@ export default function Schedule() {
 
   const styles = createStyle('schedule', colorScheme);
 
-  const isToday = useMemo(() => workingDate === date, [workingDate, date]);
-  console.log({ date, isToday });
+  const isEditable = useMemo(() => date <= workingDate, [workingDate, date]);
+  console.log({ date, workingDate, isEditable });
 
   const findDataIndex = (data) => events.findIndex(task => task.id === data.id);
 
@@ -190,7 +190,7 @@ export default function Schedule() {
   useEffect(() => {
     console.log('*** workingDate changed:', workingDate);
     setEvents([]);
-    if (!isWeekEnd(workingDate) && (workingDate === date)) {
+    if (!isWeekEnd(workingDate) && isEditable) {
       createScheduleFromTemplate(profile, user.uid, workingDate)
       .then(setupData)
     } else {
@@ -209,14 +209,14 @@ export default function Schedule() {
       <WeekStrip days={days} today={date} workingDate={workingDate} setWorkingDate={handleChangeWorkingDate} />
 
       <Activities
-        isEditable={isToday}
+        isEditable={isEditable}
         events={events}
         onDelete={handleRemoveActivity}
         onEdit={handleEditActivity}
       />
 
       {
-        isToday &&
+        isEditable &&
         <View style={{ margin: 10 }}>
           <Button mode='text' textColor={Theme.colors.primary} onPress={handleNewActivity}>
             New Activity
