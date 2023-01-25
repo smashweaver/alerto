@@ -42,7 +42,7 @@ export default function Schedule() {
   const styles = createStyle('schedule', colorScheme);
 
   const isEditable = useMemo(() => date <= workingDate, [workingDate, date]);
-  console.log({ date, workingDate, isEditable });
+  // console.log({ date, workingDate, isEditable });
 
   const findDataIndex = (data) => events.findIndex(task => task.id === data.id);
 

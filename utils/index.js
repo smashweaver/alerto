@@ -59,6 +59,26 @@ const calcStart = (activity, data = {}) => {
   return hour * 60 + min;
 };
 
+const dayToStringMap = new Map([
+  [1, 'mon'],
+  [2, 'tue'],
+  [3, 'wed'],
+  [4, 'thu'],
+  [5, 'fri'],
+  [6, 'sat'],
+  [0, 'sun']
+]);
+
+const dayToString = (day) => dayToStringMap.get(day);
+
+const canOccure = (date, occurence) => {
+  const map = new Map(Object.entries({...occurence}));
+  const day = dayToString(new Date(date).getDay());
+  const v =  map.get(day);
+  console.log({ v, date, day, occurence});
+  return v;
+};
+
 export {
   getAlertColor,
   getFormattedTime,
@@ -69,4 +89,6 @@ export {
   normalizeDate,
   calcStart,
   getFormattedEndTime,
+  dayToString,
+  canOccure,
 };

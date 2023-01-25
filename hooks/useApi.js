@@ -13,6 +13,7 @@ import {
 
 // import uuid from 'react-native-uuid';
 import constants from '../constants';
+import { canOccure } from '../utils';
 
 const { cycles } = constants;
 
@@ -96,10 +97,10 @@ export default function useApi(db) {
         const { events } = profile;
         const eventRef = collection(db, 'events');
 
-        console.log('*** createScheduleFromTemplate', {events});
+        // console.log('*** createScheduleFromTemplate', {events});
         events.forEach(async data => {
-          // todo: guard for occurence
           if (data.disabled) return;
+          if (!canOccure(date, data.occurence)) return;
           const {
             title,
             hour,
