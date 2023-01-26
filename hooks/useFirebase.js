@@ -2,10 +2,8 @@ import { useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, onSnapshot } from 'firebase/firestore';
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth/react-native';
-import constants from '../constants';
+import { firebase } from '../constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const { firebase } = constants;
 
 const app = initializeApp(firebase.config);
 const db = getFirestore(app);

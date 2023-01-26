@@ -1,5 +1,5 @@
 import { Modal } from 'react-native';
-import { ActivityForm } from '../../components/ActivityForm';
+import { ActivityForm } from '../../../components/ActivityForm';
 
 export const AddModal = ({  visible, ok, close, }) => {
   const today = new Date();

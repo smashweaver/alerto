@@ -12,10 +12,8 @@ import {
 } from 'firebase/firestore';
 
 // import uuid from 'react-native-uuid';
-import constants from '../constants';
+import { cycles } from '../constants';
 import { canOccure } from '../utils';
-
-const { cycles } = constants;
 
 export default function useApi(db) {
   const getEventsByDate = async (ownerId, date) => {
@@ -167,6 +165,7 @@ export default function useApi(db) {
       // initialize user profile
       await setDoc(doc(db, 'profiles', id), {
         schedule: false,
+        survey: false,
         events: [],
       });
       // read it again

@@ -23,7 +23,7 @@ const sleepCycle = (code) => {
 };
 
 export default function Settings() {
-  const { profile } = useContext(AppContext);
+  const { profile, features: { surveyEnabled } } = useContext(AppContext);
   const navigation = useNavigation();
 
   const disabledGroup = [styles.groupValue, { opacity: 0.3 }];
@@ -60,6 +60,9 @@ export default function Settings() {
 
   useFocusEffect(() => {
     console.log('*** screen changed: Settings');
+    if (surveyEnabled && !profile.survey) {
+      navigation.navigate('SurveyIndex');
+    }
   });
 
   return (

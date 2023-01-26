@@ -1,14 +1,18 @@
 import { useContext, useState } from 'react';
-import { ImageBackground, TouchableOpacity, StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native';
+import { TouchableOpacity,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Dimensions
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Button } from 'react-native-paper';
-import { createTheme } from '../../themes';
-import { AppContext } from '../../contexts/appContext';
-import constants from '../../constants';
-
-const { phasic  } = constants;
+import { createTheme } from '../../../themes';
+import { AppContext } from '../../../contexts/appContext';
+import { CycleView } from './CycleView';
+import { phasic } from '../../../constants';
 
 const Theme = createTheme();
 const width = Dimensions.get('window').width;
@@ -70,33 +74,6 @@ export default function ManageSchedule() {
     </View>
   )
 }
-
-const CycleView = ({ selected, cycle }) => {
-  //console.log([selected, cycle.code]);
-  const style = [styles.cycleContainer];
-  if (selected === cycle.code) {
-    style.push(styles.selected);
-    console.log(style);
-  }
-
-  return (
-    <View style={{width}}>
-      <View style={style}>
-        <ImageBackground source={{ uri: cycle.uri }} style={{resize:'cover', height: 200 }}>
-          <LinearGradient
-            colors={['rgba(0,0,0,0.01)', '#212529']}
-            style={{height : '100%', width : '100%'}}
-          />
-        </ImageBackground>
-        <View style={{padding: 10}}>
-          <Text style={[styles.title, {marginTop:10}]}>{cycle.title}</Text>
-          <Text style={[styles.description]}>{cycle.description}</Text>
-        </View>
-      </View>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -116,20 +93,4 @@ const styles = StyleSheet.create({
   text: {
     color: Theme.colors.text,
   },
-  title: {
-    fontSize: 20,
-    color: Theme.colors.text,
-  },
-  description: {
-    marginTop: 10,
-    color: '#ADB5BD',
-  },
-  cycleContainer: {
-    flexGrow: 1,
-    backgroundColor: '#212529',
-  },
-  selected: {
-    borderWidth: 1,
-    borderColor: Theme.colors.primary,
-  }
 });

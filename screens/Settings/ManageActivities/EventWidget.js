@@ -1,9 +1,9 @@
 import React, { useContext, useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { AppContext } from '../../contexts/appContext';
-import { createStyle } from '../../styles';
-import { calcStart, getFormattedTime, getFormattedEndTime, getAlertColor} from '../../utils';
-import { createTheme } from '../../themes';
+import { AppContext } from '../../../contexts/appContext';
+import { createStyle } from '../../../styles';
+import { calcStart, getFormattedTime, getFormattedEndTime, getAlertColor} from '../../../utils';
+import { createTheme } from '../../../themes';
 import { Ionicons } from '@expo/vector-icons';
 
 export const EventWidget = ({ task, remove, edit }) => {

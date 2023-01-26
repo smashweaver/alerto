@@ -1,9 +1,19 @@
 import cycles from './schedules';
 import config from './firebase';
 import phasic from './phasic';
+import {
+  questions,
+  questionToChoicesMap,
+  questionToAnswersMap
+} from './questions';
 
-export default {
-  phasic,
+const firebase = { config };
+
+export {
   cycles,
-  firebase: { config },
+  firebase,
+  phasic,
+  questions,
+  questionToChoicesMap,
+  questionToAnswersMap,
 };

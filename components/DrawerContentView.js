@@ -19,6 +19,7 @@ const DrawerContentView = (props) => {
 
   const handleRetake = () => {
     navigation.toggleDrawer();
+    navigation.navigate({ name: 'SurveyIndex', params: { retake: true }});
   };
 
   const handlePomodoro = () => {

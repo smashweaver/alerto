@@ -14,7 +14,7 @@ export const AppProvider = ({ children }) => {
   const [minutes, setMinutes] = useState(today.getMinutes());
   const [time, setTime] = useState(0);
   const [profile, setProfile] = useState(null);
-  // const [active, setActive] = useState(null);
+  const [features] = useState({ surveyEnabled: true });
 
   const { db, createStream  } = useFirebase();
 
@@ -138,6 +138,7 @@ export const AppProvider = ({ children }) => {
     time,
     date,
     colorScheme,
+    features,
 
     auth: {
       registerUser,

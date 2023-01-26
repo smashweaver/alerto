@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import Login from '../screens/Login'
 import Register from '../screens/Register';
 import Setting, { ManageActivities, ManageSchedule } from '../screens/Settings';
+import { Survey } from '../screens/Survey';
 import { createStackNavigator } from '@react-navigation/stack';
 //import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { createTheme } from '../themes';
@@ -68,6 +69,7 @@ const SettingStackNavigator = () => {
       <SettingNav.Screen name='SettingIndex' component={Setting} />
       <SettingNav.Screen name='SettingActivities' component={ManageActivities} />
       <SettingNav.Screen name='SettingSchedule' component={ManageSchedule} />
+      <SettingNav.Screen name='SurveyIndex' component={Survey} />
     </SettingNav.Navigator>
   )
 };
