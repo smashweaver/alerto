@@ -14,7 +14,7 @@ export const AppProvider = ({ children }) => {
   const [minutes, setMinutes] = useState(today.getMinutes());
   const [time, setTime] = useState(0);
   const [profile, setProfile] = useState(null);
-  const [features] = useState({ surveyEnabled: true });
+  const [features] = useState({ surveyEnabled: false });
 
   const { db, createStream  } = useFirebase();
 
