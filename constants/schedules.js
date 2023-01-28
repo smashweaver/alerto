@@ -156,10 +156,20 @@ const polyPhasic = {
   ],
 };
 
-export default {
-  'mono': monoPhasic,
-  'bi': biPhasic,
-  'everyman': polyPhasic.everyman,
-  'uberman': polyPhasic.uberman,
-  'dymaxion': polyPhasic.dymaxion,
+const cycleToEventsMap = {
+  mono: monoPhasic,
+  bi: biPhasic,
+  everyman: polyPhasic.everyman,
+  uberman: polyPhasic.uberman,
+  dymaxion: polyPhasic.dymaxion,
 };
+
+const cycleToNameMap = {
+  mono: 'Monophasic',
+  bi: 'Biphasic',
+  everyman: 'Everyman',
+  uberman: 'Uberman',
+  dymaxion: 'Dymaxion',
+};
+
+export { cycleToEventsMap, cycleToNameMap };

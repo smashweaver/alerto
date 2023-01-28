@@ -42,13 +42,19 @@ export default function Settings() {
     navigation.navigate('SettingSchedule');
   };
 
+  const checkSurvey= () => {
+    if (!profile.survey) {
+      navigation.navigate('SurveyIndex');
+    }
+  };
+
   useEffect(() => {
     console.log('*** mounting Settings');
     return () => console.log('*** unmounting Settings');
   }, []);
 
   useEffect(() => {
-    console.log('*** profile has changed', profile);
+    console.log('*** profile has changed');
     if (profile.schedule) {
       setActivitiesGroupStyle(enabledGroup);
       setIsActivitiesDisabled(false);
@@ -60,9 +66,7 @@ export default function Settings() {
 
   useFocusEffect(() => {
     console.log('*** screen changed: Settings');
-    if (surveyEnabled && !profile.survey) {
-      navigation.navigate('SurveyIndex');
-    }
+    if (surveyEnabled) checkSurvey();
   });
 
   return (

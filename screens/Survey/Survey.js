@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useContext, useEffect, useState } from 'react';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { Toolbar } from './Toolbar';
 import { createTheme } from '../../themes';
@@ -7,6 +7,8 @@ import { questions } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
 import QuestionsListView from './QuestionsListView';
 import SurveyResultView from './SurveyViewResult';
+import { AppContext } from '../../contexts/appContext';
+import { ActivityModal } from '../../components/ActivityModal';
 
 const Theme = createTheme();
 const width = Dimensions.get('window').width;
@@ -19,6 +21,12 @@ function ViewSelector(props) {
 
 // find_dimesions(event.nativeEvent.layout)
 export default function Survey ({ route: { params } }) {
+  const {
+    user,
+    api: {
+      updateProfileSurvey,
+    },
+  } = useContext(AppContext);
   const navigation = useNavigation();
   const {retake} = params || { retake:false};
   const [result, setResult] = useState({});
@@ -26,11 +34,19 @@ export default function Survey ({ route: { params } }) {
   const [answer, setAnswer] = useState(null);
   const [isDone, setDone] = useState(false);
   const [scrollRef, setScrollRef] = useState(null);
+  const [isProcessing, setProcessing] = useState(false);
 
-  console.log({ isDone, retake });
-
-  const handleConfirm = () => {
-    navigation.navigate('SettingIndex')
+  const handleConfirm = async () => {
+    setProcessing(true);
+    await updateProfileSurvey(user.uid, {
+      survey: {
+        results: { ...result }
+      },
+    });
+    setTimeout(() => {
+      setProcessing(false);
+      navigation.navigate('SettingIndex');
+    }, 5000);
   };
 
   const handleAnswer = (question, answer) => {
@@ -40,7 +56,7 @@ export default function Survey ({ route: { params } }) {
     if (page < questions.length-1) {
       setTimeout(handleNext, 700);
     } else {
-      setTimeout(() => setDone(true), 2000);
+      setTimeout(() => setDone(true), 700);
     }
   };
 
@@ -94,7 +110,7 @@ export default function Survey ({ route: { params } }) {
     if (!scrollRef) return;
     const a = getAnswer(page);
     setAnswer(a);
-    console.log('*** page changed:', {page, answer: a});
+    // console.log('*** page changed:', {page, answer: a});
     const xOffset = width * (page);
     scrollRef.scrollTo({ x: xOffset, y: 0, animated: true });
   }, [page, scrollRef]);
@@ -131,6 +147,8 @@ export default function Survey ({ route: { params } }) {
           <Button onPress={handleConfirm}>Confirm</Button>
         </View>
       </View>}
+
+      <ActivityModal visible={isProcessing} />
     </View>
   );
 }

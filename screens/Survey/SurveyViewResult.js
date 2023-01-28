@@ -1,14 +1,10 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { createTheme } from '../../themes';
-import { cycles, questions, questionToChoicesMap } from '../../constants';
+import { useRecommender } from '../../hooks';
+import { ActivityModal } from '../../components/ActivityModal';
+import { useState } from 'react';
 
 const Theme = createTheme();
-
-function getSchedule(question, answer) {
-  return questionToChoicesMap
-  .get(question, answer)
-  .get(answer);
-}
 
 function SurveyAnswerView({ question, answer }) {
   return (
@@ -19,48 +15,13 @@ function SurveyAnswerView({ question, answer }) {
   )
 }
 
-function RecommendationView({ result }) {
-   const schedules = {
-    mono: 0,
-    bi: 0,
-    everyman: 0,
-    uberman: 0,
-    dymaxion: 0,
-  };
+function RecommendationView({ recommendations }) {
+  const bestFit = recommendations.join(', ');
+  console.log(recommendations);
 
-  const process = (q) => {
-    const a = result[q];
-    getSchedule(q, a)
-    .forEach(cycle => schedules[cycle]++);
-  }
-
-  questions.forEach(q => process(q));
-  let recommendedSchedule = [];
-  let highestScore = 0;
-  for (let cycle in cycles) {
-    if (schedules[cycle] > highestScore) {
-      recommendedSchedule = [cycle];
-      highestScore = schedules[cycle];
-    } else if (schedules[cycle] === highestScore) {
-      recommendedSchedule.push(cycle);
-    }
-  }
-
-  console.log(schedules);
-
-  const cycleText = {
-    'mono': 'Monophasic',
-    'bi': 'Biphasic',
-    'everyman': 'Everyman',
-    'uberman': 'Uberman',
-    'dymaxion': 'Dymaxion',
-  };
-
-  const bestFit = recommendedSchedule.map(x => cycleText[x]).join(', ');
-  let text = 'Based on your answers above, the following cycle is recommended for you:';
-
-  if (recommendedSchedule.length > 1) {
-    text = 'Based on your answers above, the following cycles are recommended for you:';
+  let text = 'Based on the survey results, the following cycle is recommended for you:';
+  if (recommendations.length > 1) {
+    text = 'Based on the survey results, the following cycles are recommended for you:';
   }
 
   return (
@@ -73,6 +34,12 @@ function RecommendationView({ result }) {
 }
 
 export default function SurveyResultView({ questions, result }) {
+  const [recommendations, isProcessing, process] = useRecommender();
+
+  useState(() => {
+    process(result);
+  }, [])
+
   return (
     <View style={{flex:1}}>
         <View style={styles.listContainer}>
@@ -90,10 +57,12 @@ export default function SurveyResultView({ questions, result }) {
               questions.map((question, index) => <SurveyAnswerView question={question} answer={result[question]} key={index}/>)
             }
 
-            <RecommendationView result={result} />
+            <RecommendationView recommendations={recommendations} />
           </ScrollView>
         </View>
       </View>
+
+      <ActivityModal visible={isProcessing} />
     </View>
   )
 }

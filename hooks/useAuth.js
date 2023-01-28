@@ -8,7 +8,7 @@ import {
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 
-export default function useAuth(callback) {
+export default function useAuth({ onUserChanged }) {
   const registerUser = async (email, password, name) => {
     const auth = getAuth();
     try {
@@ -48,7 +48,7 @@ export default function useAuth(callback) {
       } else {
         console.log('*** user is signed in');
       }
-      callback(u);
+      onUserChanged(u);
     });
   }, []);
 

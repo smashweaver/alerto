@@ -199,14 +199,13 @@ const questionToAnswersMap = new Map(surveyQuestions.map(q => qaPair(q)));
 
 const questions = surveyQuestions.map(q => q.question);
 
-const cycles = [mono, bi, everyman, uberman, dymaxion];
-
-export { cycles, questions, questionToChoicesMap, questionToAnswersMap }
-
-/*
-function getSchedule(question, answer) {
+const answerToCyclesMap = (question, answer) => {
   return questionToChoicesMap
-  .get(question, answer)
-  .get(answer);
+  .get(question, answer);
+};
+
+export {
+  questions,
+  answerToCyclesMap,
+  questionToAnswersMap,
 }
-*/

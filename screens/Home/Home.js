@@ -23,7 +23,19 @@ const debounce = (func, delay = 1000) => {
 const Theme = createTheme();
 
 export default function Home() {
-  const { user, profile, time, date, api, stream } = useContext(AppContext);
+  const {
+    user,
+    profile,
+    time,
+    date,
+    api: {
+      getScheduleQuery,
+      createScheduleFromTemplate,
+    },
+    stream: {
+      createStream,
+    },
+  } = useContext(AppContext);
   const [coords] = useState({});
   const [scrollRef, setScrollRef] = useState(null);
   const [visible, setVisible] = useState(false);
@@ -32,11 +44,6 @@ export default function Home() {
   const [, setToggle] = useState(false);
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
   const finder = useRef(null);
-
-  const {
-    getScheduleQuery,
-    createScheduleFromTemplate,
-  } = api;
 
   const uid = useMemo(() => {
     const u = user || { uid: null };
@@ -53,7 +60,7 @@ export default function Home() {
     return qry;
   }, [uid, date]);
 
-  const [tasks] = useStream(qryEvents, reRender, stream.createStream);
+  const [tasks] = useStream(qryEvents, reRender, createStream);
 
   const createSchedule = () => {
     setLoaded(false);

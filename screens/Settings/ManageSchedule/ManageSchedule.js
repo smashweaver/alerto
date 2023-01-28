@@ -8,7 +8,7 @@ import { TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { Button } from 'react-native-paper';
+import { ActivityIndicator, Button, Modal } from 'react-native-paper';
 import { createTheme } from '../../../themes';
 import { AppContext } from '../../../contexts/appContext';
 import { CycleView } from './CycleView';
@@ -18,9 +18,16 @@ const Theme = createTheme();
 const width = Dimensions.get('window').width;
 
 export default function ManageSchedule() {
-  const { user, profile, api: { updateProfileSchedule } } = useContext(AppContext)
+  const {
+    user,
+    profile,
+    api: {
+      updateProfileSchedule,
+    },
+  } = useContext(AppContext)
 
   const [scrolledTo, setScrolledTo] = useState(0);
+  const [isProcessing, setProcessing] = useState(false);
 
   const navigation = useNavigation();
 
@@ -29,10 +36,12 @@ export default function ManageSchedule() {
     setScrolledTo(ev.nativeEvent.contentOffset.x / width);
   };
 
-  const handleApply = () => {
+  const handleApply = async () => {
     const {code} = phasic[scrolledTo];
     console.log('*** schedule changed:', code, user.uid);
-    updateProfileSchedule(user.uid, code);
+    setProcessing(true);
+    await updateProfileSchedule(user.uid, code);
+    setProcessing(false);
     handleBack();
   };
 
@@ -71,6 +80,17 @@ export default function ManageSchedule() {
           Apply
         </Button>
       </View>
+
+      <Modal
+        dismissable={false}
+        visible={isProcessing}
+        transparent={true}
+      >
+        <ActivityIndicator
+          animating={true}
+          color={Theme.colors.primary}
+        />
+      </Modal>
     </View>
   )
 }

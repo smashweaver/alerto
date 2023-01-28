@@ -14,7 +14,7 @@ export const AppProvider = ({ children }) => {
   const [minutes, setMinutes] = useState(today.getMinutes());
   const [time, setTime] = useState(0);
   const [profile, setProfile] = useState(null);
-  const [features] = useState({ surveyEnabled: false });
+  const [features] = useState({ surveyEnabled: true });
 
   const { db, createStream  } = useFirebase();
 
@@ -28,42 +28,20 @@ export const AppProvider = ({ children }) => {
     createEvent,
     updateEvent,
     retrieveEventById,
-    saveProfile,
     getProfile,
     setProfileSchedule,
-    updateProfileEvents,
+    setProfileEvents,
+    setProfileSurvey,
   } = useApi(db);
 
   const notify = useNotification({ getEventsForNotification });
 
-  const refreshProfile = async (uid) => {
-    const userProfile = await getProfile(uid);
-    console.log('*** user profile refreshed:', userProfile);
-    setProfile(userProfile);
-  };
-
-  const updateProfileSchedule = (uid, code) => {
-    setProfileSchedule(uid, code);
-    refreshProfile(uid);
-  }
-
-  const setupUser = async (userData) => {
+  const onUserChanged = async (userData) => {
     if (userData) {
       const { uid } = userData;
-      console.log('*** user id:', uid);
-
       const userProfile = await getProfile(uid);
-      /*
-      if (!userProfile.schedule) {
-        setProfileSchedule(uid, 'everyman');
-        userProfile = await getProfile(uid);
-      }
-      console.log('*** profile: ', userProfile);
-      */
-
       setProfile(userProfile);
     }
-
     setUser(userData);
   };
 
@@ -71,11 +49,33 @@ export const AppProvider = ({ children }) => {
     registerUser,
     signInUser,
     signOutUser,
-  } = useAuth(setupUser);
+  } = useAuth({ onUserChanged });
 
   const phoneThemeChanged = (theme) => {
     // console.log('*** Appearance.changeListener\n', JSON.stringify(theme, null, 2));
     setScheme(theme.colorScheme);
+  };
+
+  const refreshProfile = async (uid) => {
+    const userProfile = await getProfile(uid);
+    console.log('*** user profile refreshed:', userProfile);
+    setProfile(userProfile);
+  };
+
+  const updateProfileSchedule = async (uid, code) => {
+    await setProfileSchedule(uid, code)
+    await refreshProfile(uid);
+  };
+
+  const updateProfileEvents = async (uid, events) => {
+    await setProfileEvents(uid, events)
+    await refreshProfile(uid);
+  };
+
+  const updateProfileSurvey = async (uid, survey) => {
+    console.log('*** updating profile survey result');
+    await setProfileSurvey(uid, survey);
+    await refreshProfile(uid);
   };
 
   // todo: this must be a background task
@@ -155,11 +155,9 @@ export const AppProvider = ({ children }) => {
       createEvent,
       updateEvent,
       retrieveEventById,
-      saveProfile,
-      refreshProfile,
-      setProfileSchedule,
-      updateProfileEvents,
       updateProfileSchedule,
+      updateProfileEvents,
+      updateProfileSurvey,
     },
 
     phone: { notify },

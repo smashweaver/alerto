@@ -1,6 +1,6 @@
 import { useEffect, useRef,  useState } from 'react';
 
-export default function useStream(query, callback, observe) {
+export default function useStream(query, callback, createStream) {
   const [models] = useState([]);
 
   const unsubscribe = useRef(() => {});
@@ -45,7 +45,7 @@ export default function useStream(query, callback, observe) {
   useEffect(() => {
     console.log('*** mounting useTasks');
 
-    unsubscribe.current = observe(
+    unsubscribe.current = createStream(
       query,
       reducer,
       sorter,

@@ -12,7 +12,7 @@ import {
 } from 'firebase/firestore';
 
 // import uuid from 'react-native-uuid';
-import { cycles } from '../constants';
+import { cycleToEventsMap } from '../constants';
 import { canOccure } from '../utils';
 
 export default function useApi(db) {
@@ -174,23 +174,39 @@ export default function useApi(db) {
     return  docSnap.data();
   };
 
-  const setProfileSchedule = async (id, schedule = 'everyman') => {
+  const getEventsBySchedule = (schedule) => {
     const occurence = {
       mon: true,
       tue: true,
       wed: true,
       thu: true,
       fri: true,
+      sat: false,
+      sun: false,
     };
     const custom = false;
     const disable = false;
-    // const ts =  uuid.v4();
-    const events = cycles[schedule].map(event => ({ ...event, custom, occurence, disable }));
+    const events = cycleToEventsMap[schedule]
+    .map(event => ({
+      ...event,
+      custom,
+      occurence,
+      disable
+    }));
+    return events;
+  };
+
+  const setProfileSchedule = async (id, schedule = 'everyman') => {
+    const events = getEventsBySchedule(schedule);
     return await saveProfile(id, { schedule, events });
   };
 
-  const updateProfileEvents = async (id, events) => {
+  const setProfileEvents = async (id, events) => {
     return await saveProfile(id, events);
+  };
+
+  const setProfileSurvey = async (id, survey) => {
+    return await saveProfile(id, survey);
   };
 
   return {
@@ -206,6 +222,7 @@ export default function useApi(db) {
     saveProfile,
     getProfile,
     setProfileSchedule,
-    updateProfileEvents,
+    setProfileEvents,
+    setProfileSurvey,
   };
 }

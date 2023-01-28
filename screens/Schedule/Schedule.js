@@ -18,7 +18,19 @@ import { calcStart } from '../../utils';
 const Theme = createTheme();
 
 export default function Schedule() {
-  const { user, profile, date, colorScheme, api } = useContext(AppContext)
+  const {
+    user,
+    profile,
+    date,
+    colorScheme,
+    api: {
+      removeEventById,
+      updateEvent,
+      createEvent,
+      getEventsByDate,
+      createScheduleFromTemplate,
+    },
+  } = useContext(AppContext)
   const [events, setEvents] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -28,14 +40,6 @@ export default function Schedule() {
 
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
   const days = useMemo(() => getDaysOfWeek(Date.parse(date)), [date]);
-
-  const {
-    removeEventById,
-    updateEvent,
-    createEvent,
-    getEventsByDate,
-    createScheduleFromTemplate,
-  } = api;
 
   const { uid } = user || {};
 

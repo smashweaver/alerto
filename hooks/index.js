@@ -3,6 +3,7 @@ import useAuth from './useAuth';
 import useApi from './useApi';
 import useNotification from './useNotification';
 import useStream from './useStream';
+import useRecommender from './useRecommender';
 
 export {
   useApi,
@@ -10,4 +11,5 @@ export {
   useFirebase,
   useStream,
   useNotification,
+  useRecommender,
 };
