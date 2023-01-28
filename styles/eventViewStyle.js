@@ -21,15 +21,16 @@ export const eventViewStyle = (colorScheme = 'light') => {
       padding: 10,
       borderRadius: 0,
       marginBottom: 1,
-      minHeight: 100,
+      //minHeight: 100,
     },
     text: {
       fontSize: 18,
-      fontWeight: '500',
+      fontWeight: '100',
       color: Theme.CardTextColor,
     },
     titleText: {
-      fontSize: 32
+      fontSize: 24,
+      fontWeight: '400',
     },
     cardShadow: {
       shadowColor: Theme.ShadowColor,

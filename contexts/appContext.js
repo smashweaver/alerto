@@ -45,11 +45,14 @@ export const AppProvider = ({ children }) => {
     setUser(userData);
   };
 
-  const {
-    registerUser,
-    signInUser,
-    signOutUser,
-  } = useAuth({ onUserChanged });
+  const [
+    isAuthReady,
+    {
+      registerUser,
+      signInUser,
+      signOutUser,
+    }
+  ] = useAuth({ onUserChanged });
 
   const phoneThemeChanged = (theme) => {
     // console.log('*** Appearance.changeListener\n', JSON.stringify(theme, null, 2));
@@ -141,6 +144,7 @@ export const AppProvider = ({ children }) => {
     features,
 
     auth: {
+      isAuthReady,
       registerUser,
       signInUser,
       signOutUser,

@@ -8,11 +8,12 @@ import { TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { ActivityIndicator, Button, Modal } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import { createTheme } from '../../../themes';
 import { AppContext } from '../../../contexts/appContext';
 import { CycleView } from './CycleView';
 import { phasic } from '../../../constants';
+import { ActivityModal } from '../../../components';
 
 const Theme = createTheme();
 const width = Dimensions.get('window').width;
@@ -38,21 +39,21 @@ export default function ManageSchedule() {
 
   const handleApply = async () => {
     const {code} = phasic[scrolledTo];
-    console.log('*** schedule changed:', code, user.uid);
+    console.log('*** profile schedule changed:', code);
     setProcessing(true);
     await updateProfileSchedule(user.uid, code);
     setProcessing(false);
-    handleBack();
+    goBack();
   };
 
-  const handleBack = () => {
+  const goBack = () => {
     navigation.navigate('SettingIndex');
   };
 
   return (
     <View style={styles.container}>
       <View style={[styles.header, styles.flex, {justifyContent:'space-between'}]}>
-        <TouchableOpacity onPress={handleBack}>
+        <TouchableOpacity onPress={goBack}>
           <Ionicons name="arrow-back" size={28} color={Theme.colors.text} />
         </TouchableOpacity>
 
@@ -75,22 +76,13 @@ export default function ManageSchedule() {
         }
       </ScrollView>
 
-      <View style={{ margin: 10 }}>
-        <Button mode='text' textColor={Theme.colors.primary} onPress={handleApply}>
+      <View>
+        <Button textColor={Theme.colors.primary} onPress={handleApply}>
           Apply
         </Button>
       </View>
 
-      <Modal
-        dismissable={false}
-        visible={isProcessing}
-        transparent={true}
-      >
-        <ActivityIndicator
-          animating={true}
-          color={Theme.colors.primary}
-        />
-      </Modal>
+      <ActivityModal visible={isProcessing} />
     </View>
   )
 }

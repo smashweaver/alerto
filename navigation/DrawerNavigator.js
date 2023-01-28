@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
-import TabNavigator from "./TabNavigator";
-import { createDrawerNavigator, DrawerContentScrollView } from "@react-navigation/drawer";
-import { DrawerContentView } from "../components/DrawerContentView";
+import React, { useContext } from "react";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { DrawerContentView } from "../components";
 import { createTheme } from '../themes';
 import { AppContext } from '../contexts/appContext';
+import TabNavigator from "./TabNavigator";
 
 const Drawer = createDrawerNavigator();
 const { Navigator, Screen } = Drawer;

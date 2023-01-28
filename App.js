@@ -5,17 +5,18 @@ import Auth from './screens/Auth';
 import Main from './screens/Main';
 import * as SplashScreen from 'expo-splash-screen';
 
+SplashScreen.preventAutoHideAsync();
+
 const Screen = () => {
-  const [view, setView] = useState(null);
-  const { user } = useContext(AppContext);
+  const [AppView, setView] = useState(null);
+  const { user, auth: { isAuthReady } } = useContext(AppContext);
 
   useEffect(() => {
-    SplashScreen.preventAutoHideAsync();
-  }, []);
+    console.log('*** isAuthReady changed:', isAuthReady);
+    if (isAuthReady) SplashScreen.hideAsync();
+  }, [isAuthReady]);
 
   useEffect(() => {
-    SplashScreen.hideAsync();
-
     if (!user) {
       setView(<Auth />)
     } else {
@@ -23,7 +24,7 @@ const Screen = () => {
     }
   }, [user]);
 
-  return view;
+  return AppView;
 };
 
 export default function App() {

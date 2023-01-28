@@ -3,9 +3,12 @@ import { Text, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { createTheme } from '../../themes';
 import { MaterialIcons } from '@expo/vector-icons';
+import { Octicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { Toolbar } from './Toolbar';
+import { useRecommender } from '../../hooks';
+import { ActivityModal } from '../../components';
 
 const Theme = createTheme();
 
@@ -22,8 +25,11 @@ const sleepCycle = (code) => {
   return map[code];
 };
 
-export default function Settings() {
+export default function Settings({ route: { params } }) {
   const { profile, features: { surveyEnabled } } = useContext(AppContext);
+  const [recommendations, isProcessing, process] = useRecommender();
+  const [surveyText, setSurveyText] = useState('...');
+
   const navigation = useNavigation();
 
   const disabledGroup = [styles.groupValue, { opacity: 0.3 }];
@@ -41,6 +47,10 @@ export default function Settings() {
   const manageSchedule = () => {
     navigation.navigate('SettingSchedule');
   };
+
+  const retakeSurvey = () => {
+    navigation.navigate({ name: 'SurveyIndex', params: { retake: true }});
+  }
 
   const checkSurvey= () => {
     if (!profile.survey) {
@@ -62,7 +72,19 @@ export default function Settings() {
       setActivitiesGroupStyle(disabledGroup);
       setIsActivitiesDisabled(true);
     }
-  }, [profile]);
+  }, [profile.schedule]);
+
+  useEffect(() => {
+    if (!profile.survey) return;
+    console.log(profile.survey);
+    process(profile.survey.results)
+  }, [profile.survey])
+
+  useEffect(() => {
+    if (!recommendations.length) return;
+    setSurveyText(`${recommendations.join(', ')}`);
+  }, [recommendations])
+
 
   useFocusEffect(() => {
     console.log('*** screen changed: Settings');
@@ -79,7 +101,7 @@ export default function Settings() {
           </View>
           <View style={enabledGroup}>
             <TouchableOpacity onPressOut={manageSchedule}>
-              <Text style={{fontSize: 20, color:'#F8F9FA'}}>{scheduleText}</Text>
+              <Text style={{fontSize: 20, color:Theme.colors.text}}>{scheduleText}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -90,10 +112,31 @@ export default function Settings() {
           </View>
           <View style={activitiesGroupStyle}>
             <TouchableOpacity disabled={isActivitiesDisabled} onPressOut={manageActivities}>
-              <Text style={{fontSize: 20, color:'#F8F9FA'}}>{'Set your default activities'}</Text>
+              <Text style={{fontSize: 20, color:Theme.colors.text}}>{'Set your default activities'}</Text>
             </TouchableOpacity>
           </View>
         </View>
+
+        {profile.survey &&
+        <View style={[styles.group, {paddingBottom:4}]}>
+          <View style={styles.groupIcon}>
+            <Octicons name="checklist" size={20} color='gray' />
+          </View>
+          <View>
+            <TouchableOpacity onPressOut={retakeSurvey}>
+              <Text style={{fontSize: 20, color:Theme.colors.text}}>{'Retake survey'}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        }
+
+        {profile.survey &&
+        <View style={{marginLeft:40, padding:0}}>
+          <Text style={{color:Theme.colors.primary, fontSize:12}}>{surveyText}</Text>
+        </View>}
+
+        <ActivityModal visible={isProcessing} />
+
       </View>
     </View>
   )

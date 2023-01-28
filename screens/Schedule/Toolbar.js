@@ -24,25 +24,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-
   },
   text: {
     color: Theme.colors.text,
   },
-  title: {
-    fontSize: 20,
-    color: Theme.colors.text,
-  },
-  description: {
-    marginTop: 10,
-    color: '#ADB5BD',
-  },
-  cycleContainer: {
-    flexGrow: 1,
-    backgroundColor: '#212529',
-  },
-  selected: {
-    borderWidth: 1,
-    borderColor: Theme.colors.primary,
-  }
 });

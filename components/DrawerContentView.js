@@ -6,7 +6,7 @@ import { createStyle } from '../styles';
 import { createTheme } from '../themes';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 
-const DrawerContentView = (props) => {
+export function DrawerContentView (props) {
   const { colorScheme, user, auth } = useContext(AppContext);
   const { navigation } = props;
   const [userName, setName] = useState('Unknown');
@@ -15,15 +15,6 @@ const DrawerContentView = (props) => {
 
   const handleLogout = () => {
     auth.signOutUser();
-  };
-
-  const handleRetake = () => {
-    navigation.toggleDrawer();
-    navigation.navigate({ name: 'SurveyIndex', params: { retake: true }});
-  };
-
-  const handlePomodoro = () => {
-    navigation.toggleDrawer();
   };
 
   useEffect(() => {
@@ -48,59 +39,60 @@ const DrawerContentView = (props) => {
             style={styles.image}
           />
         </View>
-
-        <TouchableOpacity
-          onPress={handleRetake}
-          style={styles.linkContainer}
-        >
-          <MaterialCommunityIcons name="pencil" size={24} color={Theme.LinkColor} />
-          <Text style={styles.linkText}>Retake Survey</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={handlePomodoro}
-          style={styles.linkContainer}
-        >
-          <MaterialIcons name="healing" size={24} color={Theme.LinkColor} />
-          <Text style={styles.linkText}>Self-Care</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={handlePomodoro}
-          style={styles.linkContainer}
-        >
-          <MaterialCommunityIcons name="meditation" size={24} color={Theme.LinkColor} />
-          <Text style={styles.linkText}>Meditation</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={handlePomodoro}
-          style={styles.linkContainer}
-        >
-          <MaterialCommunityIcons name="run" size={24} color={Theme.LinkColor} />
-          <Text style={styles.linkText}>Exercise</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={handlePomodoro}
-          style={styles.linkContainer}
-        >
-          <MaterialIcons name="timer" size={24} color={Theme.LinkColor} />
-          <Text style={styles.linkText}>Pomodoro Timer</Text>
-        </TouchableOpacity>
-
-
       </DrawerContentScrollView>
 
       <TouchableOpacity
           onPress={handleLogout}
           style={styles.button}>
-          <Text style={[styles.buttonText, {fontSize:24, fontWeight: '500'}]}>Logout</Text>
+          <Text style={[styles.buttonText, {fontSize:16, fontWeight: '400'}]}>Logout</Text>
       </TouchableOpacity>
 
       <View style={{flexGrow:1, maxHeight: Platform.OS === 'ios' ? 45 : 10}}/>
     </View>
   );
-};
+}
 
-export { DrawerContentView };
+
+/*
+  const handleRetake = () => {
+    navigation.toggleDrawer();
+    navigation.navigate({ name: 'SurveyIndex', params: { retake: true }});
+  };
+
+  const handlePomodoro = () => {
+    navigation.toggleDrawer();
+  };
+
+  <TouchableOpacity
+    onPress={handlePomodoro}
+    style={styles.linkContainer}
+  >
+    <MaterialIcons name="healing" size={24} color={Theme.LinkColor} />
+    <Text style={styles.linkText}>Self-Care</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    onPress={handlePomodoro}
+    style={styles.linkContainer}
+  >
+    <MaterialCommunityIcons name="meditation" size={24} color={Theme.LinkColor} />
+    <Text style={styles.linkText}>Meditation</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    onPress={handlePomodoro}
+    style={styles.linkContainer}
+  >
+    <MaterialCommunityIcons name="run" size={24} color={Theme.LinkColor} />
+    <Text style={styles.linkText}>Exercise</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    onPress={handlePomodoro}
+    style={styles.linkContainer}
+  >
+    <MaterialIcons name="timer" size={24} color={Theme.LinkColor} />
+    <Text style={styles.linkText}>Pomodoro Timer</Text>
+  </TouchableOpacity>
+
+*/

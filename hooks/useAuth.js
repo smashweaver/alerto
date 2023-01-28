@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   getAuth,
@@ -9,6 +9,7 @@ import {
 } from 'firebase/auth';
 
 export default function useAuth({ onUserChanged }) {
+  const [isReady, setReady] = useState(false);
   const registerUser = async (email, password, name) => {
     const auth = getAuth();
     try {
@@ -49,12 +50,16 @@ export default function useAuth({ onUserChanged }) {
         console.log('*** user is signed in');
       }
       onUserChanged(u);
+      if (!isReady) setReady(true);
     });
   }, []);
 
-  return {
-    registerUser,
-    signInUser,
-    signOutUser,
-  };
+  return [
+    isReady,
+    {
+      registerUser,
+      signInUser,
+      signOutUser,
+    }
+  ];
 }

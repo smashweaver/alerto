@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { AppContext } from '../contexts/appContext';
 import { createTheme } from '../themes';
 
-const DateBar = ({ date }) => {
+export function DateBar({ date }) {
   const today = format(new Date(date), 'EEEE, PPP');
   const { colorScheme } = useContext(AppContext)
   const Theme = createTheme(colorScheme);
@@ -21,6 +21,4 @@ const DateBar = ({ date }) => {
       <Text style={{color: Theme.colors.text}}>{today}</Text>
     </View>
   )
-};
-
-export { DateBar };
+}

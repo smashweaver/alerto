@@ -1,30 +1,28 @@
 import { useContext, useEffect, useState } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Button  } from 'react-native-paper';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { AppContext } from '../../../contexts/appContext';
 import { createTheme } from '../../../themes';
-import { Activities } from '../../../components/Activities';
+import { Activities } from '../../../components';
 import { getFormattedTime } from '../../../utils';
 import { calcStart } from '../../../utils';
 import { EventWidget } from './EventWidget';
 import { EditModal } from './EditModal';
 import { AddModal } from './AddModal';
+import { ActivityModal } from '../../../components';
 
 const Theme = createTheme();
 
 export default function ManageActivities() {
   const navigation = useNavigation();
-  const insets = useSafeAreaInsets();
 
   const {
     user,
     profile,
     api: {
       updateProfileEvents,
-      refreshProfile
     }
   } = useContext(AppContext);
 
@@ -32,28 +30,32 @@ export default function ManageActivities() {
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [activityToEdit, setActivityToEdit] = useState(null);
+  const [isProcessing, setProcessing] = useState(false);
 
   const submitActivityChanges = async (activity, data) => {
     const index = events.findIndex(x => x === activity);
     console.log('*** profile event changed', { index });
     const newEvents = [...events];
     newEvents[index] = { ...data };
-    updateProfileEvents(user.uid, { events: [...newEvents]});
-    refreshProfile(user.uid);
+    setProcessing(true);
+    await updateProfileEvents(user.uid, { events: [...newEvents]});
+    setProcessing(false);
     closeActivityModal();
   };
 
   const submitNewActivity = async(activity) => {
     const newEvents = [...events, { ...activity }];
-    updateProfileEvents(user.uid, { events: [...newEvents]});
-    refreshProfile(user.uid);
+    setProcessing(true);
+    await updateProfileEvents(user.uid, { events: [...newEvents]});
+    setProcessing(false);
     closeActivityModal();
   };
 
-  const removeActivity = (activity) => {
+  const removeActivity = async (activity) => {
     const newEvents = events.filter(x => x !== activity);
-    updateProfileEvents(user.uid, { events: [...newEvents]});
-    refreshProfile(user.uid);
+    setProcessing(true);
+    await updateProfileEvents(user.uid, { events: [...newEvents]});
+    setProcessing(false);
     closeActivityModal();
   };
 
@@ -135,8 +137,8 @@ export default function ManageActivities() {
           onEdit={editActivity}
         />
 
-        <View style={{ margin: 10 }}>
-          <Button mode='text' textColor={Theme.colors.primary} onPress={addActivity}>
+        <View>
+          <Button textColor={Theme.colors.primary} onPress={addActivity}>
             New Activity
           </Button>
         </View>
@@ -155,6 +157,8 @@ export default function ManageActivities() {
         close={closeActivityModal}
         ok={submitNewActivity}
       />
+
+      <ActivityModal visible={isProcessing} />
     </View>
   )
 }
@@ -163,6 +167,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Theme.colors.background,
+    height: '100%',
   },
   flex: {
     display: 'flex',

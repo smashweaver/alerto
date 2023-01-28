@@ -3,7 +3,7 @@ import { Text, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { AppContext } from '../contexts/appContext';
-import { DateBar } from '../components/DateBar';
+import { DateBar } from '../components';
 
 export default function Profile() {
   const { date } = useContext(AppContext);

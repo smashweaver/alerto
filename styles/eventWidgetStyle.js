@@ -9,16 +9,12 @@ export const eventWidgetStyle = (colorScheme = 'light') => {
       padding: 10,
       backgroundColor: Theme.CardBackgroundColor,
     },
-    flexContainer: {
-      flex: 1,
+    flex: {
+      display: 'flex',
       flexDirection: 'row',
       alignContext: 'center',
       justifyContent: 'space-between',
       alignItems:'center',
-    },
-    buttons: {
-      marginTop: 10,
-      //borderTopWidth: StyleSheet.hairlineWidth,
     },
     text: {
       color: Theme.CardTextColor,
@@ -30,21 +26,5 @@ export const eventWidgetStyle = (colorScheme = 'light') => {
     title: {
       fontSize: 20
     },
-    actionGroup: {
-      //borderColor: Theme.CardBorderColor,
-      //borderWidth: StyleSheet.hairlineWidth,
-      borderRadius: 4,
-      //marginTop: 10
-      backgroundColor: '#343A40',
-      height: 50
-    },
-    topBorder: {
-      borderTopWidth: StyleSheet.hairlineWidth,
-    },
-    bordered: {
-      borderWidth: StyleSheet.hairlineWidth,
-      padding: 4,
-      borderColor: Theme.colors.text
-    }
   });
 };

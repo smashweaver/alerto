@@ -2,13 +2,14 @@ import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
 import { View, ScrollView } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { EventListView } from './EventListView';
-import { DateBar } from '../../components/DateBar';
+import { DateBar } from '../../components';
 import { EventModal } from './EventModal';
 //import { debounce } from 'lodash';
 import { useFocusEffect } from '@react-navigation/native';
 import { useStream } from '../../hooks';
 import { createTheme } from '../../themes';
 import { Toolbar } from './Toolbar';
+import { ActivityModal } from '../../components';
 
 const debounce = (func, delay = 1000) => {
   let debounceTimer
@@ -147,6 +148,8 @@ export default function Home() {
       </ScrollView>
 
       {visible ? <EventModal close={closeModal} task={modalData} /> : null}
+
+      <ActivityModal visible={!scheduleIsLoaded} />
     </View>
   )
 }

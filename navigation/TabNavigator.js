@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
 import { createTheme } from '../themes';
 import { AppContext } from '../contexts/appContext';
-import { Pressable, StyleSheet} from "react-native";
+import { Pressable } from "react-native";
 
 const Nav = createBottomTabNavigator();
 
@@ -22,7 +22,16 @@ const EnabledTabBarButton = ({ style, ...props }) => (
 
 const BottomTabNavigator = () => {
   const { profile, colorScheme } = useContext(AppContext)
-  const defaultRouteName = profile.schedule ? "Home" : "Settings";
+
+  const isSurveyRequired = useMemo(() => {
+    return !profile.survey;
+  }, [profile.survey])
+
+  const isScheduleRequired = useMemo(() => {
+    return !profile.schedule;
+  }, [profile.schedule])
+
+  const defaultRouteName = isSurveyRequired || isScheduleRequired ? 'Settings' : 'Home';
   const Theme = createTheme(colorScheme);
   return (
     <Nav.Navigator
@@ -48,7 +57,7 @@ const BottomTabNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <Octicons name="calendar" color={color} size={size} />
           ),
-          tabBarButton: profile.schedule ? EnabledTabBarButton : DisabledTabBarButton,
+          tabBarButton: isSurveyRequired || isScheduleRequired ? DisabledTabBarButton : EnabledTabBarButton,
         }}
       />
 
@@ -59,7 +68,7 @@ const BottomTabNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="home" color={color} size={size} />
           ),
-          tabBarButton: profile.schedule ? EnabledTabBarButton : DisabledTabBarButton,
+          tabBarButton: isSurveyRequired || isScheduleRequired ? DisabledTabBarButton : EnabledTabBarButton,
         }}
       />
 

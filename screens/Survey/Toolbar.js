@@ -11,10 +11,6 @@ export const Toolbar = () => {
   return (
     <View style={[styles.header, styles.flex, {justifyContent:'center'}]}>
       <Text style={[styles.text, { fontSize:24 }]}>{'Survey'}</Text>
-
-      <TouchableOpacity onPress={handleSubmit}>
-        <MaterialCommunityIcons name="restart" size={0} color={Theme.ModalHeaderTextColor}  />
-      </TouchableOpacity>
     </View>
   )
 }

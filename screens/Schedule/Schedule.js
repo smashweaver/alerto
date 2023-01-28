@@ -1,19 +1,20 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Alert, View, StyleSheet } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { getFormattedTime, getDaysOfWeek, isWeekEnd,  } from '../../utils';
-import { WeekStrip } from '../../components/WeekStrip/WeekStrip';
+import { WeekStrip } from '../../components';
 import { createStyle } from '../../styles';
-import { DateBar } from '../../components/DateBar';
+import { DateBar } from '../../components';
 import { debounce } from 'lodash';
 import { AddModal } from './AddModal';
 import { EditModal } from './EditModal';
 import { Toolbar } from './Toolbar';
-import { Activities } from '../../components/Activities';
+import { Activities } from '../../components';
 import { useFocusEffect } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
 import { createTheme } from '../../themes';
 import { calcStart } from '../../utils';
+import { ActivityModal } from '../../components';
 
 const Theme = createTheme();
 
@@ -23,6 +24,7 @@ export default function Schedule() {
     profile,
     date,
     colorScheme,
+    features,
     api: {
       removeEventById,
       updateEvent,
@@ -36,6 +38,7 @@ export default function Schedule() {
   const [isEditing, setIsEditing] = useState(false);
   const [activityToEdit, setActivityToEdit] = useState(null);
   const [workingDate, setWorkingDate] = useState(date);
+  const [isProcessing, setProcessing] = useState(false);
   const [, setToggle] = useState(false);
 
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
@@ -43,7 +46,7 @@ export default function Schedule() {
 
   const { uid } = user || {};
 
-  const styles = createStyle('schedule', colorScheme);
+  // const styles = createStyle('schedule', colorScheme);
 
   const isEditable = useMemo(() => date <= workingDate, [workingDate, date]);
   // console.log({ date, workingDate, isEditable });
@@ -60,12 +63,13 @@ export default function Schedule() {
   const removeActivity = (activity) => {
     const index = findDataIndex(activity)
     setIsEditing(false);
-
+    setProcessing(true);
     removeEventById(activity.id)
     .then(() => removeByIndex(index))
     .catch(() => {
       console.log('*** deleting activity failed!')
-    });
+    })
+    .finally(() => setProcessing(false));
   };
 
   const handleRemoveActivity = (activity) => {
@@ -103,9 +107,9 @@ export default function Schedule() {
     if (note != data.note)    { payload['note'] = data.note; }
     if (alert != data.alert)  { payload['alert'] = data.alert; }
     if (duration != data.duration)    { payload['duration'] = data.duration }
-    if (disable != data.disable)      { payload['disable'] = data.alert; }
-    if (occurence != data.occurence)  { payload['occurence'] = data.occurence; }
-    if (is_done != data.is_done)      { payload['is_done'] = data.is_done }
+    if (disable != data.disable)      { payload['disable'] = data.disable }
+    if (occurence != data.occurence)  { payload['occurence'] = data.occurence || false }
+    if (is_done != data.is_done)      { payload['is_done'] = data.is_done || false }
 
     const start = calcStart(activity, data);
     if (start !== activity.start) { payload['start'] = start; }
@@ -121,6 +125,8 @@ export default function Schedule() {
   const submitActivityChanges = async (activity, data) => {
     closeModal();
     const [id, payload] = createUpdatePayload(activity, data);
+    console.log('*** update payload', payload);
+    setProcessing(true);
     updateEvent(id, payload)
     .then(() => {
       // todo: notify success via toaster
@@ -131,11 +137,14 @@ export default function Schedule() {
     .catch(() => {
        // todo: notify failure via toaster
        console.log('*** updating activity failed!');
-    });
+    })
+    .finally(() => setProcessing(false))
   };
 
   const submitNewActivity = (payload = {}) => {
     closeModal();
+    setProcessing(true);
+
     const {
       title,
       hour,
@@ -143,7 +152,8 @@ export default function Schedule() {
       duration,
       note,
       alert,
-      custom
+      custom,
+      disable,
     } = payload;
 
     createEvent(uid, workingDate, {
@@ -154,6 +164,8 @@ export default function Schedule() {
       note,
       alert,
       custom,
+      disable,
+      occurence: false,
       is_done: false,
     })
     .then((data) => {
@@ -164,7 +176,8 @@ export default function Schedule() {
     .catch((error) => {
       // todo: notify failure via toaster
       console.log('*** creating new activity failed:', error.message);
-    });
+    })
+    .finally(() => setProcessing(false));
   };
 
   const handleChangeWorkingDate = (newWorkingDate) => {
@@ -184,17 +197,20 @@ export default function Schedule() {
   };
 
   const setupData = useCallback(() => {
+    setProcessing(true);
     getEventsByDate(uid, workingDate)
     .then(data => {
       data.sort((x, y) => x.start - y.start);
       setEvents([...data]);
+      setProcessing(false);
     });
   }, [uid, workingDate]);
 
   useEffect(() => {
     console.log('*** workingDate changed:', workingDate);
     setEvents([]);
-    if (!isWeekEnd(workingDate) && isEditable) {
+
+    if (isEditable) {
       createScheduleFromTemplate(profile, user.uid, workingDate)
       .then(setupData)
     } else {
@@ -207,26 +223,25 @@ export default function Schedule() {
   });
 
   return (
-    <View edges={[]} style={{ flex: 1 }}>
-      <Toolbar />
-      <DateBar date={workingDate} />
-      <WeekStrip days={days} today={date} workingDate={workingDate} setWorkingDate={handleChangeWorkingDate} />
+    <View style={{flex:1}}>
+      <View style={styles.container}>
+        <Toolbar />
+        <DateBar date={workingDate} />
+        <WeekStrip days={days} today={date} workingDate={workingDate} setWorkingDate={handleChangeWorkingDate} />
 
-      <Activities
-        isEditable={isEditable}
-        events={events}
-        onDelete={handleRemoveActivity}
-        onEdit={handleEditActivity}
-      />
+        <Activities
+          isEditable={isEditable}
+          events={events}
+          onDelete={handleRemoveActivity}
+          onEdit={handleEditActivity}
+        />
 
-      {
-        isEditable &&
-        <View style={{ margin: 10 }}>
-          <Button mode='text' textColor={Theme.colors.primary} onPress={handleNewActivity}>
+        <View>
+          <Button disabled={!isEditable} textColor={Theme.colors.primary} onPress={handleNewActivity}>
             New Activity
           </Button>
+        </View>
       </View>
-      }
 
       <AddModal
         visible={isAdding}
@@ -242,6 +257,16 @@ export default function Schedule() {
         ok={submitActivityChanges}
         onDelete={handleRemoveActivity}
       />
+
+      <ActivityModal visible={isProcessing} />
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    backgroundColor: Theme.colors.background,
+    height: '100%',
+  },
+});

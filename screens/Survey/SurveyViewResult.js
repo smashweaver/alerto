@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { createTheme } from '../../themes';
 import { useRecommender } from '../../hooks';
-import { ActivityModal } from '../../components/ActivityModal';
+import { ActivityModal } from '../../components';
 import { useState } from 'react';
 
 const Theme = createTheme();
@@ -17,7 +17,7 @@ function SurveyAnswerView({ question, answer }) {
 
 function RecommendationView({ recommendations }) {
   const bestFit = recommendations.join(', ');
-  console.log(recommendations);
+  // console.log(recommendations);
 
   let text = 'Based on the survey results, the following cycle is recommended for you:';
   if (recommendations.length > 1) {
@@ -25,7 +25,7 @@ function RecommendationView({ recommendations }) {
   }
 
   return (
-    <View style={styles.headerContainer}>
+    <View style={[styles.headerContainer, {marginBottom:20}]}>
       <Text style={styles.header}>Synopis</Text>
       <Text style={styles.recommended}>{text}</Text>
       <Text style={[styles.recommended, {color:'#fff', fontWeight:'500'}]}>- {bestFit}</Text>

@@ -109,7 +109,7 @@ export const ActivityForm = ({ activity, ok, close, name, onDelete }) => {
   };
 
   const handleChangeAlert = (level) => {
-    console.log('*** chnage alert:', level)
+    console.log('*** change alert:', level)
     setAlert(level);
     setPickAlert(false);
   };
@@ -245,7 +245,7 @@ export const ActivityForm = ({ activity, ok, close, name, onDelete }) => {
       {
         onDelete && custom &&
         <View style={{ marginBottom }}>
-          <Button mode='text' textColor={Theme.colors.primary} onPress={onDelete}>
+          <Button textColor={Theme.colors.primary} onPress={onDelete}>
             Delete
           </Button>
         </View>

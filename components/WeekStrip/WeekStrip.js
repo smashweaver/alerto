@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import { DateWidget } from './DateWidget';
 import { createTheme } from '../../themes';
 
-export const WeekStrip = ({ days, today, workingDate, setWorkingDate }) => {
+export function WeekStrip({ days, today, workingDate, setWorkingDate }) {
   const Theme = createTheme();
 
   const styles = StyleSheet.create({
@@ -33,4 +33,4 @@ export const WeekStrip = ({ days, today, workingDate, setWorkingDate }) => {
       }
     </View>
   );
-};
+}

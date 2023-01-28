@@ -25,10 +25,13 @@ export const EventWidget = ({ isEditable=true, task, remove, edit }) => {
       onLongPress={handleEdit}
       style={[styles.container]}
     >
-      <View style={[styles.flexContainer]}>
-        <Text style={[styles.start, styles.text]}>
-          {start} - {endTime}
-        </Text>
+      <View style={[styles.flex]}>
+        <View>
+          <Text style={[styles.start, styles.text]}>
+            <Ionicons name="time-outline" size={16} color='gray' /> {start} - {endTime}
+          </Text>
+        </View>
+
 
         {color && <Ionicons name="alert-circle" size={20} color={color} style={{marginRight: 4}} />}
       </View>

@@ -8,9 +8,11 @@ import { useNavigation } from '@react-navigation/native';
 import QuestionsListView from './QuestionsListView';
 import SurveyResultView from './SurveyViewResult';
 import { AppContext } from '../../contexts/appContext';
-import { ActivityModal } from '../../components/ActivityModal';
+import { ActivityModal } from '../../components';
 
 const Theme = createTheme();
+//console.log(Theme.colors.disabled);
+
 const width = Dimensions.get('window').width;
 const winHeight = Dimensions.get('window').height;
 
@@ -35,6 +37,8 @@ export default function Survey ({ route: { params } }) {
   const [isDone, setDone] = useState(false);
   const [scrollRef, setScrollRef] = useState(null);
   const [isProcessing, setProcessing] = useState(false);
+
+  //console.log(retake);
 
   const handleConfirm = async () => {
     setProcessing(true);
@@ -103,7 +107,7 @@ export default function Survey ({ route: { params } }) {
   }, []);
 
   useEffect(() => {
-    //if (retake) resetSurvey();
+    if (retake) resetSurvey();
   }, [retake]);
 
   useEffect(() =>  {
@@ -163,14 +167,14 @@ const styles = StyleSheet.create({
   topContainer: {
   },
   middleContainer: {
-    flexGrow: 1000,
+    flexGrow: 1,
   },
   bottomContainer: {
+    backgroundColor: Theme.colors.background,
   },
   buttonContainer: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: Theme.colors.background,
   }
 });

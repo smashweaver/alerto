@@ -1,5 +1,5 @@
 import { Modal } from 'react-native';
-import { ActivityForm } from '../../../components/ActivityForm';
+import { ActivityForm } from '../../../components';
 
 export const EditModal = ({ visible, activity, ok, close, onDelete }) => {
   const handleSubmit = (payload) => {

@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 
 import Dialog from "react-native-dialog";
 
-export const InputDialog = ({ title, initial, cancel, ok }) => {
+export function InputDialog({ title, initial, cancel, ok }) {
   const [value, setValue] = useState(initial) ;
 
   const handleOk = () => {
@@ -29,4 +29,4 @@ export const InputDialog = ({ title, initial, cancel, ok }) => {
       <Dialog.Button label="Confirm" onPress={handleOk} />
     </Dialog.Container>
   )
-};
+}

@@ -11,7 +11,7 @@ export const EventWidget = ({ task, remove, edit }) => {
   const Theme = createTheme(colorScheme);
   const styles = createStyle('eventWidget', colorScheme);
   const color = getAlertColor(task.alert);
-  const isDeletable = task.custom;
+  const isDeletable = !!task.custom;
   const start = getFormattedTime(task.hour, task.min);
   const [disabled, setDisabled] = useState(!!task.disabled)
 
@@ -35,10 +35,10 @@ export const EventWidget = ({ task, remove, edit }) => {
       onLongPress={handleEdit}
       style={[styles.container]}
     >
-      <View style={[styles.flexContainer]}>
-        <View style={[styles.flexContainer, { justifyContent: 'flex-start'}]}>
+      <View style={[styles.flex]}>
+        <View>
           <Text style={[styles.start, styles.text]}>
-          <Ionicons name="time-outline" size={16} color='gray' /> {start} - {endTime}
+            <Ionicons name="time-outline" size={16} color='gray' /> {start} - {endTime}
           </Text>
         </View>
 
