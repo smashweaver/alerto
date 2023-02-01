@@ -10,6 +10,7 @@ export function DrawerContentView (props) {
   const { colorScheme, user, auth } = useContext(AppContext);
   const styles = createStyle('drawerContent', colorScheme);
 
+
   const { displayName } = user || {};
   const userName = displayName || 'John Doe';
   const userInitials = initials(userName);
@@ -34,9 +35,10 @@ export function DrawerContentView (props) {
       </DrawerContentScrollView>
 
       <TouchableOpacity
-          onPress={handleLogout}
-          style={styles.button}>
-          <Text style={[styles.buttonText, {fontSize:16, fontWeight: '400'}]}>Logout</Text>
+        onPress={handleLogout}
+        style={styles.button}
+      >
+        <Text style={[styles.buttonText, {fontSize:16, fontWeight: '400'}]}>Logout</Text>
       </TouchableOpacity>
 
       <View style={{flexGrow:1, maxHeight: Platform.OS === 'ios' ? 45 : 10}}/>

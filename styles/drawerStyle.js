@@ -25,10 +25,12 @@ export const drawerStyle = (colorScheme = 'light') => {
       margin: 20,
       padding: 10,
       borderRadius: 4 ,
-      backgroundColor: Theme.ButtonBackgroundColor,
+      //backgroundColor: Theme.ButtonBackgroundColor,
+      backgroundColor: Theme.colors.primary,
     },
     buttonText: {
-      color: Theme.ButtonTextColor,
+      color: Theme.colors.text,
+      //backgroundColor: Theme.colors.primary,
     },
     text: {
       color: Theme.LinkColor,
