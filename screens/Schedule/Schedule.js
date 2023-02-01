@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Alert, View, StyleSheet } from 'react-native';
+import { Alert, View, StyleSheet, Text } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { getFormattedTime, getDaysOfWeek, isWeekEnd,  } from '../../utils';
 import { WeekStrip } from '../../components';
@@ -10,7 +10,7 @@ import { AddModal } from './AddModal';
 import { EditModal } from './EditModal';
 import { Toolbar } from './Toolbar';
 import { Activities } from '../../components';
-import { useFocusEffect } from '@react-navigation/native';
+// import { useFocusEffect } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
 import { createTheme } from '../../themes';
 import { calcStart } from '../../utils';
@@ -45,11 +45,8 @@ export default function Schedule() {
   const days = useMemo(() => getDaysOfWeek(Date.parse(date)), [date]);
 
   const { uid } = user || {};
-
-  // const styles = createStyle('schedule', colorScheme);
-
-  const isEditable = useMemo(() => date <= workingDate, [workingDate, date]);
-  // console.log({ date, workingDate, isEditable });
+  const isEditable = date <= workingDate;
+  const isEmpty = !events.length;
 
   const findDataIndex = (data) => events.findIndex(task => task.id === data.id);
 
@@ -218,9 +215,9 @@ export default function Schedule() {
     }
   }, [workingDate]);
 
-  useFocusEffect(() => {
+  /* useFocusEffect(() => {
     console.log('*** screen changed: Schedule');
-  });
+  }); */
 
   return (
     <View style={{flex:1}}>
@@ -228,6 +225,7 @@ export default function Schedule() {
         <Toolbar />
         <DateBar date={workingDate} />
         <WeekStrip days={days} today={date} workingDate={workingDate} setWorkingDate={handleChangeWorkingDate} />
+        <EmptyView hidden={!isProcessing ? !isEmpty : true} />
 
         <Activities
           isEditable={isEditable}
@@ -263,10 +261,36 @@ export default function Schedule() {
   )
 }
 
+function EmptyView({ hidden=false }) {
+  const myStyle = hidden ? [styles.hidden] : [styles.flex, styles.shown];
+  return (
+    <View style={myStyle}>
+      <View style={{padding: 24, borderWidth:1, borderColor:Theme.colors.primary, borderRadius:4}}>
+        <Text style={{color:Theme.colors.text}}>
+          No activities found for the day
+        </Text>
+      </View>
+    </View>
+  )
+}
+
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
+    flex: 1,
     backgroundColor: Theme.colors.background,
     height: '100%',
+  },
+  shown:{
+    flexGrow: 8,
+  },
+  hidden: {
+    display: 'none',
+  },
+  flex: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
   },
 });

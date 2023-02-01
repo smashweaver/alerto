@@ -64,11 +64,11 @@ export default function Home() {
   const tasks = useStream(qryEvents, reRender, createStream);
   const isEmpty = !tasks.length;
 
-  const createSchedule = () => {
+  /* const createSchedule = () => {
     setLoaded(false);
     createScheduleFromTemplate(profile, user.uid, date)
     .then(() => setLoaded(true));
-  };
+  }; */
 
   const scrollTo = (id) => {
     if (!id) return;
@@ -130,7 +130,7 @@ export default function Home() {
   }, [time]);
 
   useFocusEffect(() => {
-    console.log('*** screen changed: Home');
+    //console.log('*** screen changed: Home');
     scrollToNearest(time);
   });
 
@@ -161,16 +161,16 @@ function NormalView({ coords, tasks, openModal, setScrollRef, hidden=false }) {
 
   return (
     <ScrollView
-        style={{marginTop:1}}
-        ref={ref => setScrollRef(ref)}
-        contentContainerStyle={myStyle}
-        keyboardShouldPersistTaps='handled'
-      >
-        <EventListView
-          openModal={openModal}
-          coords={coords}
-          list={tasks} />
-      </ScrollView>
+      style={{marginTop:1}}
+      ref={ref => setScrollRef(ref)}
+      contentContainerStyle={myStyle}
+      keyboardShouldPersistTaps='handled'
+    >
+      <EventListView
+        openModal={openModal}
+        coords={coords}
+        list={tasks} />
+    </ScrollView>
   )
 }
 
@@ -180,7 +180,7 @@ function EmptyView({ hidden=false }) {
     <View style={myStyle}>
       <View style={{padding: 24, borderWidth:1, borderColor:Theme.colors.primary, borderRadius:4}}>
         <Text style={{color:Theme.colors.text}}>
-          You have no activities for the day.
+          You have no activities for today
         </Text>
       </View>
     </View>
