@@ -1,27 +1,22 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
-import { Image, Platform, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, Text, TouchableOpacity, View } from 'react-native';
 import { AppContext } from '../contexts/appContext';
 import { createStyle } from '../styles';
-import { createTheme } from '../themes';
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Avatar } from 'react-native-paper';
+import initials from 'initials';
 
 export function DrawerContentView (props) {
   const { colorScheme, user, auth } = useContext(AppContext);
-  const { navigation } = props;
-  const [userName, setName] = useState('Unknown');
   const styles = createStyle('drawerContent', colorScheme);
-  const Theme = createTheme(colorScheme);
+
+  const { displayName } = user || {};
+  const userName = displayName || 'John Doe';
+  const userInitials = initials(userName);
 
   const handleLogout = () => {
     auth.signOutUser();
   };
-
-  useEffect(() => {
-    const { displayName } = user || {};
-    setName(displayName || 'Unknown');
-  }, [user]);
 
   return (
     <View style={styles.container}>
@@ -34,7 +29,7 @@ export function DrawerContentView (props) {
             <Text style={styles.text}>{user && user.email}</Text>
           </View>
 
-          <Avatar.Text size={48} label="XD" />
+          <Avatar.Text size={48} label={userInitials} />
         </View>
       </DrawerContentScrollView>
 
