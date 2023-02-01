@@ -39,9 +39,10 @@ export default function ManageSchedule() {
 
   const handleApply = async () => {
     const {code} = phasic[scrolledTo];
-    console.log('*** profile schedule changed:', code);
+    const custom = (profile.events || []).filter(x => !!x.custom);
+    console.log('*** profile schedule changed:', { code, custom });
     setProcessing(true);
-    await updateProfileSchedule(user.uid, code);
+    await updateProfileSchedule(user.uid, code, custom);
     setProcessing(false);
     goBack();
   };

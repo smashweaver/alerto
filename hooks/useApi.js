@@ -196,8 +196,8 @@ export default function useApi(db) {
     return events;
   };
 
-  const setProfileSchedule = async (id, schedule = 'everyman') => {
-    const events = getEventsBySchedule(schedule);
+  const setProfileSchedule = async (id, schedule = 'everyman', custom=[]) => {
+    const events = [...getEventsBySchedule(schedule), ...custom];
     return await saveProfile(id, { schedule, events });
   };
 

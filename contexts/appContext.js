@@ -65,8 +65,8 @@ export const AppProvider = ({ children }) => {
     setProfile(userProfile);
   };
 
-  const updateProfileSchedule = async (uid, code) => {
-    await setProfileSchedule(uid, code)
+  const updateProfileSchedule = async (uid, code, custom=[]) => {
+    await setProfileSchedule(uid, code, custom)
     await refreshProfile(uid);
   };
 
@@ -111,8 +111,11 @@ export const AppProvider = ({ children }) => {
       }
     }, 60000);
 
+    const subscription = Appearance.addChangeListener(phoneThemeChanged);
+
     return () => {
       clearInterval(timer);
+      subscription.remove();
     }
   }, []);
 
@@ -126,10 +129,10 @@ export const AppProvider = ({ children }) => {
     }
   }, [hour, minutes]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     const subscription = Appearance.addChangeListener(phoneThemeChanged);
     return () => subscription.remove();
-  }, [setScheme])
+  }, [setScheme]) */
 
   useEffect(() => {
     console.log('*** phone theme changed:', { colorScheme });

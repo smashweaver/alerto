@@ -57,5 +57,5 @@ export default function useStream(query, callback, createStream) {
     }
   }, []);
 
-  return [models];
+  return [...models];
 }

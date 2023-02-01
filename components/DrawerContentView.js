@@ -5,6 +5,7 @@ import { AppContext } from '../contexts/appContext';
 import { createStyle } from '../styles';
 import { createTheme } from '../themes';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Avatar } from 'react-native-paper';
 
 export function DrawerContentView (props) {
   const { colorScheme, user, auth } = useContext(AppContext);
@@ -32,12 +33,8 @@ export function DrawerContentView (props) {
             <Text style={styles.text}>{userName}</Text>
             <Text style={styles.text}>{user && user.email}</Text>
           </View>
-          <Image
-            source={{
-              uri: 'https://images.unsplash.com/photo-1624243225303-261cc3cd2fbc?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-            }}
-            style={styles.image}
-          />
+
+          <Avatar.Text size={48} label="XD" />
         </View>
       </DrawerContentScrollView>
 
@@ -54,6 +51,13 @@ export function DrawerContentView (props) {
 
 
 /*
+  <Image
+    source={{
+      uri: 'https://images.unsplash.com/photo-1624243225303-261cc3cd2fbc?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
+    }}
+    style={styles.image}
+  />
+
   const handleRetake = () => {
     navigation.toggleDrawer();
     navigation.navigate({ name: 'SurveyIndex', params: { retake: true }});

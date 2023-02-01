@@ -6,15 +6,16 @@ import { createTheme } from '../../themes';
 
 const Theme = createTheme();
 
-const EventModal = ({ close, task }) => {
-  const time = getFormattedTime(task.hour, task.min);
-  const color = getAlertColor(task.alert);
-  const title = task.title;
-  const note = task.note || '';
+const EventModal = ({ close, task, visible=false }) => {
+  const event = task || { hour: 0, min: 0, alert: 0 };
+  const time = getFormattedTime(event.hour, event.min);
+  const color = getAlertColor(event.alert);
+  const title = event.title;
+  const note = event.note || '';
 
   return (
     <Modal
-      visible={true}
+      visible={visible}
       transparent={true}
       onRequestClose={close}
     >

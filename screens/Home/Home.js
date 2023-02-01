@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
-import { View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { EventListView } from './EventListView';
 import { DateBar } from '../../components';
@@ -39,9 +39,9 @@ export default function Home() {
   } = useContext(AppContext);
   const [coords] = useState({});
   const [scrollRef, setScrollRef] = useState(null);
-  const [visible, setVisible] = useState(false);
+  const [isShowEventModal, setShowEventModal] = useState(false);
   const [modalData, setModalData] = useState(null);
-  const [scheduleIsLoaded, setLoaded] = useState(false);
+  const [isScheduleLoaded, setLoaded] = useState(false);
   const [, setToggle] = useState(false);
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
   const finder = useRef(null);
@@ -61,7 +61,8 @@ export default function Home() {
     return qry;
   }, [uid, date]);
 
-  const [tasks] = useStream(qryEvents, reRender, createStream);
+  const tasks = useStream(qryEvents, reRender, createStream);
+  const isEmpty = !tasks.length;
 
   const createSchedule = () => {
     setLoaded(false);
@@ -80,7 +81,7 @@ export default function Home() {
   };
 
   const scrollToNearest = (start) => {
-    if (!scheduleIsLoaded) return;
+    if (!isScheduleLoaded) return;
     clearTimeout(finder.current);
     finder.current = setTimeout(() => {
       if (tasks.length) {
@@ -97,12 +98,12 @@ export default function Home() {
   const openModal = (activity) => {
     console.log('*** open modal:', activity.title);
     setModalData(activity);
-    setVisible(true);
+    setShowEventModal(true);
   };
 
   const closeModal = () => {
     console.log('*** close modal');
-    setVisible(false);
+    setShowEventModal(false);
     setModalData(null);
   };
 
@@ -117,7 +118,10 @@ export default function Home() {
 
   useEffect(() => {
     console.log('*** date changes', { date });
-    createSchedule();
+    //createSchedule();
+    setTimeout(() => setLoaded(true), 1000);
+
+    return () => setLoaded(false);
   }, [date]);
 
   useEffect(() => {
@@ -131,14 +135,35 @@ export default function Home() {
   });
 
   return (
-    <View edges={[]} style={{ flex: 1 }}>
-      <Toolbar />
-      <DateBar date={date} />
+    <View style={{flex:1}}>
+      <View style={styles.container}>
+        <Toolbar />
+        <DateBar date={date} />
+        <EmptyView hidden={isScheduleLoaded ? !isEmpty : true} />
 
-      <ScrollView
-        style={{marginTop: 1}}
+        <NormalView
+          hidden={isEmpty}
+          coords={coords}
+          tasks={tasks}
+          openModal={openModal}
+          setScrollRef={setScrollRef}
+        />
+      </View>
+
+      <EventModal visible={isShowEventModal} close={closeModal} task={modalData} />
+      <ActivityModal visible={!isScheduleLoaded} />
+    </View>
+  )
+}
+
+function NormalView({ coords, tasks, openModal, setScrollRef, hidden=false }) {
+  const myStyle = hidden ? [styles.hidden] : [styles.shown];
+
+  return (
+    <ScrollView
+        style={{marginTop:1}}
         ref={ref => setScrollRef(ref)}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={myStyle}
         keyboardShouldPersistTaps='handled'
       >
         <EventListView
@@ -146,10 +171,47 @@ export default function Home() {
           coords={coords}
           list={tasks} />
       </ScrollView>
+  )
+}
 
-      {visible ? <EventModal close={closeModal} task={modalData} /> : null}
-
-      <ActivityModal visible={!scheduleIsLoaded} />
+function EmptyView({ hidden=false }) {
+  const myStyle = hidden ? [styles.hidden] : [styles.flex, styles.shown];
+  return (
+    <View style={myStyle}>
+      <View style={{padding: 24, borderWidth:1, borderColor:Theme.colors.primary, borderRadius:4}}>
+        <Text style={{color:Theme.colors.text}}>
+          You have no activities for the day.
+        </Text>
+      </View>
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Theme.colors.background,
+    height: '100%',
+  },
+  flex: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+  shown:{
+    flexGrow: 8,
+  },
+  hidden: {
+    display: 'none',
+  },
+  header: {
+    backgroundColor: Theme.HeaderBackgroundColor,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+  },
+  text: {
+    color: Theme.colors.text,
+  },
+});
