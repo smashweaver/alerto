@@ -76,7 +76,7 @@ export default function Settings({ route: { params } }) {
 
   useEffect(() => {
     if (!profile.survey) return;
-    console.log(profile.survey);
+    //console.log(profile.survey);
     process(profile.survey.results)
   }, [profile.survey])
 

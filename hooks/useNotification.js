@@ -61,7 +61,7 @@ export default function useNotification({ getEventsForNotification }) {
 
   // todo: this should be a background task
   const notify = async (notifyUserId, notifyDate, notifyStart) => {
-    // console.log('*** schedule:', { notifyUserId, notifyDate, notifyHour, notificationPermissions});
+    console.log('*** notify:', { notifyUserId, notifyDate, notifyStart, notificationPermissions});
     if (!isNotificationEnabled) return;
     const events = await getEventsForNotification(notifyUserId, notifyDate, notifyStart);
     events.forEach(event => createNotification(event));

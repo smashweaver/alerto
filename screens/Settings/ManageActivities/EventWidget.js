@@ -1,12 +1,17 @@
-import React, { useContext, useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { AppContext } from '../../../contexts/appContext';
-import { createStyle } from '../../../styles';
-import { calcStart, getFormattedTime, getFormattedEndTime, getAlertColor} from '../../../utils';
-import { createTheme } from '../../../themes';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import { AppContext } from '../../../contexts/appContext';
+import { createTheme } from '../../../themes';
+import { createStyle } from '../../../styles';
+import { calcStart,
+  getFormattedTime,
+  getFormattedEndTime,
+  getAlertColor
+} from '../../../utils';
 
-export const EventWidget = ({ task, remove, edit }) => {
+export function EventWidget({ task, remove, edit }) {
   const { colorScheme } = useContext(AppContext);
   const Theme = createTheme(colorScheme);
   const styles = createStyle('eventWidget', colorScheme);
@@ -45,18 +50,39 @@ export const EventWidget = ({ task, remove, edit }) => {
         {color && <Ionicons name="alert-circle" size={20} color={color} />}
       </View>
 
+      <View style={[styles.flex, {justifyContent:'flex-start'}]}>
+         <MaterialCommunityIcons name="calendar-week" size={16} color='gray' />
+
+         <OccurrenceView value={task.occurence} />
+      </View>
+
       <Text style={[styles.title, styles.text]}>
         {task.title}
       </Text>
-
-
     </TouchableOpacity>
   )
 }
 
-/*
-<View style={[styles.actionGroup, styles.flexContainer, styles.actionGroup, { paddingHorizontal, paddingVertical,  marginVertical: 10 }]}>
-  <Text style={{color: Theme.colors.text}}>{statusText}</Text>
-  <Switch color={Theme.colors.primary}  value={!disabled} onValueChange={toggleDisabled} />
-</View>
-*/
+function OccurrenceView({ value={} }) {
+  return (
+    <View style={{display:'flex',flexDirection:'row',justifyContent:'flex-start', marginLeft:5}}>
+      <DayView caption='S' value={value.sun} />
+      <DayView caption='M' value={value.mon} />
+      <DayView caption='T' value={value.tue} />
+      <DayView caption='W' value={value.wed} />
+      <DayView caption='T' value={value.thu} />
+      <DayView caption='F' value={value.fri} />
+      <DayView caption='S' value={value.sat} />
+    </View>
+  )
+}
+
+function DayView({ caption='M', value=true }) {
+  const color = value ? '#B197FC' : '#868E96';
+
+  return(
+    <View style={{marginRight:5}}>
+      <Text style={{color}}>{caption}</Text>
+    </View>
+  )
+}

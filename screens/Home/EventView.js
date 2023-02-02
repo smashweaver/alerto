@@ -18,7 +18,7 @@ const EventView = ({ openModal, coords, task }) => {
   const handlePress = () => openModal(task);
 
   useEffect(() => {
-    console.log(task)
+    //console.log(task)
     if (time >= start && time <= start+task.duration ) {
       console.log('*** event activated:', task.id);
       setFocusStyle(styles.active);

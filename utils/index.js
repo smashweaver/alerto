@@ -75,7 +75,7 @@ const canOccure = (date, occurence) => {
   const map = new Map(Object.entries({...occurence}));
   const day = dayToString(new Date(date).getDay());
   const v =  map.get(day);
-  console.log({ v, date, day, occurence});
+  //console.log({ v, date, day, occurence});
   return v;
 };
 

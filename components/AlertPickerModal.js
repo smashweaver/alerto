@@ -7,7 +7,7 @@ const Theme = createTheme();
 
 const AlertPickerModal = ({ initial = 0, isVisible=false, onChange, close }) => {
   const handlePress = (level) => {
-    console.log('*** alert:', level);
+    //console.log('*** alert:', level);
     onChange(level);
   };
 
