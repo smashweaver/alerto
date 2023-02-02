@@ -6,6 +6,7 @@ import { DateBar } from './DateBar';
 import { DrawerContentView } from './DrawerContentView';
 import { InputDialog } from './InputDialog';
 import { WeekStrip } from './WeekStrip';
+import { OccurrenceDialog } from './OccurenceDialog';
 
 export {
   Activities,
@@ -16,4 +17,5 @@ export {
   DrawerContentView,
   InputDialog,
   WeekStrip,
+  OccurrenceDialog,
 }

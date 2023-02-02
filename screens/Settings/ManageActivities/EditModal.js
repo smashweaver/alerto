@@ -18,6 +18,7 @@ export const EditModal = ({ visible, activity, ok, close, onDelete }) => {
       style={{ margin: 0}}
     >
       <ActivityForm
+        showOccurence={true}
         name='Edit Activity'
         activity={activity}
         ok={handleSubmit}

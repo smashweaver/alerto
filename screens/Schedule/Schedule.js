@@ -38,7 +38,7 @@ export default function Schedule() {
   const [isEditing, setIsEditing] = useState(false);
   const [activityToEdit, setActivityToEdit] = useState(null);
   const [workingDate, setWorkingDate] = useState(date);
-  const [isProcessing, setProcessing] = useState(false);
+  const [isProcessing, setProcessing] = useState(true);
   const [, setToggle] = useState(false);
 
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
@@ -261,7 +261,7 @@ export default function Schedule() {
   )
 }
 
-function EmptyView({ hidden=false }) {
+function EmptyView({ hidden=true }) {
   const myStyle = hidden ? [styles.hidden] : [styles.flex, styles.shown];
   return (
     <View style={myStyle}>

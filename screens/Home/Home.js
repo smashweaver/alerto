@@ -41,7 +41,7 @@ export default function Home() {
   const [scrollRef, setScrollRef] = useState(null);
   const [isShowEventModal, setShowEventModal] = useState(false);
   const [modalData, setModalData] = useState(null);
-  const [isScheduleLoaded, setLoaded] = useState(false);
+  const [isProcessing, setProcessing] = useState(true);
   const [, setToggle] = useState(false);
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
   const finder = useRef(null);
@@ -65,9 +65,9 @@ export default function Home() {
   const isEmpty = !tasks.length;
 
   /* const createSchedule = () => {
-    setLoaded(false);
+    setProcessing(true);
     createScheduleFromTemplate(profile, user.uid, date)
-    .then(() => setLoaded(true));
+    .then(() => setProcessing(false));
   }; */
 
   const scrollTo = (id) => {
@@ -81,7 +81,7 @@ export default function Home() {
   };
 
   const scrollToNearest = (start) => {
-    if (!isScheduleLoaded) return;
+    if (isProcessing) return;
     clearTimeout(finder.current);
     finder.current = setTimeout(() => {
       if (tasks.length) {
@@ -119,9 +119,9 @@ export default function Home() {
   useEffect(() => {
     console.log('*** date changes', { date });
     //createSchedule();
-    setTimeout(() => setLoaded(true), 1000);
+    setTimeout(() => setProcessing(false), 1000);
 
-    return () => setLoaded(false);
+    return () => setProcessing(true);
   }, [date]);
 
   useEffect(() => {
@@ -139,7 +139,8 @@ export default function Home() {
       <View style={styles.container}>
         <Toolbar />
         <DateBar date={date} />
-        <EmptyView hidden={isScheduleLoaded ? !isEmpty : true} />
+
+        <EmptyView hidden={!isProcessing ? !isEmpty : true} />
 
         <NormalView
           hidden={isEmpty}
@@ -151,7 +152,8 @@ export default function Home() {
       </View>
 
       <EventModal visible={isShowEventModal} close={closeModal} task={modalData} />
-      <ActivityModal visible={!isScheduleLoaded} />
+
+      <ActivityModal visible={isProcessing} />
     </View>
   )
 }
@@ -174,7 +176,7 @@ function NormalView({ coords, tasks, openModal, setScrollRef, hidden=false }) {
   )
 }
 
-function EmptyView({ hidden=false }) {
+function EmptyView({ hidden=true }) {
   const myStyle = hidden ? [styles.hidden] : [styles.flex, styles.shown];
   return (
     <View style={myStyle}>

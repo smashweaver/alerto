@@ -3,9 +3,9 @@ import { StyleSheet, Modal, View, Text, TouchableOpacity } from 'react-native';
 import { createTheme } from '../themes';
 import { FontAwesome } from '@expo/vector-icons';
 
-const AlertPickerModal = ({ initial = 0, onChange, close}) => {
-  const Theme = createTheme();
+const Theme = createTheme();
 
+const AlertPickerModal = ({ initial = 0, isVisible=false, onChange, close }) => {
   const handlePress = (level) => {
     console.log('*** alert:', level);
     onChange(level);
@@ -13,14 +13,14 @@ const AlertPickerModal = ({ initial = 0, onChange, close}) => {
 
   return (
     <Modal
-      visible={true}
+      visible={isVisible}
       transparent={true}
       onRequestClose={close}
     >
       <View style={styles.container}>
         <View style={[styles.content, styles.shadow]}>
-          <View style={[styles.header, styles.centered]}>
-            <Text style={{color:'#000', fontSize:20, fontWeight: '700'}}>Alert Level</Text>
+          <View style={[styles.header]}>
+            <Text style={styles.headerText}>Alert</Text>
           </View>
 
           <View style={styles.body}>
@@ -37,13 +37,12 @@ const AlertPickerModal = ({ initial = 0, onChange, close}) => {
               <TouchableOpacity onPress={() => handlePress(3)}>
                 <FontAwesome name="bell-o" size={40} color='red' />
               </TouchableOpacity>
-
             </View>
           </View>
 
-          <View style={[styles.actionButtons, styles.centered]}>
+          <View style={[styles.buttons]}>
               <TouchableOpacity onPress={close}>
-                <Text style={{fontSize:20, color: Theme.colors.primary}}>Cancel</Text>
+                <Text style={styles.buttonText}>CANCEL</Text>
               </TouchableOpacity>
           </View>
         </View>
@@ -76,25 +75,32 @@ const styles = StyleSheet.create({
   centered: {
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'space-around',
   },
   header: {
     padding: 20,
-    borderBottomWidth: StyleSheet.hairlineWidth
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: '500',
   },
   body: {
-    flexGrow: 1,
-    backgroundColor: '#F8F9FA',
-    paddingVertical: 20
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: Theme.colors.border,
+    height: 120,
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    fontSize: 14,
+    color:Theme.colors.primary,
   },
   buttons: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'flex-end',
+    paddingTop: 30,
+    paddingBottom: 20,
     paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-  actionButtons: {
-    paddingVertical: 10,
-    borderTopWidth: StyleSheet.hairlineWidth
   }
 });
 

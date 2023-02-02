@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 
 import Dialog from "react-native-dialog";
 
-export function InputDialog({ title, initial, cancel, ok }) {
+export function InputDialog({ isVisible=false, title, initial, cancel, ok }) {
   const [value, setValue] = useState(initial) ;
 
   const handleOk = () => {
@@ -11,7 +11,7 @@ export function InputDialog({ title, initial, cancel, ok }) {
   };
 
   return (
-    <Dialog.Container visible={true}>
+    <Dialog.Container visible={isVisible}>
       <Dialog.Title>
         <Text style={{color: '#000'}}>{title}</Text>
       </Dialog.Title>

@@ -45,6 +45,7 @@ export const AddModal = ({  visible, ok, close, }) => {
       style={{ margin: 0}}
     >
       <ActivityForm
+        showOccurence={true}
         name='Add Activity'
         activity={activity}
         ok={handleSubmit}

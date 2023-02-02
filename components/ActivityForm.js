@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useMemo, useState} from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 // import DateTimePicker from '@react-native-community/datetimepicker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createTheme } from '../themes';
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,15 +21,33 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { getFormattedTime } from '../utils';
 import { InputDialog } from './InputDialog';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AlertPickerModal } from './AlertPickerModal';
+import { OccurrenceDialog } from './OccurenceDialog';
 import { Button } from 'react-native-paper';
 
 import { normalizeMin, normalizeDate } from '../utils';
 
 const Theme = createTheme();
 
-export const ActivityForm = ({ activity, ok, close, name, onDelete }) => {
+const getOccurenceText = (value) => {
+  if (!value) return '';
+
+  const a = [];
+  if (value.sun) a.push('Sun');
+  if (value.mon) a.push('Mon');
+  if (value.tue) a.push('Tue');
+  if (value.wed) a.push('Wed');
+  if (value.thu) a.push('Thu');
+  if (value.fri) a.push('Fri');
+  if (value.sat) a.push('Sat');
+
+  if (a.length === 0) return 'Disabled';
+  if (a.length === 7) return 'Everyday';
+
+  return a.join(', ');
+};
+
+export const ActivityForm = ({ activity, ok, close, name, showOccurence=false, onDelete=()=>{} }) => {
   const data = { ...activity };
   const insets = useSafeAreaInsets();
   const [title, setTitle] = useState(data.title);
@@ -40,47 +59,28 @@ export const ActivityForm = ({ activity, ok, close, name, onDelete }) => {
 
   // valid only in profile.events
   const [custom, setCustom ] = useState(data.custom);
-  const [occurence] = useState(data.occurence || false);
+  const [occurence, setOccurence] = useState(data.occurence || false);
   const [disable, setDisable] = useState(data.disable || false);
 
   const [pickTime, setPickTime] = useState(false);
   const [pickNote, setPickNote] = useState(false);
   const [pickAlert, setPickAlert] = useState(false);
   const [pickDuration, setPickDuration] = useState(false);
+  const [pickOccurence, setPickOccurence] = useState(false);
   const [date, setDate] = useState(new Date());
   const [formattedTime, setFormattedTime] = useState(getFormattedTime(hour, min));
   const [color, setColor] = useState('black');
+  const occurenceText = useMemo(() => getOccurenceText(occurence), [occurence]);
 
   const handleCancel = () => close();
   const handleCancelAlert = () => setPickAlert(false);
   const handleCancelChangeNote = () => setPickNote(false);
+  const handleCancelOccurence = () => setPickOccurence(false);
   const handleTime = () => setPickTime(true);
   const handleNote = () => setPickNote(true);
   const handleAlert = () => setPickAlert(true);
   const handleDuration = () => setPickDuration(true);
-
-  const handleDurationChange = (newDate) => {
-    const hrs = newDate.getHours();
-    const mins = newDate.getMinutes();
-    const value = hrs * 60 + mins;
-    console.log('*** change duration:', value);
-    setDuration(value);
-    setPickDuration(false);
-  };
-
-  const handleTimeChange = (newDate) => {
-    const newHour = newDate.getHours();
-    const newMin = newDate.getMinutes();
-    console.log('*** change time:', getFormattedTime(newHour, newMin));
-    setHour(newHour);
-    setMin(newMin);
-    setPickTime(false);
-  };
-
-  const handleChangeNote = (value) => {
-    setPickNote(false);
-    setNote(value)
-  };
+  const handleOccurence = () => setPickOccurence(true);
 
   const handleSubmit = () => {
     if (!title) {
@@ -103,9 +103,38 @@ export const ActivityForm = ({ activity, ok, close, name, onDelete }) => {
         duration,
         custom,
         occurence,
-        disable
+        disable,
       });
     }
+  };
+
+  const handleChangeOccurence = (value) => {
+    console.log('*** change occurence:', value);
+    setOccurence({...value});
+    setPickOccurence(false);
+  };
+
+  const handleChangeDuration = (newDate) => {
+    const hrs = newDate.getHours();
+    const mins = newDate.getMinutes();
+    const value = hrs * 60 + mins;
+    console.log('*** change duration:', value);
+    setDuration(value);
+    setPickDuration(false);
+  };
+
+  const handleChangeTime = (newDate) => {
+    const newHour = newDate.getHours();
+    const newMin = newDate.getMinutes();
+    console.log('*** change time:', getFormattedTime(newHour, newMin));
+    setHour(newHour);
+    setMin(newMin);
+    setPickTime(false);
+  };
+
+  const handleChangeNote = (value) => {
+    setPickNote(false);
+    setNote(value)
   };
 
   const handleChangeAlert = (level) => {
@@ -148,18 +177,18 @@ export const ActivityForm = ({ activity, ok, close, name, onDelete }) => {
         <TouchableOpacity
           onPress={handleCancel}
         >
-          <Feather name="x" size={28} color={Theme.ModalHeaderTextColor}  />
+          <Feather name="x" size={24} color={Theme.ModalHeaderTextColor}  />
         </TouchableOpacity>
 
-        <Text style={[styles.text, { fontSize:24, marginLeft: 20 }]}>{name}</Text>
+        <Text style={[styles.text, { fontSize:22, marginLeft: 20 }]}>{name}</Text>
 
         <TouchableOpacity onPress={handleSubmit}>
-          <Ionicons name="checkmark" size={28} color={Theme.ModalHeaderTextColor} />
+          <Ionicons name="checkmark" size={24} color={Theme.ModalHeaderTextColor} />
         </TouchableOpacity>
       </View>
 
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, padding: 20 }}
+        contentContainerStyle={{ flexGrow: 8, padding: 20 }}
         keyboardShouldPersistTaps='handled'
       >
         <View style={styles.group}>
@@ -208,6 +237,23 @@ export const ActivityForm = ({ activity, ok, close, name, onDelete }) => {
           </View>
         </View>
 
+        {showOccurence &&
+        <View style={styles.group}>
+          <View style={styles.groupIcon}>
+            <MaterialCommunityIcons name="calendar-week" size={20} color='gray' />
+          </View>
+
+          <View style={styles.groupValue}>
+            <TouchableOpacity
+              onPress={handleOccurence}
+            >
+              <Text style={{fontSize: 20, maxHeight: 36, color:'#F8F9FA'}}>
+                {occurenceText}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>}
+
         <View style={styles.group}>
           <View style={styles.groupIcon}>
             <Entypo name="text" size={20} color='gray' />
@@ -242,29 +288,40 @@ export const ActivityForm = ({ activity, ok, close, name, onDelete }) => {
 
       </ScrollView>
 
-      {
-        onDelete && custom &&
-        <View style={{ marginBottom }}>
-          <Button textColor={Theme.colors.primary} onPress={onDelete}>
-            Delete
-          </Button>
-        </View>
-      }
+      <View style={custom ? {marginBottom} : {display:'none'}}>
+        <Button textColor={Theme.colors.primary} onPress={onDelete}>
+          Delete
+        </Button>
+      </View>
 
-      {pickAlert &&
-        <AlertPickerModal
-          initial={alert}
-          close={handleCancelAlert}
-          onChange={handleChangeAlert}
-        />
-      }
+      <OccurrenceDialog
+        value={occurence}
+        isVisible={pickOccurence}
+        onDismiss={handleCancelOccurence}
+        onChange={handleChangeOccurence}
+      />
+
+      <AlertPickerModal
+        isVisible={pickAlert}
+        initial={alert}
+        close={handleCancelAlert}
+        onChange={handleChangeAlert}
+      />
+
+      <InputDialog
+        isVisible={pickNote}
+        title={'Write a Note'}
+        initial={note}
+        ok={handleChangeNote}
+        cancel={(handleCancelChangeNote)}
+      />
 
       <DateTimePickerModal
         isVisible={pickTime}
         date={date}
         mode='time'
         minuteInterval={5}
-        onConfirm={handleTimeChange}
+        onConfirm={handleChangeTime}
         onCancel={() => setPickTime(false)}
       />
 
@@ -275,18 +332,9 @@ export const ActivityForm = ({ activity, ok, close, name, onDelete }) => {
         mode='time'
         minuteInterval={5}
         locale='en_GB'
-        onConfirm={handleDurationChange}
+        onConfirm={handleChangeDuration}
         onCancel={() => setPickDuration(false)}
       />
-
-      {pickNote &&
-        <InputDialog
-          title={'Write a Note'}
-          initial={note}
-          ok={handleChangeNote}
-          cancel={(handleCancelChangeNote)}
-        />
-      }
     </View>
   );
 };

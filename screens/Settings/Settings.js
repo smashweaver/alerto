@@ -112,7 +112,7 @@ export default function Settings({ route: { params } }) {
           </View>
           <View style={activitiesGroupStyle}>
             <TouchableOpacity disabled={isActivitiesDisabled} onPressOut={manageActivities}>
-              <Text style={{fontSize: 20, color:Theme.colors.text}}>{'Set your default activities'}</Text>
+              <Text style={{fontSize: 20, color:Theme.colors.text}}>{'Set your activities'}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -124,7 +124,7 @@ export default function Settings({ route: { params } }) {
           </View>
           <View>
             <TouchableOpacity onPressOut={retakeSurvey}>
-              <Text style={{fontSize: 20, color:Theme.colors.text}}>{'Retake survey'}</Text>
+              <Text style={{fontSize: 20, color:Theme.colors.text}}>{'Retake the survey'}</Text>
             </TouchableOpacity>
           </View>
         </View>
