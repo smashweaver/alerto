@@ -28,6 +28,8 @@ export default function useNotification({ getEventsForNotification }) {
     if (!data) return;
     console.log('*** createNotification', { data });
 
+    const sound = true;
+    const vibrate = false;
     let title = 'REMINDER';
     switch (data.alert) {
       case 1:
@@ -44,12 +46,11 @@ export default function useNotification({ getEventsForNotification }) {
     }
 
     const body = data.title;
-    const sound = true;
     const priority = Notifications.AndroidNotificationPriority.HIGH
 
     const schedulingOptions = {
-      content: { title, body, sound, priority },
-      trigger: { seconds: 2 },
+      content: { title, body, sound, priority, vibrate },
+      trigger: { seconds: 1 },
     };
 
     Notifications.scheduleNotificationAsync(schedulingOptions);

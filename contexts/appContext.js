@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { Appearance } from 'react-native';
 import { useApi, useAuth, useFirebase, useNotification } from '../hooks';
+import { normalizeMin } from '../utils';
 
 export const AppContext = createContext();
 
@@ -95,8 +96,7 @@ export const AppProvider = ({ children }) => {
       }
 
       const hr = d.getHours();
-      let min = d.getMinutes();
-      min = min - (min % 5);
+      const min = normalizeMin(d.getMinutes());
 
       console.log('*** heartbeat', { hr, min, hour, minutes })
 

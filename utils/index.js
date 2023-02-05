@@ -39,11 +39,7 @@ const isWeekEnd = (dd) => {
 };
 
 const normalizeMin = (m) => {
-  if (m >= 45) return 45;
-  if (m >= 30) return 30;
-  if (m >= 20) return 20;
-  if (m >= 15) return 15;
-  return 0;
+  return m - (m % 5);
 };
 
 const normalizeDate = (h, m) => {
