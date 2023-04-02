@@ -62,13 +62,14 @@ export default function Home() {
   }, [uid, date]);
 
   const tasks = useStream(qryEvents, reRender, createStream);
-  const isEmpty = !tasks.length;
+  console.log(tasks.length);
+  const isEmpty = useMemo(() => !tasks.length, [tasks]);
 
-  /* const createSchedule = () => {
+  const createSchedule = () => {
     setProcessing(true);
     createScheduleFromTemplate(profile, user.uid, date)
     .then(() => setProcessing(false));
-  }; */
+  };
 
   const scrollTo = (id) => {
     if (!id) return;
@@ -118,10 +119,10 @@ export default function Home() {
 
   useEffect(() => {
     console.log('*** date changes', { date });
-    //createSchedule();
-    setTimeout(() => setProcessing(false), 1000);
+    createSchedule();
+    // setTimeout(() => setProcessing(false), 1000);
 
-    return () => setProcessing(true);
+    // return () => setProcessing(true);
   }, [date]);
 
   useEffect(() => {

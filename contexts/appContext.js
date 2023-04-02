@@ -1,8 +1,23 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { format } from 'date-fns';
-import { Appearance } from 'react-native';
+import { Appearance, AppState } from 'react-native';
 import { useApi, useAuth, useFirebase, useNotification } from '../hooks';
 import { normalizeMin } from '../utils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as BackgroundFetch from 'expo-background-fetch';
+import * as TaskManager from 'expo-task-manager';
+
+const BACKGROUND_FETCH_TASK = 'background-fetch';
+
+TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
+  const now = Date.now();
+
+  console.log(`Got background fetch call at date: ${new Date(now).toISOString()}`);
+  // scheduleNotification();
+
+  // Be sure to return the successful result type!
+  return BackgroundFetch.BackgroundFetchResult.NewData;
+});
 
 export const AppContext = createContext();
 
@@ -16,6 +31,7 @@ export const AppProvider = ({ children }) => {
   const [time, setTime] = useState(0);
   const [profile, setProfile] = useState(null);
   const [features] = useState({ surveyEnabled: true });
+  const [appState, setAppState] = useState(null);
 
   const { db, createStream  } = useFirebase();
 
@@ -38,10 +54,15 @@ export const AppProvider = ({ children }) => {
   const notify = useNotification({ getEventsForNotification });
 
   const onUserChanged = async (userData) => {
+    const email = userData && userData.email || null;
+    console.log('*** user:', email);
     if (userData) {
       const { uid } = userData;
       const userProfile = await getProfile(uid);
       setProfile(userProfile);
+      await AsyncStorage.setItem('uid', uid);
+    } else {
+      await AsyncStorage.removeItem('uid');
     }
     setUser(userData);
   };
@@ -58,6 +79,16 @@ export const AppProvider = ({ children }) => {
   const phoneThemeChanged = (theme) => {
     // console.log('*** Appearance.changeListener\n', JSON.stringify(theme, null, 2));
     setScheme(theme.colorScheme);
+  };
+
+  const appStateChanged = (newAppState) => {
+    console.log('*** app state:', newAppState);
+    setAppState(newAppState);
+    if (newAppState === 'background') {
+      // register
+    } else {
+      // unregister
+    }
   };
 
   const refreshProfile = async (uid) => {
@@ -111,11 +142,15 @@ export const AppProvider = ({ children }) => {
       }
     }, 60000);
 
-    const subscription = Appearance.addChangeListener(phoneThemeChanged);
+    const themeListener = Appearance.addChangeListener(phoneThemeChanged);
+    const stateListener = AppState.addEventListener('change', appStateChanged);
+
+    AppState.add
 
     return () => {
       clearInterval(timer);
-      subscription.remove();
+      themeListener.remove();
+      stateListener.remove();
     }
   }, []);
 
@@ -127,7 +162,7 @@ export const AppProvider = ({ children }) => {
       console.log('*** time changed:', { hour, min, newTime });
       setTime(newTime);
     }
-  }, [hour, minutes]);
+  }, [time, hour, minutes]);
 
   /* useEffect(() => {
     const subscription = Appearance.addChangeListener(phoneThemeChanged);
@@ -145,6 +180,7 @@ export const AppProvider = ({ children }) => {
     date,
     colorScheme,
     features,
+    appState,
 
     auth: {
       isAuthReady,

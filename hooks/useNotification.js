@@ -57,7 +57,7 @@ export default function useNotification({ getEventsForNotification }) {
   };
 
   const handleNotification = (notification) => {
-    console.log('*** fire notification:', notification.request.content.body);
+    console.log('*** fire notification:', notification.request.content);
   };
 
   // todo: this should be a background task

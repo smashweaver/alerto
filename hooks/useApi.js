@@ -11,9 +11,9 @@ import {
   where,
 } from 'firebase/firestore';
 
-// import uuid from 'react-native-uuid';
 import { cycleToEventsMap } from '../constants';
 import { canOccure } from '../utils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function useApi(db) {
   const getEventsByDate = async (ownerId, date) => {
