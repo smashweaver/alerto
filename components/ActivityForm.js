@@ -47,7 +47,7 @@ const getOccurenceText = (value) => {
   return a.join(', ');
 };
 
-export const ActivityForm = ({ activity, ok, close, name, showOccurence=false, onDelete=()=>{} }) => {
+export const ActivityForm = ({ activity, ok, close, name, showOccurence=false, isNew=false, onDelete=()=>{} }) => {
   const data = { ...activity };
   const insets = useSafeAreaInsets();
   const [title, setTitle] = useState(data.title);
@@ -288,7 +288,7 @@ export const ActivityForm = ({ activity, ok, close, name, showOccurence=false, o
 
       </ScrollView>
 
-      <View style={custom ? {marginBottom} : {display:'none'}}>
+      <View style={custom && !isNew ? {marginBottom} : {display:'none'}}>
         <Button textColor={Theme.colors.primary} onPress={onDelete}>
           Delete
         </Button>

@@ -3,9 +3,26 @@ import DrawerNavigator from '../navigation/DrawerNavigator';
 import { NavigationContainer } from '@react-navigation/native';
 import { AppContext } from '../contexts/appContext';
 import { createTheme } from '../themes';
+import * as BackgroundFetch from 'expo-background-fetch';
+
+const BACKGROUND_TASK_NAME = 'background-fetch';
+
+async function registerBackgroundFetchAsync() {
+  console.log('*** register background task');
+  return await BackgroundFetch.registerTaskAsync(BACKGROUND_TASK_NAME, {
+    minimumInterval: 60, // 5 minutes
+    stopOnTerminate: false, // android only,
+    startOnBoot: true, // android only
+  });
+}
+
+async function unregisterBackgroundFetchAsync() {
+  console.log('*** unregister background task');
+  return await BackgroundFetch.unregisterTaskAsync(BACKGROUND_TASK_NAME);
+}
 
 export default function Main() {
-  const { user, date, time, phone, profile } = useContext(AppContext);
+  const { appState, user, date, time, phone, profile } = useContext(AppContext);
   const theme = createTheme();
 
   const uid = useMemo(() => {
@@ -15,8 +32,8 @@ export default function Main() {
   }, [user]);
 
   useEffect(() => {
-    console.log('*** mounting Main');
-    return () => console.log('*** unmounting Main');
+    registerBackgroundFetchAsync();
+    () =>  unregisterBackgroundFetchAsync();
   }, []);
 
   useEffect(() => {

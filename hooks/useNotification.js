@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { PermissionStatus } from 'expo-modules-core';
 import * as Notifications from 'expo-notifications';
+import { TouchableRipple } from "react-native-paper";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -57,7 +58,7 @@ export default function useNotification({ getEventsForNotification }) {
   };
 
   const handleNotification = (notification) => {
-    console.log('*** fire notification:', notification.request.content.body);
+    console.log('*** fire notification:', notification.request.content);
   };
 
   // todo: this should be a background task

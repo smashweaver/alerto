@@ -36,6 +36,7 @@ export const AddModal = ({ visible, workingDate, ok, close }) => {
       style={{ margin: 0}}
     >
       <ActivityForm
+        isNew={true}
         name='New Activity'
         activity={activity}
         ok={handleSubmit}

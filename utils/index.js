@@ -1,4 +1,4 @@
-import { addMinutes, format } from 'date-fns';
+import { addMinutes, format, parseISO } from 'date-fns';
 import getDaysOfWeek from './getDaysOfWeek';
 
 const getAlertColor = (alert) => {
@@ -12,6 +12,11 @@ const getAlertColor = (alert) => {
     default:
       return '';
   }
+};
+
+const dayOfWeek = (dateString = '2023-04-12') => {
+  const date = parseISO(dateString);
+  return format(date, 'eee').toLowerCase();
 };
 
 const formatDate = (date = new Date()) => format(date, 'yyyy-MM-dd');
@@ -87,4 +92,5 @@ export {
   getFormattedEndTime,
   dayToString,
   canOccure,
+  dayOfWeek,
 };
