@@ -2,11 +2,12 @@ import React, { createContext, useCallback, useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { Appearance, AppState } from 'react-native';
 import { useApi, useAuth, useFirebase, useNotification } from '../hooks';
-import { normalizeMin } from '../utils';
+import { formatDateTime, normalizeMin } from '../utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
 import uuid from 'react-native-uuid';
+import * as Notifications from 'expo-notifications';
 
 import { getEventsToNotify, scheduleBackgroundNotifications } from './events';
 const BACKGROUND_TASK_NAME = 'background-fetch';
@@ -16,7 +17,7 @@ TaskManager.defineTask(BACKGROUND_TASK_NAME, async () => {
 
   // scheduleNotification();
   const uid = await AsyncStorage.getItem('uid');
-  // console.log(`Got background fetch call at date: ${new Date(now).toISOString()}  uid:${uid}`);
+  console.log(`Got background fetch call at date: ${formatDateTime(new Date())}  uid:${uid}`);
   const events = await getEventsToNotify(uid);
   await scheduleBackgroundNotifications(events);
 
@@ -88,12 +89,10 @@ export const AppProvider = ({ children }) => {
   };
 
   const appStateChanged = async (newAppState) => {
-    console.log('*** app state:', newAppState);
+    console.log(`*** app state: ${newAppState}   ${formatDateTime(new Date())}`);
     setAppState(newAppState);
-    if (newAppState === 'background') {
-      // register
-    } else {
-      // unregister
+    if (newAppState !== 'background') {
+      await Notifications.cancelAllScheduledNotificationsAsync();
     }
   };
 

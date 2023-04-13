@@ -59,17 +59,17 @@ export default function Home() {
     .then(() => setProcessing(false));
   }; */
 
-  const setupData = useCallback(() => {
-    console.log('*** setupData')
+  const setupData = (targetDate) => {
+    console.log('*** setupData', { targetDate, date })
     setProcessing(true);
     setTasks([]);
-    getEventsByDate(uid, date)
+    getEventsByDate(uid, targetDate)
     .then(data => {
       data.sort((x, y) => x.start - y.start);
       setTasks([...data]);
       setProcessing(false);
     });
-  }, [uid, date]);
+  };
 
   const scrollTo = (id) => {
     if (!id) return;
@@ -110,7 +110,7 @@ export default function Home() {
 
   useEffect(() => {
     console.log('*** mounting Home');
-    setupData();
+    setupData(date);
 
     return () => {
       console.log('*** unmounting Home');
@@ -120,11 +120,7 @@ export default function Home() {
 
   useEffect(() => {
     console.log('*** date changes', { date });
-    // createSchedule();
-    // setTimeout(() => setProcessing(false), 1000);
-
-    // return () => setProcessing(true);
-    setupData();
+    setupData(date);
   }, [date, profile]);
 
   useEffect(() => {

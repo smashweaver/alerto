@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Alert, View, StyleSheet, Text } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { getFormattedTime, getDaysOfWeek, isWeekEnd,  } from '../../utils';
@@ -26,10 +26,6 @@ export default function Schedule() {
     colorScheme,
     features,
     api: {
-      removeEventById,
-      updateEvent,
-      createEvent,
-      createScheduleFromTemplate,
       getEventsByDate,
       addDatedEvent,
       removeDatedEvent,
@@ -43,6 +39,8 @@ export default function Schedule() {
   const [workingDate, setWorkingDate] = useState(date);
   const [isProcessing, setProcessing] = useState(false);
   const [, setToggle] = useState(false);
+
+  // console.log('*** Schedule', { workingDate, date });
 
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
   const days = useMemo(() => getDaysOfWeek(Date.parse(date)), [date]);
@@ -66,7 +64,7 @@ export default function Schedule() {
     setIsEditing(false);
     setProcessing(true);
     removeDatedEvent(uid, activity.id, workingDate)
-    .then(() => setupData())
+    .then(() => setupData(workingDate))
     .catch(() => {
       console.log('*** deleting activity failed!')
     })
@@ -118,11 +116,6 @@ export default function Schedule() {
     return [id, payload];
   };
 
-  const sortEvents = async () => {
-    events.sort((x, y) => x.start - y.start);
-    return Promise.resolve();
-  };
-
   const submitActivityChanges = async (activity, data) => {
     closeModal();
     const [id, payload] = createUpdatePayload(activity, data);
@@ -130,11 +123,7 @@ export default function Schedule() {
     setProcessing(true);
     updateDatedEvent(uid, id, date, payload)
     .then(() => {
-      // todo: notify success via toaster
-      // const index = findDataIndex(activity);
-      // events[index] = { ...activity, ...payload };
-      // sortEvents().then(reRender);
-      setupData();
+      setupData(workingDate);
     })
     .catch(() => {
        // todo: notify failure via toaster
@@ -173,7 +162,7 @@ export default function Schedule() {
       // todo: notify success via toaster
       // events.push({ ...data });
       // sortEvents().then(reRender);
-      setupData();
+      setupData(workingDate);
     })
     .catch((error) => {
       // todo: notify failure via toaster
@@ -199,34 +188,31 @@ export default function Schedule() {
     setActivityToEdit(null);
   };
 
-  const setupData = useCallback(() => {
-    console.log('*** setupData')
+  const setupData = (targetDate) => {
+    console.log('*** setupData', { date, workingDate, targetDate })
     setProcessing(true);
     setEvents([]);
-    getEventsByDate(uid, workingDate)
+    getEventsByDate(uid, targetDate)
     .then(data => {
       data.sort((x, y) => x.start - y.start);
       setEvents([...data]);
       setProcessing(false);
     });
-  }, [uid, workingDate]);
+  };
 
   useEffect(() => {
-    console.log('*** profile:',  JSON.stringify(profile, null, 2));
-    /* if (isEditable) {
-      createScheduleFromTemplate(profile, user.uid, workingDate)
-      .then(setupData)
-    } else {
-      setupData();
-    } */
-    setupData()
+    // console.log('*** profile:',  JSON.stringify(profile, null, 2));
+    console.log('*** Schedule HOOK: ', { date, workingDate })
+    setupData(workingDate);
   }, [workingDate, profile]);
 
   useFocusEffect(
     useCallback(() => {
-      console.log('*** screen changed: Schedule');
-      if (!isProcessing) setupData();
-    }, [])
+      console.log('*** screen changed: Schedule', { date, workingDate });
+      //setWorkingDate(workingDate);
+      reRender();
+      if (!isProcessing) setupData(workingDate);
+    }, [workingDate])
   );
 
   return (

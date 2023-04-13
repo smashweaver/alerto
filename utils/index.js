@@ -21,6 +21,8 @@ const dayOfWeek = (dateString = '2023-04-12') => {
 
 const formatDate = (date = new Date()) => format(date, 'yyyy-MM-dd');
 
+const formatDateTime = (date = new Date()) => format(date, 'P p');
+
 const getFormattedTime = (hour, minutes) => {
   const hr = hour > 12 ?  hour - 12 : hour === 0 ? 12 : hour;
   const amPm = hour < 12 ? 'am' : 'pm';
@@ -93,4 +95,5 @@ export {
   dayToString,
   canOccure,
   dayOfWeek,
+  formatDateTime,
 };

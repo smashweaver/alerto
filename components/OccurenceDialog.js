@@ -22,12 +22,6 @@ export function OccurrenceDialog({ value, isVisible=false, onChange=()=>{}, onDi
 
   const handleCancel = () => onDismiss();
 
-  useEffect(() => {
-    console.log('*** mounting OccurenceDialog');
-
-    return () => console.log('*** unmounting OccurenceDialog');
-  }, [])
-
   return (
     <Modal
       visible={isVisible}

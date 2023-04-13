@@ -5,6 +5,8 @@ import { createTheme } from '../../themes';
 export function WeekStrip({ days, today, workingDate, setWorkingDate }) {
   const Theme = createTheme();
 
+  //console.log('*** WeekStrip:', { today, workingDate })
+
   const styles = StyleSheet.create({
     container: {
       display: 'flex',

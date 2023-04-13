@@ -17,17 +17,8 @@ import uuid from 'react-native-uuid';
 import UserStorage from './userStorage';
 
 export default function useApi(db) {
-  const getEventsByDate = async (ownerId, date) => {
-    /* const colRef = collection(db, 'events');
-    const qryRef = query(colRef, where('owner_id', '==', ownerId),  where('date', '==', date));
-    const snap = await getDocs(qryRef);
-    if (!snap.empty) {
-      const data = snap.docs.map(x => ({ ... x.data(), id: x.id }));
-      //console.log('*** getEventsByDate', date, docs);
-      return [...data];
-    }
-    return []; */
-
+  const getEventsByDate = async (ownerId, targetDate) => {
+    console.log('*** getEventsByDate', { targetDate });
     const store = new UserStorage(ownerId);
     const profile = await store.getProfile();
     const { events, dated } = profile;
@@ -35,7 +26,7 @@ export default function useApi(db) {
     const result = [];
 
     events.forEach(data => {
-      if (!canOccure(date, data.occurence)) return;
+      if (!canOccure(targetDate, data.occurence)) return;
       const {
         id,
         title,
@@ -62,8 +53,7 @@ export default function useApi(db) {
       });
     });
 
-    console.log('*** dated:', dated);
-    (dated[date] || []).forEach(data => {
+    (dated[targetDate] || []).forEach(data => {
       const {
         id,
         title,

@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { createTheme } from '../../themes';
 
 export const EventWidget = ({ task, remove, edit }) => {
-  console.log('*** task:', task)
+  // console.log('*** task:', task)
   const { colorScheme } = useContext(AppContext);
   const Theme = createTheme(colorScheme);
   const styles = createStyle('eventWidget', colorScheme);

@@ -1,6 +1,8 @@
 import UserStorage from '../hooks/userStorage';
 import { canOccure, formatDate, normalizeMin } from '../utils';
 import * as Notifications from 'expo-notifications';
+import { format } from 'date-fns';
+import { formatDateTime } from '../utils';
 
 export const scheduleBackgroundNotifications = async (events) => {
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -10,6 +12,8 @@ export const scheduleBackgroundNotifications = async (events) => {
     const { status } = await Notifications.requestPermissionsAsync();
     finalStatus = status;
   }
+
+  console.log('*** BACKGROUND TASK:', { finalStatus });
 
   if (finalStatus !== 'granted') {
     // Handle permission not granted error
@@ -52,7 +56,9 @@ export const scheduleBackgroundNotifications = async (events) => {
       vibrate: [0, 250, 250, 250],
     };
 
-    console.log({ notificationContent, fireDate });
+    const notifyDate = formatDateTime(fireDate);
+
+    console.log('*** NOTIFY: ', { notificationContent, notifyDate });
 
     const notificationId = await Notifications.scheduleNotificationAsync({
       content: notificationContent,
