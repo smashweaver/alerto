@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { PermissionStatus } from 'expo-modules-core';
 import * as Notifications from 'expo-notifications';
+import { TouchableRipple } from "react-native-paper";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({

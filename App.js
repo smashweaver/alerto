@@ -30,7 +30,7 @@ const Screen = () => {
 export default function App() {
   return (
     <AppProvider>
-      <StatusBar style='light' />
+      <StatusBar style='dark' />
       <Screen/>
     </AppProvider>
   )

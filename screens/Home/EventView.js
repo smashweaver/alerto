@@ -19,8 +19,8 @@ const EventView = ({ openModal, coords, task }) => {
 
   useEffect(() => {
     //console.log(task)
-    if (time >= start && time <= start+task.duration ) {
-      console.log('*** event activated:', task.id);
+    if (time >= start && time < start+task.duration ) {
+      console.log('*** event activated:', {task, start});
       setFocusStyle(styles.active);
     } else {
       setFocusStyle(styles.normal);

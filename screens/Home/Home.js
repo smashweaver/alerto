@@ -1,25 +1,15 @@
-import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState, useRef } from 'react';
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { AppContext } from '../../contexts/appContext';
 import { EventListView } from './EventListView';
 import { DateBar } from '../../components';
 import { EventModal } from './EventModal';
-//import { debounce } from 'lodash';
+import { debounce } from 'lodash';
 import { useFocusEffect } from '@react-navigation/native';
 import { useStream } from '../../hooks';
 import { createTheme } from '../../themes';
 import { Toolbar } from './Toolbar';
 import { ActivityModal } from '../../components';
-
-const debounce = (func, delay = 1000) => {
-  let debounceTimer
-  return function() {
-    const context = this
-    const args = arguments
-    clearTimeout(debounceTimer)
-    debounceTimer = setTimeout(() => func.apply(context, args), delay)
-  }
-}
 
 const Theme = createTheme();
 
@@ -30,6 +20,7 @@ export default function Home() {
     time,
     date,
     api: {
+      getEventsByDate,
       getScheduleQuery,
       createScheduleFromTemplate,
     },
@@ -37,22 +28,20 @@ export default function Home() {
       createStream,
     },
   } = useContext(AppContext);
+  const [tasks, setTasks] = useState([]);
   const [coords] = useState({});
   const [scrollRef, setScrollRef] = useState(null);
   const [isShowEventModal, setShowEventModal] = useState(false);
   const [modalData, setModalData] = useState(null);
-  const [isProcessing, setProcessing] = useState(true);
+  const [isProcessing, setProcessing] = useState(false);
   const [, setToggle] = useState(false);
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
   const finder = useRef(null);
 
-  const uid = useMemo(() => {
-    const u = user || { uid: null };
-    // console.log('*** memoizing uid:', { uid: u.uid });
-    return u.uid;
-  }, [user]);
+  const { uid } = user || {};
+  const isEmpty = !tasks.length;
 
-  const qryEvents = useMemo(() => {
+  /* const qryEvents = useMemo(() => {
     let qry = null;
     if (uid) {
       qry = getScheduleQuery(uid, date);
@@ -63,13 +52,24 @@ export default function Home() {
 
   const tasks = useStream(qryEvents, reRender, createStream);
   console.log(tasks.length);
-  const isEmpty = useMemo(() => !tasks.length, [tasks]);
 
   const createSchedule = () => {
     setProcessing(true);
     createScheduleFromTemplate(profile, user.uid, date)
     .then(() => setProcessing(false));
-  };
+  }; */
+
+  const setupData = useCallback(() => {
+    console.log('*** setupData')
+    setProcessing(true);
+    setTasks([]);
+    getEventsByDate(uid, date)
+    .then(data => {
+      data.sort((x, y) => x.start - y.start);
+      setTasks([...data]);
+      setProcessing(false);
+    });
+  }, [uid, date]);
 
   const scrollTo = (id) => {
     if (!id) return;
@@ -110,6 +110,7 @@ export default function Home() {
 
   useEffect(() => {
     console.log('*** mounting Home');
+    setupData();
 
     return () => {
       console.log('*** unmounting Home');
@@ -119,21 +120,25 @@ export default function Home() {
 
   useEffect(() => {
     console.log('*** date changes', { date });
-    createSchedule();
+    // createSchedule();
     // setTimeout(() => setProcessing(false), 1000);
 
     // return () => setProcessing(true);
-  }, [date]);
+    setupData();
+  }, [date, profile]);
 
   useEffect(() => {
     console.log('*** time changed:', time);
+    reRender();
     scrollToNearest(time);
   }, [time]);
 
-  useFocusEffect(() => {
-    //console.log('*** screen changed: Home');
-    scrollToNearest(time);
-  });
+  useFocusEffect(
+    useCallback(() => {
+      console.log('*** screen changed: Home');
+      scrollToNearest(time);
+    }, [])
+  );
 
   return (
     <View style={{flex:1}}>

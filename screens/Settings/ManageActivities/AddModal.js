@@ -1,5 +1,6 @@
 import { Modal } from 'react-native';
 import { ActivityForm } from '../../../components';
+import uuid from 'react-native-uuid';
 
 export const AddModal = ({  visible, ok, close, }) => {
   const today = new Date();
@@ -34,6 +35,7 @@ export const AddModal = ({  visible, ok, close, }) => {
   };
 
   const handleSubmit = (payload) => {
+    payload.id = uuid.v4(),
     ok(payload);
   };
 
@@ -45,6 +47,7 @@ export const AddModal = ({  visible, ok, close, }) => {
       style={{ margin: 0}}
     >
       <ActivityForm
+        isNew={true}
         showOccurence={true}
         name='Add Activity'
         activity={activity}

@@ -10,10 +10,10 @@ import { AddModal } from './AddModal';
 import { EditModal } from './EditModal';
 import { Toolbar } from './Toolbar';
 import { Activities } from '../../components';
-// import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
 import { createTheme } from '../../themes';
-import { calcStart } from '../../utils';
+import { calcStart, canOccure } from '../../utils';
 import { ActivityModal } from '../../components';
 
 const Theme = createTheme();
@@ -29,8 +29,11 @@ export default function Schedule() {
       removeEventById,
       updateEvent,
       createEvent,
-      getEventsByDate,
       createScheduleFromTemplate,
+      getEventsByDate,
+      addDatedEvent,
+      removeDatedEvent,
+      updateDatedEvent,
     },
   } = useContext(AppContext)
   const [events, setEvents] = useState([]);
@@ -38,14 +41,15 @@ export default function Schedule() {
   const [isEditing, setIsEditing] = useState(false);
   const [activityToEdit, setActivityToEdit] = useState(null);
   const [workingDate, setWorkingDate] = useState(date);
-  const [isProcessing, setProcessing] = useState(true);
+  const [isProcessing, setProcessing] = useState(false);
   const [, setToggle] = useState(false);
 
   const reRender = useMemo(() => debounce(() => setToggle(c => !c), 250), [date]);
   const days = useMemo(() => getDaysOfWeek(Date.parse(date)), [date]);
 
   const { uid } = user || {};
-  const isEditable = date <= workingDate;
+  const isEditable = false; // date <= workingDate;
+  const isNewEnabled = date <= workingDate;
   const isEmpty = !events.length;
 
   const findDataIndex = (data) => events.findIndex(task => task.id === data.id);
@@ -61,8 +65,8 @@ export default function Schedule() {
     const index = findDataIndex(activity)
     setIsEditing(false);
     setProcessing(true);
-    removeEventById(activity.id)
-    .then(() => removeByIndex(index))
+    removeDatedEvent(uid, activity.id, workingDate)
+    .then(() => setupData())
     .catch(() => {
       console.log('*** deleting activity failed!')
     })
@@ -106,7 +110,7 @@ export default function Schedule() {
     if (duration != data.duration)    { payload['duration'] = data.duration }
     if (disable != data.disable)      { payload['disable'] = data.disable }
     if (occurence != data.occurence)  { payload['occurence'] = data.occurence || false }
-    if (is_done != data.is_done)      { payload['is_done'] = data.is_done || false }
+    //if (is_done != data.is_done)      { payload['is_done'] = data.is_done || false }
 
     const start = calcStart(activity, data);
     if (start !== activity.start) { payload['start'] = start; }
@@ -122,20 +126,21 @@ export default function Schedule() {
   const submitActivityChanges = async (activity, data) => {
     closeModal();
     const [id, payload] = createUpdatePayload(activity, data);
-    console.log('*** update payload', payload);
+    console.log('*** updating:', { activity, id, payload });
     setProcessing(true);
-    updateEvent(id, payload)
+    updateDatedEvent(uid, id, date, payload)
     .then(() => {
       // todo: notify success via toaster
-      const index = findDataIndex(activity);
-      events[index] = { ...activity, ...payload };
-      sortEvents().then(reRender);
+      // const index = findDataIndex(activity);
+      // events[index] = { ...activity, ...payload };
+      // sortEvents().then(reRender);
+      setupData();
     })
     .catch(() => {
        // todo: notify failure via toaster
        console.log('*** updating activity failed!');
     })
-    .finally(() => setProcessing(false))
+    .finally(() => setProcessing(false));
   };
 
   const submitNewActivity = (payload = {}) => {
@@ -153,7 +158,7 @@ export default function Schedule() {
       disable,
     } = payload;
 
-    createEvent(uid, workingDate, {
+    addDatedEvent(uid, workingDate, {
       title,
       hour,
       min,
@@ -163,12 +168,12 @@ export default function Schedule() {
       custom,
       disable,
       occurence: false,
-      is_done: false,
     })
-    .then((data) => {
+    .then(() => {
       // todo: notify success via toaster
-      events.push({ ...data });
-      sortEvents().then(reRender);
+      // events.push({ ...data });
+      // sortEvents().then(reRender);
+      setupData();
     })
     .catch((error) => {
       // todo: notify failure via toaster
@@ -178,12 +183,13 @@ export default function Schedule() {
   };
 
   const handleChangeWorkingDate = (newWorkingDate) => {
-    console.log('*** workingdate changed:', newWorkingDate);
+    console.log('*** workingDate changed:', newWorkingDate);
     setWorkingDate(newWorkingDate);
   };
 
   const handleNewActivity = () => {
     console.log('*** new activity');
+    setActivityToEdit(null);
     setIsAdding(true);
   };
 
@@ -194,7 +200,9 @@ export default function Schedule() {
   };
 
   const setupData = useCallback(() => {
+    console.log('*** setupData')
     setProcessing(true);
+    setEvents([]);
     getEventsByDate(uid, workingDate)
     .then(data => {
       data.sort((x, y) => x.start - y.start);
@@ -204,20 +212,22 @@ export default function Schedule() {
   }, [uid, workingDate]);
 
   useEffect(() => {
-    console.log('*** workingDate changed:', workingDate);
-    setEvents([]);
-
-    if (isEditable) {
+    console.log('*** profile:',  JSON.stringify(profile, null, 2));
+    /* if (isEditable) {
       createScheduleFromTemplate(profile, user.uid, workingDate)
       .then(setupData)
     } else {
       setupData();
-    }
-  }, [workingDate]);
+    } */
+    setupData()
+  }, [workingDate, profile]);
 
-  /* useFocusEffect(() => {
-    console.log('*** screen changed: Schedule');
-  }); */
+  useFocusEffect(
+    useCallback(() => {
+      console.log('*** screen changed: Schedule');
+      if (!isProcessing) setupData();
+    }, [])
+  );
 
   return (
     <View style={{flex:1}}>
@@ -234,8 +244,8 @@ export default function Schedule() {
           onEdit={handleEditActivity}
         />
 
-        <View>
-          <Button disabled={!isEditable} textColor={Theme.colors.primary} onPress={handleNewActivity}>
+        <View visible={false}>
+          <Button disabled={!isNewEnabled} textColor={Theme.colors.primary} onPress={handleNewActivity}>
             New Activity
           </Button>
         </View>

@@ -12,6 +12,7 @@ import { EventWidget } from './EventWidget';
 import { EditModal } from './EditModal';
 import { AddModal } from './AddModal';
 import { ActivityModal } from '../../../components';
+import uuid from 'react-native-uuid';
 
 const Theme = createTheme();
 
@@ -36,7 +37,7 @@ export default function ManageActivities() {
     const index = events.findIndex(x => x === activity);
     console.log('*** profile event changed', { index });
     const newEvents = [...events];
-    newEvents[index] = { ...data };
+    newEvents[index] = { ...activity, ...data };
     setProcessing(true);
     await updateProfileEvents(user.uid, { events: [...newEvents]});
     setProcessing(false);

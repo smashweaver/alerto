@@ -13,11 +13,12 @@ import {
 
 import { cycleToEventsMap } from '../constants';
 import { canOccure } from '../utils';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid';
+import UserStorage from './userStorage';
 
 export default function useApi(db) {
   const getEventsByDate = async (ownerId, date) => {
-    const colRef = collection(db, 'events');
+    /* const colRef = collection(db, 'events');
     const qryRef = query(colRef, where('owner_id', '==', ownerId),  where('date', '==', date));
     const snap = await getDocs(qryRef);
     if (!snap.empty) {
@@ -25,12 +26,78 @@ export default function useApi(db) {
       //console.log('*** getEventsByDate', date, docs);
       return [...data];
     }
-    return [];
+    return []; */
+
+    const store = new UserStorage(ownerId);
+    const profile = await store.getProfile();
+    const { events, dated } = profile;
+
+    const result = [];
+
+    events.forEach(data => {
+      if (!canOccure(date, data.occurence)) return;
+      const {
+        id,
+        title,
+        hour,
+        min,
+        duration,
+        note,
+        alert,
+        custom,
+      } = data;
+      const start = hour * 60 + min;
+      result.push({
+        id,
+        title,
+        hour,
+        min,
+        duration,
+        note,
+        alert,
+        custom,
+        start,
+        isEditable: false,
+        isDated: false,
+      });
+    });
+
+    console.log('*** dated:', dated);
+    (dated[date] || []).forEach(data => {
+      const {
+        id,
+        title,
+        hour,
+        min,
+        duration,
+        note,
+        alert,
+        custom,
+      } = data;
+      const start = hour * 60 + min;
+      result.push({
+        id,
+        title,
+        hour,
+        min,
+        duration,
+        note,
+        alert,
+        custom,
+        start,
+        isEditable: true,
+        isDated: true,
+      });
+    })
+
+    return result;
   };
 
   const getEventsForNotification = async (ownerId, date, time) => {
-    console.log('*** getEventsForNotification', { ownerId, date, time});
-    const colRef = collection(db, 'events');
+    // console.log('*** getEventsForNotification', { ownerId, date, time});
+    const events = await getEventsByDate(ownerId, date);
+    // console.log(events);
+    /* const colRef = collection(db, 'events');
     const qryRef = query(colRef,
       where('owner_id', '==', ownerId),
       where('date', '==', date),
@@ -42,8 +109,8 @@ export default function useApi(db) {
       return snap.docs.map(x => {
         return { ...x.data(), id: x.id };
       });
-    }
-    return [];
+    } */
+    return events.filter(x => x.start === time);
   };
 
   const getScheduleQuery = (ownerId, date) => {
@@ -153,13 +220,20 @@ export default function useApi(db) {
   };
 
   const saveProfile = async (id, payload) => {
-    return await updateDoc(doc(db, 'profiles', id), {
+    /* return await updateDoc(doc(db, 'profiles', id), {
       ...payload
-    });
+    }); */
+
+    const store = new UserStorage(id);
+    const profile = await store.getProfile();
+    const data = { ...profile, ...payload };
+    console.log('*** saveProfile:', data);
+    await store.setProfile(data);
+    return data;
   };
 
   const getProfile = async (id) => {
-    const docRef = doc(db, 'profiles', id);
+    /* const docRef = doc(db, 'profiles', id);
     let docSnap = await getDoc(docRef);
     if (!docSnap.exists()) {
       // initialize user profile
@@ -171,7 +245,12 @@ export default function useApi(db) {
       // read it again
       docSnap = await getDoc(docRef);
     }
-    return  docSnap.data();
+    return  docSnap.data(); */
+
+    const store = new UserStorage(id);
+    const data = await store.getProfile();
+    console.log('*** getProfile:', data)
+    return data;
   };
 
   const getEventsBySchedule = (schedule) => {
@@ -191,7 +270,8 @@ export default function useApi(db) {
       ...event,
       custom,
       occurence,
-      disable
+      disable,
+      id: uuid.v4(),
     }));
     return events;
   };
@@ -209,6 +289,10 @@ export default function useApi(db) {
     return await saveProfile(id, survey);
   };
 
+  const setProfileDatedEvents = async (id, dated) => {
+    return await saveProfile(id, dated);
+  }
+
   return {
     createScheduleFromTemplate,
     getScheduleQuery,
@@ -224,5 +308,6 @@ export default function useApi(db) {
     setProfileSchedule,
     setProfileEvents,
     setProfileSurvey,
+    setProfileDatedEvents,
   };
 }

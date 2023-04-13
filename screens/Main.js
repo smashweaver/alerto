@@ -5,12 +5,12 @@ import { AppContext } from '../contexts/appContext';
 import { createTheme } from '../themes';
 import * as BackgroundFetch from 'expo-background-fetch';
 
-const BACKGROUND_FETCH_TASK = 'background-fetch';
+const BACKGROUND_TASK_NAME = 'background-fetch';
 
 async function registerBackgroundFetchAsync() {
   console.log('*** register background task');
-  return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-    minimumInterval: 60 * 3, // 5 minutes
+  return await BackgroundFetch.registerTaskAsync(BACKGROUND_TASK_NAME, {
+    minimumInterval: 60, // 5 minutes
     stopOnTerminate: false, // android only,
     startOnBoot: true, // android only
   });
@@ -18,7 +18,7 @@ async function registerBackgroundFetchAsync() {
 
 async function unregisterBackgroundFetchAsync() {
   console.log('*** unregister background task');
-  return BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK);
+  return await BackgroundFetch.unregisterTaskAsync(BACKGROUND_TASK_NAME);
 }
 
 export default function Main() {

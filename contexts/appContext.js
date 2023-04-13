@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { Appearance, AppState } from 'react-native';
 import { useApi, useAuth, useFirebase, useNotification } from '../hooks';
@@ -6,14 +6,19 @@ import { normalizeMin } from '../utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
+import uuid from 'react-native-uuid';
 
-const BACKGROUND_FETCH_TASK = 'background-fetch';
+import { getEventsToNotify, scheduleBackgroundNotifications } from './events';
+const BACKGROUND_TASK_NAME = 'background-fetch';
 
-TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
+TaskManager.defineTask(BACKGROUND_TASK_NAME, async () => {
   const now = Date.now();
 
-  console.log(`Got background fetch call at date: ${new Date(now).toISOString()}`);
   // scheduleNotification();
+  const uid = await AsyncStorage.getItem('uid');
+  // console.log(`Got background fetch call at date: ${new Date(now).toISOString()}  uid:${uid}`);
+  const events = await getEventsToNotify(uid);
+  await scheduleBackgroundNotifications(events);
 
   // Be sure to return the successful result type!
   return BackgroundFetch.BackgroundFetchResult.NewData;
@@ -49,6 +54,7 @@ export const AppProvider = ({ children }) => {
     setProfileSchedule,
     setProfileEvents,
     setProfileSurvey,
+    setProfileDatedEvents,
   } = useApi(db);
 
   const notify = useNotification({ getEventsForNotification });
@@ -81,7 +87,7 @@ export const AppProvider = ({ children }) => {
     setScheme(theme.colorScheme);
   };
 
-  const appStateChanged = (newAppState) => {
+  const appStateChanged = async (newAppState) => {
     console.log('*** app state:', newAppState);
     setAppState(newAppState);
     if (newAppState === 'background') {
@@ -108,8 +114,36 @@ export const AppProvider = ({ children }) => {
   };
 
   const updateProfileSurvey = async (uid, survey) => {
-    console.log('*** updating profile survey result');
     await setProfileSurvey(uid, survey);
+    await refreshProfile(uid);
+  };
+
+  const addDatedEvent = async (uid, date, data) => {
+    data.id =  uuid.v4();
+    const profile = await getProfile(uid);
+    const { dated } = profile;
+    const events = dated[date] || [];
+    dated[date] = [...events, data];
+    await setProfileDatedEvents(uid, { dated });
+    await refreshProfile(uid);
+  };
+
+  const removeDatedEvent = async(uid, id, date) => {
+    const profile = await getProfile(uid);
+    const { dated } = profile;
+    const events = (dated[date] || []).filter(x => x.id !== id);
+    dated[date] = [...events];
+    await setProfileDatedEvents(uid, { dated });
+    await refreshProfile(uid);
+  };
+
+  const updateDatedEvent = async(uid, id, date, data) => {
+    const profile = await getProfile(uid);
+    const { dated } = profile;
+    const targetEvent = (dated[date] || []).find(x => x.id === id);
+    const events = (dated[date] || []).filter(x => x.id !== id);
+    dated[date] = [...events, { ...targetEvent, ...data }];
+    await setProfileDatedEvents(uid, { dated });
     await refreshProfile(uid);
   };
 
@@ -145,8 +179,6 @@ export const AppProvider = ({ children }) => {
     const themeListener = Appearance.addChangeListener(phoneThemeChanged);
     const stateListener = AppState.addEventListener('change', appStateChanged);
 
-    AppState.add
-
     return () => {
       clearInterval(timer);
       themeListener.remove();
@@ -154,20 +186,19 @@ export const AppProvider = ({ children }) => {
     }
   }, []);
 
-  useEffect(() => {
+  const processTime = useCallback((hour, minutes) => {
     const min = minutes - (minutes % 5);
     const newTime = (hour * 60) + min;
 
     if (time !== newTime) {
-      console.log('*** time changed:', { hour, min, newTime });
+      console.log('*** time changed:', { newTime });
       setTime(newTime);
     }
-  }, [time, hour, minutes]);
+  }, [time]);
 
-  /* useEffect(() => {
-    const subscription = Appearance.addChangeListener(phoneThemeChanged);
-    return () => subscription.remove();
-  }, [setScheme]) */
+  useEffect(() => {
+    processTime(hour, minutes);
+  }, [hour, minutes]);
 
   useEffect(() => {
     console.log('*** phone theme changed:', { colorScheme });
@@ -201,6 +232,9 @@ export const AppProvider = ({ children }) => {
       updateProfileSchedule,
       updateProfileEvents,
       updateProfileSurvey,
+      addDatedEvent,
+      removeDatedEvent,
+      updateDatedEvent,
     },
 
     phone: { notify },
