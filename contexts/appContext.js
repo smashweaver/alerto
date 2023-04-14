@@ -185,7 +185,7 @@ export const AppProvider = ({ children }) => {
     }
   }, []);
 
-  const processTime = useCallback((hour, minutes) => {
+  const processTime = (hour, minutes) => {
     const min = minutes - (minutes % 5);
     const newTime = (hour * 60) + min;
 
@@ -193,7 +193,7 @@ export const AppProvider = ({ children }) => {
       console.log('*** time changed:', { newTime });
       setTime(newTime);
     }
-  }, [time]);
+  };
 
   useEffect(() => {
     processTime(hour, minutes);
