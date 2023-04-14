@@ -132,6 +132,7 @@ export default function Home() {
   useFocusEffect(
     useCallback(() => {
       console.log('*** screen changed: Home');
+      reRender();
       scrollToNearest(time);
     }, [])
   );
