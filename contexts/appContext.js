@@ -146,34 +146,40 @@ export const AppProvider = ({ children }) => {
     await refreshProfile(uid);
   };
 
+  const ticker = () => {
+    const d = new Date();
+
+    const heartbeat = formatDateTime(d);
+    //console.log('*** TIME:', { heartbeat, hour, minutes })
+
+    const fd = format(d, 'yyyy-MM-dd');
+    if (fd !== date) {
+      setDate(fd);
+      setHour(0);
+      setMinutes(0);
+      console.log('*** TIME:', { heartbeat, hr:0, min:0 })
+      return;
+    }
+
+    const hr = d.getHours();
+    const min = normalizeMin(d.getMinutes());
+
+    if (hr !== hour) {
+      setHour(hr);
+      setMinutes(0);
+      console.log('*** TIME:', { heartbeat, hr, min:0 })
+      return;
+    }
+
+    if (min !== minutes) {
+      setMinutes(min);
+      console.log('*** TIME:', { heartbeat, hr, min })
+    }
+  };
+
   // todo: this must be a background task
   useEffect(() => {
-    const timer = setInterval(() => {
-      const d = new Date();
-
-      const fd = format(d, 'yyyy-MM-dd');
-      if (fd !== date) {
-        setDate(fd);
-        setHour(0);
-        setMinutes(0);
-        return;
-      }
-
-      const hr = d.getHours();
-      const min = normalizeMin(d.getMinutes());
-
-      console.log('*** heartbeat', { hr, min, hour, minutes })
-
-      if (hr !== hour) {
-        setHour(hr);
-        setMinutes(0);
-        return;
-      }
-
-      if (min !== minutes) {
-        setMinutes(min);
-      }
-    }, 60000);
+    const timer = setInterval(ticker, 15000);
 
     const themeListener = Appearance.addChangeListener(phoneThemeChanged);
     const stateListener = AppState.addEventListener('change', appStateChanged);
