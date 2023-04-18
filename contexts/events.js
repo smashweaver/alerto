@@ -57,45 +57,37 @@ export const scheduleBackgroundNotifications = async (events) => {
 
     let seconds = differenceInSeconds(fireDate, new Date());
     console.log(`*** [${Device.osName}] fire in ${seconds} secs`);
-    if (seconds < 1) return;
+    if (seconds < 1) {
+      seconds = seconds + 600;  // compensate for delay
+    }
 
-    let trigger = {
-      //date: fireDate,
-      //fireDate: fireDate.getTime(),
-      //hour: event.hour,
-      //minute: event.min,
-      //second: 0,
-      seconds
-    };
-
-    if (Device.osName === 'iOS') {
-      let trigger = {
+    if (seconds > 0) {
+      const trigger = {
         //date: fireDate,
-        fireDate: fireDate.getTime(),
+        //fireDate: fireDate.getTime(),
         //hour: event.hour,
         //minute: event.min,
         //second: 0,
-        seconds: 1,
+        seconds
       };
+
+      const notificationContent = {
+        content: { title, body, sound, priority, vibrate },
+        trigger,
+      };
+
+      const notifyDate = formatDateTime(fireDate);
+
+      console.log(`*** [${Device.osName}] NOTIFY:`, { notificationContent, notifyDate });
+
+      const notificationId = await Notifications.scheduleNotificationAsync(notificationContent);
+
+      notificationIds.push(notificationId);
     }
-
-    const notificationContent = {
-      content: { title, body, sound, priority, vibrate },
-      trigger,
-    };
-
-    const notifyDate = formatDateTime(fireDate);
-
-    console.log(`*** [${Device.osName}] NOTIFY:`, { notificationContent, notifyDate });
-
-    const notificationId = await Notifications.scheduleNotificationAsync(notificationContent);
-
-    notificationIds.push(notificationId);
   }
 
   return notificationIds;
 }
-
 
 const getEvents = async (ownerId, date) => {
   const store = new UserStorage(ownerId);

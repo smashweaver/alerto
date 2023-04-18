@@ -8,6 +8,7 @@ import * as Notifications from 'expo-notifications';
 import { formatDateTime } from '../utils';
 
 const BACKGROUND_TASK_NAME = 'background-fetch';
+const MINIMIMUM_INTERVAL = 120;
 
 async function registerBackgroundFetchAsync() {
   await Notifications.requestPermissionsAsync({
@@ -23,9 +24,9 @@ async function registerBackgroundFetchAsync() {
   if (isBackgroundFetchAvailable) {
     // Register and implement your background task
     console.log('*** register background task:', formatDateTime(new Date()));
-    await BackgroundFetch.setMinimumIntervalAsync(60);
+    await BackgroundFetch.setMinimumIntervalAsync(MINIMIMUM_INTERVAL);
     return await BackgroundFetch.registerTaskAsync(BACKGROUND_TASK_NAME, {
-      minimumInterval: 60, // 15 minutes
+      minimumInterval: MINIMIMUM_INTERVAL,
       stopOnTerminate: true, // android only,
       startOnBoot: false, // android only
     });
