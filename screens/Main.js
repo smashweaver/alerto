@@ -1,20 +1,37 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import DrawerNavigator from '../navigation/DrawerNavigator';
 import { NavigationContainer } from '@react-navigation/native';
 import { AppContext } from '../contexts/appContext';
 import { createTheme } from '../themes';
 import * as BackgroundFetch from 'expo-background-fetch';
+import * as Notifications from 'expo-notifications';
 import { formatDateTime } from '../utils';
 
 const BACKGROUND_TASK_NAME = 'background-fetch';
 
 async function registerBackgroundFetchAsync() {
-  console.log('*** register background task:', formatDateTime(new Date()));
-  return await BackgroundFetch.registerTaskAsync(BACKGROUND_TASK_NAME, {
-    minimumInterval: 60, // 5 minutes
-    stopOnTerminate: false, // android only,
-    startOnBoot: true, // android only
+  await Notifications.requestPermissionsAsync({
+    ios: {
+      allowAlert: true,
+      allowBadge: true,
+      allowSound: true,
+      allowAnnouncements: true,
+    },
   });
+  const status = await BackgroundFetch.getStatusAsync();
+  const isBackgroundFetchAvailable = status === BackgroundFetch.BackgroundFetchStatus.Available;
+  if (isBackgroundFetchAvailable) {
+    // Register and implement your background task
+    console.log('*** register background task:', formatDateTime(new Date()));
+    await BackgroundFetch.setMinimumIntervalAsync(60);
+    return await BackgroundFetch.registerTaskAsync(BACKGROUND_TASK_NAME, {
+      minimumInterval: 60, // 15 minutes
+      stopOnTerminate: true, // android only,
+      startOnBoot: false, // android only
+    });
+  } else {
+    console.log('Background fetch is not available on this device');
+  }
 }
 
 async function unregisterBackgroundFetchAsync() {
@@ -34,7 +51,9 @@ export default function Main() {
 
   useEffect(() => {
     registerBackgroundFetchAsync();
-    () =>  unregisterBackgroundFetchAsync();
+    () =>  {
+      unregisterBackgroundFetchAsync();
+    }
   }, []);
 
   useEffect(() => {

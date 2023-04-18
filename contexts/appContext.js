@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState, useRef } from 'react';
 import { format } from 'date-fns';
 import { Appearance, AppState } from 'react-native';
 import { useApi, useAuth, useFirebase, useNotification } from '../hooks';
@@ -8,16 +8,19 @@ import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
 import uuid from 'react-native-uuid';
 import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 
 import { getEventsToNotify, scheduleBackgroundNotifications } from './events';
 const BACKGROUND_TASK_NAME = 'background-fetch';
+const TICKER_INTERVAL = 15000;
 
-TaskManager.defineTask(BACKGROUND_TASK_NAME, async () => {
+TaskManager.defineTask(BACKGROUND_TASK_NAME, async (taskData) => {
   const now = Date.now();
 
   // scheduleNotification();
   const uid = await AsyncStorage.getItem('uid');
-  console.log(`Got background fetch call at date: ${formatDateTime(new Date())}  uid:${uid}`);
+  console.log(`*** [${Device.osName}] BACKGROUND FETCHING:  ${formatDateTime(new Date())}  uid:${uid}`);
   const events = await getEventsToNotify(uid);
   await scheduleBackgroundNotifications(events);
 
@@ -38,8 +41,8 @@ export const AppProvider = ({ children }) => {
   const [profile, setProfile] = useState(null);
   const [features] = useState({ surveyEnabled: true });
   const [appState, setAppState] = useState(null);
-
   const { db, createStream  } = useFirebase();
+  const timer = useRef(null);
 
   const {
     createScheduleFromTemplate,
@@ -89,12 +92,10 @@ export const AppProvider = ({ children }) => {
   };
 
   const appStateChanged = async (newAppState) => {
-    console.log(`*** app state: ${newAppState}   ${formatDateTime(new Date())}`);
+    console.log(`*** [${Device.osName}] app state: ${newAppState}   ${formatDateTime(new Date())}`);
     setAppState(newAppState);
-    if (newAppState !== 'background') {
-      await Notifications.cancelAllScheduledNotificationsAsync();
-    }
-  };
+    await Notifications.cancelAllScheduledNotificationsAsync();
+   };
 
   const refreshProfile = async (uid) => {
     const userProfile = await getProfile(uid);
@@ -150,14 +151,14 @@ export const AppProvider = ({ children }) => {
     const d = new Date();
 
     const heartbeat = formatDateTime(d);
-    //console.log('*** TIME:', { heartbeat, hour, minutes })
+    console.log(`*** [${Device.osName}] TICKER:`, { heartbeat, hour, minutes })
 
     const fd = format(d, 'yyyy-MM-dd');
     if (fd !== date) {
       setDate(fd);
       setHour(0);
       setMinutes(0);
-      console.log('*** TIME:', { heartbeat, hr:0, min:0 })
+      console.log(`*** [${Device.osName}]  TIME:`, { heartbeat, hr:0, min:0 })
       return;
     }
 
@@ -167,36 +168,51 @@ export const AppProvider = ({ children }) => {
     if (hr !== hour) {
       setHour(hr);
       setMinutes(0);
-      console.log('*** TIME:', { heartbeat, hr, min:0 })
+      console.log(`*** [${Device.osName}] TIME:`, { heartbeat, hr, min:0 })
       return;
     }
 
     if (min !== minutes) {
       setMinutes(min);
-      console.log('*** TIME:', { heartbeat, hr, min })
+      console.log(`*** [${Device.osName}] TIME:`, { heartbeat, hr, min })
     }
   };
 
   // todo: this must be a background task
   useEffect(() => {
-    const timer = setInterval(ticker, 15000);
-
     const themeListener = Appearance.addChangeListener(phoneThemeChanged);
     const stateListener = AppState.addEventListener('change', appStateChanged);
+    timer.current = setInterval(ticker, TICKER_INTERVAL);
 
     return () => {
-      clearInterval(timer);
+      clearInterval(timer.current);
       themeListener.remove();
       stateListener.remove();
     }
   }, []);
+
+  const enableKeepAwake = async () => {
+    await activateKeepAwakeAsync();
+  };
+
+  useEffect(() => {
+    console.log(`*** [${Device.osName}]`, appState);
+    if (appState === 'background') {
+      clearInterval(timer.current);
+      enableKeepAwake();
+    }
+    if (appState === 'active') {
+      timer.current = setInterval(ticker, TICKER_INTERVAL);
+      deactivateKeepAwake();
+    }
+  }, [appState]);
 
   const processTime = (hour, minutes) => {
     const min = minutes - (minutes % 5);
     const newTime = (hour * 60) + min;
 
     if (time !== newTime) {
-      console.log('*** time changed:', { newTime });
+      console.log(`*** [${Device.osName}] time changed:`, { newTime });
       setTime(newTime);
     }
   };

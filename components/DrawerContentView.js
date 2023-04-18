@@ -1,21 +1,23 @@
 import { useContext } from 'react';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
-import { Platform, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { AppContext } from '../contexts/appContext';
 import { createStyle } from '../styles';
 import { Avatar } from 'react-native-paper';
+import * as Notifications from 'expo-notifications';
 import initials from 'initials';
+import * as Device from 'expo-device';
 
 export function DrawerContentView (props) {
   const { colorScheme, user, auth } = useContext(AppContext);
   const styles = createStyle('drawerContent', colorScheme);
 
-
   const { displayName } = user || {};
   const userName = displayName || 'John Doe';
   const userInitials = initials(userName);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await Notifications.cancelAllScheduledNotificationsAsync();
     auth.signOutUser();
   };
 
@@ -41,7 +43,7 @@ export function DrawerContentView (props) {
         <Text style={[styles.buttonText, {fontSize:16, fontWeight: '400'}]}>Logout</Text>
       </TouchableOpacity>
 
-      <View style={{flexGrow:1, maxHeight: Platform.OS === 'ios' ? 45 : 10}}/>
+      <View style={{flexGrow:1, maxHeight: Device.osName === 'iOS' ? 45 : 10}}/>
     </View>
   );
 }

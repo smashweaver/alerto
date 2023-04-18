@@ -24,14 +24,6 @@ export function EventWidget({ task, remove, edit }) {
 
   const handleEdit = () => edit(task);
 
-  // const handleDelete = () => remove(task);
-  // const toggleDisabled = () => {
-  //   setDisabled(prev => !prev);
-  // };
-
-  // const paddingVertical = Platform.OS === 'ios' ? 5 : 0;
-  // const paddingHorizontal = 10;
-
   const endTime = getFormattedEndTime(calcStart(task), task.duration);
 
   return (

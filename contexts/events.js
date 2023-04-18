@@ -1,8 +1,17 @@
 import UserStorage from '../hooks/userStorage';
 import { canOccure, formatDate, normalizeMin } from '../utils';
 import * as Notifications from 'expo-notifications';
-import { format } from 'date-fns';
 import { formatDateTime } from '../utils';
+import * as Device from 'expo-device';
+import { differenceInSeconds } from 'date-fns';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
 export const scheduleBackgroundNotifications = async (events) => {
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -13,7 +22,7 @@ export const scheduleBackgroundNotifications = async (events) => {
     finalStatus = status;
   }
 
-  console.log('*** BACKGROUND TASK:', { finalStatus });
+  console.log(`*** [${Device.osName}] BACKGROUND TASK STATUS:`, { finalStatus });
 
   if (finalStatus !== 'granted') {
     // Handle permission not granted error
@@ -21,12 +30,14 @@ export const scheduleBackgroundNotifications = async (events) => {
   }
 
   const notificationIds = [];
-  await Notifications.cancelAllScheduledNotificationsAsync();
+  // await Notifications.cancelAllScheduledNotificationsAsync();
 
   for (const event of events) {
     const fireDate = new Date();
     fireDate.setHours(event.hour, event.min, 0, 0);
 
+    const sound = true;
+    const vibrate = false;
     let title = 'REMINDER';
     switch (event.alert) {
       case 1:
@@ -41,32 +52,43 @@ export const scheduleBackgroundNotifications = async (events) => {
       default:
         break;
     }
-    const body = event.title;
+    const body = event.title + ' *';
     const priority = Notifications.AndroidNotificationPriority.HIGH
 
+    let seconds = differenceInSeconds(fireDate, new Date());
+    console.log(`*** [${Device.osName}] fire in ${seconds} secs`);
+    if (seconds < 1) return;
+
+    let trigger = {
+      //date: fireDate,
+      //fireDate: fireDate.getTime(),
+      //hour: event.hour,
+      //minute: event.min,
+      //second: 0,
+      seconds
+    };
+
+    if (Device.osName === 'iOS') {
+      let trigger = {
+        //date: fireDate,
+        fireDate: fireDate.getTime(),
+        //hour: event.hour,
+        //minute: event.min,
+        //second: 0,
+        seconds: 1,
+      };
+    }
+
     const notificationContent = {
-      title,
-      body,
-      data: {
-        eventId: event.id,
-      },
-      sound: 'default',
-      priority,
-      channelId: 'events',
-      vibrate: [0, 250, 250, 250],
+      content: { title, body, sound, priority, vibrate },
+      trigger,
     };
 
     const notifyDate = formatDateTime(fireDate);
 
-    console.log('*** NOTIFY: ', { notificationContent, notifyDate });
+    console.log(`*** [${Device.osName}] NOTIFY:`, { notificationContent, notifyDate });
 
-    const notificationId = await Notifications.scheduleNotificationAsync({
-      content: notificationContent,
-      trigger: {
-        date: fireDate,
-        channelId: 'events',
-      },
-    });
+    const notificationId = await Notifications.scheduleNotificationAsync(notificationContent);
 
     notificationIds.push(notificationId);
   }

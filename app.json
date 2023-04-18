@@ -7,6 +7,10 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
+    "platforms": ["ios", "android"],
+    "backgroundFetch": {
+      "enabled": true
+    },
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -23,7 +27,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.jasonjimenez.alerto",
       "infoPlist": {
-        "UIBackgroundModes": ["location", "fetch"]
+        "UIBackgroundModes": ["fetch", "remote-notification"],
+        "UIBackgroundFetchInterval": 60
       }
     },
     "android": {

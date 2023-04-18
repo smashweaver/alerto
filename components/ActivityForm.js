@@ -7,7 +7,6 @@ import {
   Text,
   TouchableOpacity,
   Alert,
-  Platform,
 } from 'react-native';
 // import DateTimePicker from '@react-native-community/datetimepicker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -24,7 +23,7 @@ import { InputDialog } from './InputDialog';
 import { AlertPickerModal } from './AlertPickerModal';
 import { OccurrenceDialog } from './OccurenceDialog';
 import { Button } from 'react-native-paper';
-
+import * as Device from 'expo-device';
 import { normalizeMin, normalizeDate } from '../utils';
 
 const Theme = createTheme();
@@ -143,8 +142,8 @@ export const ActivityForm = ({ activity, ok, close, name, showOccurence=false, i
     setPickAlert(false);
   };
 
-  const marginTop = Platform.OS === 'ios' ? insets.top : 0;
-  const marginBottom = Platform.OS === 'ios' ? insets.bottom + 10: 20;
+  const marginTop = Device.osName === 'iOS' ? insets.top : 0;
+  const marginBottom = Device.osName === 'iOS' ? insets.bottom + 10: 20;
 
   useEffect(() => {
     if (!activity) {
