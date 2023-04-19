@@ -151,7 +151,7 @@ export const AppProvider = ({ children }) => {
     const d = new Date();
 
     const heartbeat = formatDateTime(d);
-    console.log(`*** [${Device.osName}] TICKER:`, { heartbeat, hour, minutes })
+    // console.log(`*** [${Device.osName}] TICKER:`, { heartbeat, hour, minutes })
 
     const fd = format(d, 'yyyy-MM-dd');
     if (fd !== date) {
@@ -197,8 +197,8 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => {
     console.log(`*** [${Device.osName}]`, appState);
+    clearInterval(timer.current);
     if (appState === 'background') {
-      clearInterval(timer.current);
       enableKeepAwake();
     }
     if (appState === 'active') {

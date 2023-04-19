@@ -57,6 +57,7 @@ export default function useNotification({ getEventsForNotification }) {
   const notify = async (notifyUserId, notifyDate, notifyStart) => {
     console.log('*** notify:', { notifyUserId, notifyDate, notifyStart, notificationPermissions});
     if (!isNotificationEnabled) return;
+    await Notifications.cancelAllScheduledNotificationsAsync();
     const events = await getEventsForNotification(notifyUserId, notifyDate, notifyStart);
     events.forEach(event => createNotification(event));
   };
