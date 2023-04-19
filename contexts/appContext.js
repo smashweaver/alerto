@@ -191,20 +191,25 @@ export const AppProvider = ({ children }) => {
     }
   }, []);
 
-  const enableKeepAwake = async () => {
-    await activateKeepAwakeAsync();
+  //const enableKeepAwake = async () => {
+  //  await activateKeepAwakeAsync();
+  //};
+
+  const clearTicker = () => {
+    clearInterval(timer.current);
+    timer.current = null;
   };
 
   useEffect(() => {
     console.log(`*** [${Device.osName}]`, appState);
-    clearInterval(timer.current);
-    if (appState === 'background') {
-      enableKeepAwake();
-    }
+    clearTicker();
+    //if (appState === 'background') {
+    //  enableKeepAwake();
+    //}
     if (appState === 'active') {
       ticker();
       timer.current = setInterval(ticker, TICKER_INTERVAL);
-      deactivateKeepAwake();
+      //deactivateKeepAwake();
     }
   }, [appState]);
 

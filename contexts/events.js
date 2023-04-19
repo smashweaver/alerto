@@ -57,8 +57,12 @@ export const scheduleBackgroundNotifications = async (events) => {
 
     let seconds = differenceInSeconds(fireDate, new Date());
     console.log(`*** [${Device.osName}] fire in ${seconds} secs`);
+
+    const lagTime = Device.osName === 'iOS' ? 900 : 120;
+
+
     if (seconds < 1) {
-      seconds = seconds + 600;  // compensate for delay
+      seconds = seconds + lagTime;  // compensate for lag in background notification
     }
 
     if (seconds > 0) {
