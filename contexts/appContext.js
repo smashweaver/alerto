@@ -13,7 +13,7 @@ import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 
 import { getEventsToNotify, scheduleBackgroundNotifications } from './events';
 const BACKGROUND_TASK_NAME = 'background-fetch';
-const TICKER_INTERVAL = 5000;
+const TICKER_INTERVAL = 60000;
 
 TaskManager.defineTask(BACKGROUND_TASK_NAME, async (taskData) => {
   const now = Date.now();
@@ -151,7 +151,7 @@ export const AppProvider = ({ children }) => {
     const d = new Date();
 
     const heartbeat = formatDateTime(d);
-    // console.log(`*** [${Device.osName}] TICKER:`, { heartbeat, hour, minutes })
+    console.log(`*** [${Device.osName}] TICKER:`, { heartbeat, hour, minutes })
 
     const fd = format(d, 'yyyy-MM-dd');
     if (fd !== date) {
@@ -202,6 +202,7 @@ export const AppProvider = ({ children }) => {
       enableKeepAwake();
     }
     if (appState === 'active') {
+      ticker();
       timer.current = setInterval(ticker, TICKER_INTERVAL);
       deactivateKeepAwake();
     }
@@ -258,7 +259,7 @@ export const AppProvider = ({ children }) => {
       updateDatedEvent,
     },
 
-    phone: { notify },
+    phone: { notify, ticker },
 
     stream: { createStream  }
   };
