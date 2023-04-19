@@ -30,7 +30,7 @@ export const scheduleBackgroundNotifications = async (events) => {
   }
 
   const notificationIds = [];
-  // await Notifications.cancelAllScheduledNotificationsAsync();
+  await Notifications.cancelAllScheduledNotificationsAsync();
 
   for (const event of events) {
     const fireDate = new Date();
