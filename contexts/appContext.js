@@ -13,7 +13,7 @@ import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 
 import { getEventsToNotify, scheduleBackgroundNotifications } from './events';
 const BACKGROUND_TASK_NAME = 'background-fetch';
-const TICKER_INTERVAL = 15000;
+const TICKER_INTERVAL = 5000;
 
 TaskManager.defineTask(BACKGROUND_TASK_NAME, async (taskData) => {
   const now = Date.now();
