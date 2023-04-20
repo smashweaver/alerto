@@ -24,7 +24,7 @@ async function registerBackgroundFetchAsync() {
   if (isBackgroundFetchAvailable) {
     // Register and implement your background task
     console.log('*** register background task:', formatDateTime(new Date()));
-    await BackgroundFetch.setMinimumIntervalAsync(MINIMIMUM_INTERVAL);
+
     return await BackgroundFetch.registerTaskAsync(BACKGROUND_TASK_NAME, {
       minimumInterval: MINIMIMUM_INTERVAL,
       stopOnTerminate: true, // android only,

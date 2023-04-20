@@ -14,6 +14,7 @@ import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { getEventsToNotify, scheduleBackgroundNotifications } from './events';
 const BACKGROUND_TASK_NAME = 'background-fetch';
 const TICKER_INTERVAL = 60000;
+const MINIMIMUM_INTERVAL = 120;
 
 TaskManager.defineTask(BACKGROUND_TASK_NAME, async (taskData) => {
   const now = Date.now();
@@ -200,12 +201,14 @@ export const AppProvider = ({ children }) => {
     timer.current = null;
   };
 
+  const setBackgroundFetchInterval = async () => {
+    await BackgroundFetch.setMinimumIntervalAsync(MINIMIMUM_INTERVAL);
+  };
+
   useEffect(() => {
     console.log(`*** [${Device.osName}]`, appState);
     clearTicker();
-    //if (appState === 'background') {
-    //  enableKeepAwake();
-    //}
+    setBackgroundFetchInterval();
     if (appState === 'active') {
       ticker();
       timer.current = setInterval(ticker, TICKER_INTERVAL);

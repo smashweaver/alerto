@@ -5,6 +5,8 @@ import { formatDateTime } from '../utils';
 import * as Device from 'expo-device';
 import { differenceInSeconds } from 'date-fns';
 
+const MINIMIMUM_INTERVAL = 120;
+
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -58,11 +60,10 @@ export const scheduleBackgroundNotifications = async (events) => {
     let seconds = differenceInSeconds(fireDate, new Date());
     console.log(`*** [${Device.osName}] fire in ${seconds} secs`);
 
-    const lagTime = Device.osName === 'iOS' ? 900 : 120;
-
+    // const lagTime = Device.osName === 'iOS' ? 900 : 120;
 
     if (seconds < 1) {
-      seconds = seconds + lagTime;  // compensate for lag in background notification
+      seconds = seconds + MINIMIMUM_INTERVAL;  // compensate for lag in background notification
     }
 
     if (seconds > 0) {
