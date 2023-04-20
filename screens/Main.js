@@ -25,11 +25,13 @@ async function registerBackgroundFetchAsync() {
     // Register and implement your background task
     console.log('*** register background task:', formatDateTime(new Date()));
 
-    return await BackgroundFetch.registerTaskAsync(BACKGROUND_TASK_NAME, {
+    await BackgroundFetch.registerTaskAsync(BACKGROUND_TASK_NAME, {
       minimumInterval: MINIMIMUM_INTERVAL,
       stopOnTerminate: true, // android only,
       startOnBoot: false, // android only
     });
+
+    return await BackgroundFetch.setMinimumIntervalAsync(MINIMIMUM_INTERVAL);
   } else {
     console.log('Background fetch is not available on this device');
   }
