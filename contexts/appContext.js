@@ -67,7 +67,6 @@ export const AppProvider = ({ children }) => {
 
   const onUserChanged = async (userData) => {
     const email = userData && userData.email || null;
-    console.log('*** user:', userData);
     if (userData) {
       const { uid } = userData;
       console.log({ uid });
@@ -107,6 +106,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const resetProfile = async (uid) => {
+    console.log('*** resetting profile:', uid);
     await clearProfile(uid);
     await refreshProfile(uid);
   };

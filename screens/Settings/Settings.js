@@ -26,7 +26,7 @@ const sleepCycle = (code) => {
 };
 
 export default function Settings({ route: { params } }) {
-  const { profile, features: { surveyEnabled }, api: { resetProfile } } = useContext(AppContext);
+  const { user, profile, features: { surveyEnabled }, api: { resetProfile } } = useContext(AppContext);
   const [recommendations, isProcessing, process] = useRecommender();
   const [surveyText, setSurveyText] = useState('...');
 
@@ -41,7 +41,7 @@ export default function Settings({ route: { params } }) {
   const scheduleText = sleepCycle(profile.schedule);
 
   const reset = () => {
-    resetProfile();
+    resetProfile(user.uid);
   };
 
   const manageActivities = () => {
