@@ -243,6 +243,11 @@ export default function useApi(db) {
     return data;
   };
 
+  const clearProfile = async (id) => {
+    const store = new UserStorage(id);
+    await store.clearData();
+  };
+
   const getEventsBySchedule = (schedule) => {
     const occurence = {
       mon: true,
@@ -295,6 +300,7 @@ export default function useApi(db) {
     retrieveEventById,
     saveProfile,
     getProfile,
+    clearProfile,
     setProfileSchedule,
     setProfileEvents,
     setProfileSurvey,

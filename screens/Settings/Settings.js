@@ -26,7 +26,7 @@ const sleepCycle = (code) => {
 };
 
 export default function Settings({ route: { params } }) {
-  const { profile, features: { surveyEnabled } } = useContext(AppContext);
+  const { profile, features: { surveyEnabled }, api: { resetProfile } } = useContext(AppContext);
   const [recommendations, isProcessing, process] = useRecommender();
   const [surveyText, setSurveyText] = useState('...');
 
@@ -39,6 +39,10 @@ export default function Settings({ route: { params } }) {
   const [isActivitiesDisabled, setIsActivitiesDisabled] = useState(true);
 
   const scheduleText = sleepCycle(profile.schedule);
+
+  const reset = () => {
+    resetProfile();
+  };
 
   const manageActivities = () => {
     navigation.navigate('SettingActivities');
@@ -127,13 +131,23 @@ export default function Settings({ route: { params } }) {
               <Text style={{fontSize: 20, color:Theme.colors.text}}>{'Retake the survey'}</Text>
             </TouchableOpacity>
           </View>
-        </View>
-        }
+        </View>}
 
         {profile.survey &&
         <View style={{marginLeft:40, padding:0}}>
-          <Text style={{color:Theme.colors.primary, fontSize:12}}>{surveyText}</Text>
+          <Text style={{borderBottomColor:'gray', borderBottomWidth:StyleSheet.hairlineWidth, color:Theme.colors.primary, fontSize:12}}>{surveyText}</Text>
         </View>}
+
+        <View style={[styles.group, {marginTop:24}]}>
+          <View style={styles.groupIcon}>
+            <MaterialIcons name="clear" size={20} color='gray' />
+          </View>
+          <View>
+            <TouchableOpacity onPressOut={reset}>
+              <Text style={{fontSize: 20, color:Theme.colors.text}}>{'Reset'}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
         <ActivityModal visible={isProcessing} />
 
