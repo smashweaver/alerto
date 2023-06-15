@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import QuestionView from './QuestionView';
 

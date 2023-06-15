@@ -1,10 +1,5 @@
 import config from './firebase';
 import phasic from './phasic';
-import {
-  questions,
-  answerToCyclesMap,
-  questionToAnswersMap,
-} from './questions';
 
 const firebase = { config };
 
@@ -13,13 +8,20 @@ import {
   cycleToNameMap,
 } from './schedules';
 
+import {
+  questions,
+  questionToAnswersMap,
+  processPart1,
+  useChronotype,
+} from './biotime';
+
 export {
   firebase,
   phasic,
   questions,
-  answerToCyclesMap,
   questionToAnswersMap,
   cycleToEventsMap,
   cycleToNameMap,
-
+  useChronotype,
+  processPart1,
 };
