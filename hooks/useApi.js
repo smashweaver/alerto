@@ -11,7 +11,7 @@ import {
   where,
 } from 'firebase/firestore';
 
-import { cycleToEventsMap } from '../constants';
+import { cycleToEventsMap, chronotypeToEventsMap } from '../constants';
 import { canOccure } from '../utils';
 import uuid from 'react-native-uuid';
 import UserStorage from './userStorage';
@@ -249,29 +249,17 @@ export default function useApi(db) {
   };
 
   const getEventsBySchedule = (schedule) => {
-    const occurence = {
-      mon: true,
-      tue: true,
-      wed: true,
-      thu: true,
-      fri: true,
-      sat: false,
-      sun: false,
-    };
-    const custom = false;
-    const disable = false;
-    const events = cycleToEventsMap[schedule]
+    const events = chronotypeToEventsMap[schedule]
     .map(event => ({
       ...event,
-      custom,
-      occurence,
-      disable,
+      custom:false,
+      disable:false,
       id: uuid.v4(),
     }));
     return events;
   };
 
-  const setProfileSchedule = async (id, schedule = 'everyman', custom=[]) => {
+  const setProfileSchedule = async (id, schedule = 'dolphin', custom=[]) => {
     const events = [...getEventsBySchedule(schedule), ...custom];
     return await saveProfile(id, { schedule, events });
   };

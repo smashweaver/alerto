@@ -7,7 +7,7 @@ import { Octicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { Toolbar } from './Toolbar';
-import { useRecommender } from '../../hooks';
+import { useChronotype } from '../../constants';
 import { ActivityModal } from '../../components';
 
 const Theme = createTheme();
@@ -16,21 +16,18 @@ const sleepCycle = (code) => {
   if (!code) return 'Set your schedule';
 
   const map = {
-    'mono': 'Monophasic',
-    'bi': 'Biphasic',
-    'everyman': 'Everyman',
-    'uberman': 'Uberman',
-    'dymaxion': 'Dymaxion',
+    'dolphin': 'Dolphin',
+    'lion': 'Lion',
+    'wolf': 'wolf',
+    'bear': 'Bear',
   }
   return map[code];
 };
 
 export default function Settings({ route: { params } }) {
-  const { user, profile, features: { surveyEnabled }, api: { resetProfile } } = useContext(AppContext);
-  const [recommendations, isProcessing, process] = useRecommender();
-  const [surveyText, setSurveyText] = useState('...');
-
   const navigation = useNavigation();
+  const [chronotype, score, isProcessing, process] = useChronotype();
+  const { user, profile, features: { surveyEnabled }, api: { resetProfile } } = useContext(AppContext);
 
   const disabledGroup = [styles.groupValue, { opacity: 0.3 }];
   const enabledGroup = [styles.groupValue];
@@ -63,12 +60,6 @@ export default function Settings({ route: { params } }) {
   };
 
   useEffect(() => {
-    console.log('*** mounting Settings');
-    return () => console.log('*** unmounting Settings');
-  }, []);
-
-  useEffect(() => {
-    console.log('*** profile has changed');
     if (profile.schedule) {
       setActivitiesGroupStyle(enabledGroup);
       setIsActivitiesDisabled(false);
@@ -76,19 +67,11 @@ export default function Settings({ route: { params } }) {
       setActivitiesGroupStyle(disabledGroup);
       setIsActivitiesDisabled(true);
     }
-  }, [profile.schedule]);
 
-  useEffect(() => {
-    if (!profile.survey) return;
-    //console.log(profile.survey);
-    process(profile.survey.results)
-  }, [profile.survey])
-
-  useEffect(() => {
-    if (!recommendations.length) return;
-    setSurveyText(`${recommendations.join(', ')}`);
-  }, [recommendations])
-
+    if (profile.survey.results) {
+      process(profile.survey.results);
+    }
+  }, []);
 
   useFocusEffect(() => {
     console.log('*** screen changed: Settings');
@@ -133,9 +116,9 @@ export default function Settings({ route: { params } }) {
           </View>
         </View>}
 
-        {profile.survey &&
+        {profile.survey && chronotype &&
         <View style={{marginLeft:40, padding:0}}>
-          <Text style={{borderBottomColor:'gray', borderBottomWidth:StyleSheet.hairlineWidth, color:Theme.colors.primary, fontSize:12}}>{surveyText}</Text>
+          <Text style={{borderBottomColor:'gray', borderBottomWidth:StyleSheet.hairlineWidth, color:Theme.colors.primary, fontSize:12}}>{chronotype}</Text>
         </View>}
 
         <View style={[styles.group, {marginTop:24}]}>

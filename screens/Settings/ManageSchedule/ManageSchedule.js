@@ -12,7 +12,7 @@ import { Button } from 'react-native-paper';
 import { createTheme } from '../../../themes';
 import { AppContext } from '../../../contexts/appContext';
 import { CycleView } from './CycleView';
-import { phasic } from '../../../constants';
+import { chronotypes } from '../../../constants';
 import { ActivityModal } from '../../../components';
 
 const Theme = createTheme();
@@ -25,7 +25,11 @@ export default function ManageSchedule() {
     api: {
       updateProfileSchedule,
     },
-  } = useContext(AppContext)
+  } = useContext(AppContext);
+
+  const { schedule, events } = profile;
+
+  console.log('*** [ManageSchedule]', { schedule, events });
 
   const [scrolledTo, setScrolledTo] = useState(0);
   const [isProcessing, setProcessing] = useState(false);
@@ -38,9 +42,9 @@ export default function ManageSchedule() {
   };
 
   const handleApply = async () => {
-    const {code} = phasic[scrolledTo];
+    const {code} = chronotypes[scrolledTo];
     const custom = (profile.events || []).filter(x => !!x.custom);
-    console.log('*** profile schedule changed:', { code, custom });
+    console.log('*** [ManageSchedule] handleApply', { code, custom });
     setProcessing(true);
     await updateProfileSchedule(user.uid, code, custom);
     setProcessing(false);
@@ -73,7 +77,7 @@ export default function ManageSchedule() {
         onMomentumScrollEnd={handleScroll}
       >
         {
-          phasic.map(cycle => <CycleView selected={profile.schedule} cycle={cycle} key={cycle.code} />)
+          chronotypes.map(cycle => <CycleView selected={profile.schedule} cycle={cycle} key={cycle.code} />)
         }
       </ScrollView>
 
