@@ -128,7 +128,7 @@ export default function Survey ({ route: { params } }) {
 
       console.log('*** result of part 1:', { score, flag });
 
-      if (isDolphin && page === 8) {
+      if (flag && page === 8) {
         setDone(true);
       } else {
         setTimeout(handleNext, 700);

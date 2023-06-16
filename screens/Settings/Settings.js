@@ -9,6 +9,8 @@ import { useNavigation } from '@react-navigation/native';
 import { Toolbar } from './Toolbar';
 import { useChronotype } from '../../constants';
 import { ActivityModal } from '../../components';
+import { is } from 'date-fns/locale';
+import { reauthenticateWithCredential } from 'firebase/auth';
 
 const Theme = createTheme();
 
@@ -24,6 +26,11 @@ const sleepCycle = (code) => {
   return map[code];
 };
 
+const isValidCode = (code) => {
+  const codes = ['dolphin', 'lion', 'wolf', 'bear'];
+  return code === false || codes.includes(code);
+};
+
 export default function Settings({ route: { params } }) {
   const navigation = useNavigation();
   const [chronotype, score, isProcessing, process] = useChronotype();
@@ -35,7 +42,7 @@ export default function Settings({ route: { params } }) {
   const [activitiesGroupStyle, setActivitiesGroupStyle] = useState(disabledGroup);
   const [isActivitiesDisabled, setIsActivitiesDisabled] = useState(true);
 
-  const scheduleText = sleepCycle(profile.schedule);
+  const scheduleText = sleepCycle(profile.schedule) || 'Set your schedule';
 
   const reset = () => {
     resetProfile(user.uid);
@@ -60,6 +67,11 @@ export default function Settings({ route: { params } }) {
   };
 
   useEffect(() => {
+    if (!isValidCode(profile.schedule)) {
+      reset();
+      return;
+    }
+
     if (profile.schedule) {
       setActivitiesGroupStyle(enabledGroup);
       setIsActivitiesDisabled(false);

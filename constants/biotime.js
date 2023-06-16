@@ -72,7 +72,7 @@ export const bioQuiz = [
   {
     question: 'What\'s your favorite meal? (Think time of day more than the menu.)',
     choices: [
-      { answer: 'Breakfast', r: 1 },
+      { answer: 'Breakfast.', r: 1 },
       { answer: 'Lunch.', r: 2 },
       { answer: 'Dinner.', r: 3 },
     ],
@@ -208,7 +208,7 @@ const bioResults = [
 
 function getBioResult(score) {
   const result = bioResults.find(({ min, max }) => score >= min && score <= max);
-  return result.name;
+  return result ? result.name : 'Unknown';
 }
 
 function mapQuestionToAnswers() {
@@ -237,7 +237,6 @@ const questionAndAnswerResultMap = new Map(bioQuiz.map(({ question, choices }) =
   return [question, answerResultMap];
 }));
 
-
 function getResultEntries(result, startingIndex, count) {
   const entries = Object.entries(result);
   const endIndex = startingIndex + count;
@@ -246,27 +245,27 @@ function getResultEntries(result, startingIndex, count) {
   return resultEntries;
 }
 
-function getBioScore(entries) {
-  console.log('*** getBioScore', { entries });
+function getBioScore(entries, label) {
   let score = 0;
   for (const [question, answer] of entries) {
     const answerResultMap = questionAndAnswerResultMap.get(question);
     const result = answerResultMap.get(answer);
     score += result;
   }
+  console.log(`*** getBioScore ${label}=${score}:`, { entries });
   return score;
 }
 
 export function processPart1(result) {
   if (Object.keys(result).length === 9) {
-    const score = getBioScore(getResultEntries(result, 0, 9));
+    const score = getBioScore(getResultEntries(result, 0, 9), 'Part1');
     return [score, score >= 7];
   }
   return [0, false];
 }
 
 function processPart2(result) {
-  const score = getBioScore(getResultEntries(result, 10, 20));
+  const score = getBioScore(getResultEntries(result, 9, 20), 'Part2');
   const chronotype = getBioResult(score);
   return [score, chronotype];
 }
