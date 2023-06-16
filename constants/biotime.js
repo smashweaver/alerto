@@ -247,6 +247,7 @@ function getResultEntries(result, startingIndex, count) {
 }
 
 function getBioScore(entries) {
+  console.log('*** getBioScore', { entries });
   let score = 0;
   for (const [question, answer] of entries) {
     const answerResultMap = questionAndAnswerResultMap.get(question);

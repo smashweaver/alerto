@@ -305,9 +305,9 @@ const dolphin = [
     occurence: WeekdayOccurrence,
   },
   {
-    hour: 0,       // 12am
-    min: 0,
-    duration: 390,  // 6.5 hours
+    hour: 23,       // 11pm
+    min: 30,
+    duration: 420,  // 7 hours
     title: 'Sleep',
     alert: 3,
     note: 'Sleep',

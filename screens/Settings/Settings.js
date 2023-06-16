@@ -71,7 +71,7 @@ export default function Settings({ route: { params } }) {
     if (profile.survey.results) {
       process(profile.survey.results);
     }
-  }, []);
+  }, [profile]);
 
   useFocusEffect(() => {
     console.log('*** screen changed: Settings');
@@ -116,7 +116,7 @@ export default function Settings({ route: { params } }) {
           </View>
         </View>}
 
-        {profile.survey && chronotype &&
+        {profile.survey && profile.survey.results && chronotype &&
         <View style={{marginLeft:40, padding:0}}>
           <Text style={{borderBottomColor:'gray', borderBottomWidth:StyleSheet.hairlineWidth, color:Theme.colors.primary, fontSize:12}}>{chronotype}</Text>
         </View>}
