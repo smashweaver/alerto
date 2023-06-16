@@ -295,7 +295,7 @@ export function useChronotype() {
     setProcessing(false);
   };
 
-  console.log('*** useChronotype', { chronotype, score, process });
+  // console.log('*** useChronotype', { chronotype, score, process });
 
   return [chronotype, score, isProcessing, process];
 }

@@ -9,7 +9,7 @@ import QuestionsListView from './QuestionsListView';
 import SurveyResultView from './SurveyViewResult';
 import { AppContext } from '../../contexts/appContext';
 import { ActivityModal } from '../../components';
-
+import { useChronotype } from '../../constants';
 
 const Theme = createTheme();
 //console.log(Theme.colors.disabled);
@@ -19,7 +19,7 @@ const winHeight = Dimensions.get('window').height;
 
 function ViewSelector(props) {
   const { isDone } = props;
-  return !isDone ? <QuestionsListView {...props} /> : <SurveyResultView {...props} />;
+  return !isDone ? <QuestionsListView {...props} /> : <SurveyResultView {...props}  />;
 }
 
 export default function Survey ({ route: { params } }) {
@@ -27,18 +27,26 @@ export default function Survey ({ route: { params } }) {
     user,
     api: {
       updateProfileSurvey,
+      updateProfileSchedule,
     },
   } = useContext(AppContext);
   const navigation = useNavigation();
+  const [chronotype, , , process] = useChronotype();
   const {retake} = params || { retake:false};
   const [result, setResult] = useState({});
   const [page, setPage] = useState(0);
   const [isDone, setDone] = useState(false);
   const [scrollRef, setScrollRef] = useState(null);
-  const [isProcessing, setProcessing] = useState(false);
   const [isDolphin, setIsDolphin] = useState(false);
+  const [isProcessing, setProcessing] = useState(false);
 
   //console.log(retake);
+
+  const updateUserSchedule = async () => {
+    const code = chronotype.toLowerCase();
+    console.log('*** updateUserSchedule', { code });
+    await updateProfileSchedule(user.uid, code);
+  };
 
   const handleConfirm = async () => {
     setProcessing(true);
@@ -47,6 +55,7 @@ export default function Survey ({ route: { params } }) {
         results: { ...result }
       },
     });
+
     setTimeout(() => {
       setProcessing(false);
       navigation.navigate('SettingIndex');
@@ -54,14 +63,6 @@ export default function Survey ({ route: { params } }) {
   };
 
   const handleAnswer = (question, answer) => {
-    /*const newResult = { ...result };
-    newResult[question] = answer;
-    setResult({ ...newResult });
-    if (page < questions.length-1) {
-      setTimeout(handleNext, 700);
-    } else {
-      setTimeout(() => setDone(true), 700);
-    }*/
     console.log('*** handleAnswer', {question, answer});
     setResult(prevResult => ({
       ...prevResult,
@@ -138,6 +139,16 @@ export default function Survey ({ route: { params } }) {
     }
   }, [result]);
 
+  useEffect(() => {
+    if (isDone)  process(result);
+  }, [isDone]);
+
+  useEffect(() => {
+    if (chronotype) {
+      updateUserSchedule();
+    }
+  }, [chronotype]);
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
@@ -150,6 +161,7 @@ export default function Survey ({ route: { params } }) {
           isDone={isDone}
           result={result}
           questions={questions}
+          chronotype={chronotype}
           onAnswer={handleAnswer}
           setScrollRef={setScrollRef}
           showSurveyResults={showSurveyResults}
@@ -167,7 +179,7 @@ export default function Survey ({ route: { params } }) {
       {isDone &&
       <View style={styles.bottomContainer}>
         <View style={styles.buttonContainer}>
-          <Button onPress={handleConfirm}>Confirm</Button>
+          <Button onPress={handleConfirm}>Ok</Button>
         </View>
       </View>}
 

@@ -32,14 +32,7 @@ function RecommendationView({ chronotype }) {
   )
 }
 
-export default function SurveyResultView({ questions, result }) {
-  const [chronotype, score, isProcessing, process] = useChronotype();
-
-  useState(() => {
-    console.log('*** mounting SurveyResultView', { result});
-    process(result);
-  }, [])
-
+export default function SurveyResultView({ questions, result, chronotype }) {
   return (
     <View style={{flex:1}}>
         <View style={styles.listContainer}>
@@ -65,12 +58,12 @@ export default function SurveyResultView({ questions, result }) {
               ))
             }
 
-            <RecommendationView chronotype={chronotype} />
+            {chronotype && <RecommendationView chronotype={chronotype} />}
           </ScrollView>
         </View>
       </View>
 
-      <ActivityModal visible={isProcessing} />
+      <ActivityModal visible={!chronotype} />
     </View>
   )
 }

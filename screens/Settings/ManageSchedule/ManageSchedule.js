@@ -43,10 +43,10 @@ export default function ManageSchedule() {
 
   const handleApply = async () => {
     const {code} = chronotypes[scrolledTo];
-    const custom = (profile.events || []).filter(x => !!x.custom);
-    console.log('*** [ManageSchedule] handleApply', { code, custom });
+    // const custom = (profile.events || []).filter(x => !!x.custom);
+    // console.log('*** [ManageSchedule] handleApply', { code, custom });
     setProcessing(true);
-    await updateProfileSchedule(user.uid, code, custom);
+    await updateProfileSchedule(user.uid, code);
     setProcessing(false);
     goBack();
   };
