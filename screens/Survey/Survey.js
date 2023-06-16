@@ -3,12 +3,13 @@ import { Dimensions, StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { Toolbar } from './Toolbar';
 import { createTheme } from '../../themes';
-import { questions } from '../../constants';
+import { questions, processPart1 } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
 import QuestionsListView from './QuestionsListView';
 import SurveyResultView from './SurveyViewResult';
 import { AppContext } from '../../contexts/appContext';
 import { ActivityModal } from '../../components';
+
 
 const Theme = createTheme();
 //console.log(Theme.colors.disabled);
@@ -21,7 +22,6 @@ function ViewSelector(props) {
   return !isDone ? <QuestionsListView {...props} /> : <SurveyResultView {...props} />;
 }
 
-// find_dimesions(event.nativeEvent.layout)
 export default function Survey ({ route: { params } }) {
   const {
     user,
@@ -33,10 +33,10 @@ export default function Survey ({ route: { params } }) {
   const {retake} = params || { retake:false};
   const [result, setResult] = useState({});
   const [page, setPage] = useState(0);
-  const [answer, setAnswer] = useState(null);
   const [isDone, setDone] = useState(false);
   const [scrollRef, setScrollRef] = useState(null);
   const [isProcessing, setProcessing] = useState(false);
+  const [isDolphin, setIsDolphin] = useState(false);
 
   //console.log(retake);
 
@@ -54,14 +54,19 @@ export default function Survey ({ route: { params } }) {
   };
 
   const handleAnswer = (question, answer) => {
-    const newResult = { ...result };
+    /*const newResult = { ...result };
     newResult[question] = answer;
     setResult({ ...newResult });
     if (page < questions.length-1) {
       setTimeout(handleNext, 700);
     } else {
       setTimeout(() => setDone(true), 700);
-    }
+    }*/
+    console.log('*** handleAnswer', {question, answer});
+    setResult(prevResult => ({
+      ...prevResult,
+      [question]: answer
+    }));
   };
 
   const showSurveyResults = () => {
@@ -70,18 +75,18 @@ export default function Survey ({ route: { params } }) {
   };
 
   const handleNext = () => {
-    // todo: do not allow if current question is not yet answered
+    if (isDolphin && page === 8) {
+      setDone(true);
+      return;
+    }
+
     if (page+1 < questions.length) {
-      const xOffset = width * (page+1);
-      scrollRef.scrollTo({ x: xOffset, y: 0, animated: true });
       setPage(page+1);
     }
   };
 
   const handlePrev = () => {
     if (page-1 >= 0) {
-      const xOffset = width * (page-1);
-      scrollRef.scrollTo({ x: xOffset, y: 0, animated: true });
       setPage(page-1);
     }
   };
@@ -96,15 +101,9 @@ export default function Survey ({ route: { params } }) {
 
   const resetSurvey = () => {
     setDone(false);
-    setAnswer(null);
     setPage(0);
     setResult({});
   }
-
-  useEffect(() => {
-    console.log('*** mounting Survey');
-    //resetSurvey();
-  }, []);
 
   useEffect(() => {
     if (retake) resetSurvey();
@@ -112,12 +111,32 @@ export default function Survey ({ route: { params } }) {
 
   useEffect(() =>  {
     if (!scrollRef) return;
-    const a = getAnswer(page);
-    setAnswer(a);
-    // console.log('*** page changed:', {page, answer: a});
+    console.log('*** page:', page+1);
     const xOffset = width * (page);
     scrollRef.scrollTo({ x: xOffset, y: 0, animated: true });
   }, [page, scrollRef]);
+
+  useEffect(() => {
+    console.log('*** survey result:', result);
+    if (page < questions.length-1) {
+      const answer = getAnswer(page);
+
+      if (!answer) return; // wait for answer
+
+      const [score, flag] = processPart1(result);
+      setIsDolphin(flag);
+
+      console.log('*** result of part 1:', { score, flag });
+
+      if (isDolphin && page === 8) {
+        setDone(true);
+      } else {
+        setTimeout(handleNext, 700);
+      }
+    } else {
+      setTimeout(() => setDone(true), 700);
+    }
+  }, [result]);
 
   return (
     <View style={styles.container}>
@@ -141,7 +160,7 @@ export default function Survey ({ route: { params } }) {
       <View style={styles.bottomContainer}>
         <View style={styles.buttonContainer}>
           <Button disabled={isDone} onPress={handlePrev}>Previous</Button>
-          <Button disabled={!answer} onPress={handleNext}>Next</Button>
+          <Button disabled={!getAnswer(page)} onPress={handleNext}>Next</Button>
         </View>
       </View>}
 

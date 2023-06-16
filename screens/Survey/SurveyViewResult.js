@@ -1,6 +1,6 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { createTheme } from '../../themes';
-import { useRecommender } from '../../hooks';
+import { useChronotype } from '../../constants';
 import { ActivityModal } from '../../components';
 import { useState } from 'react';
 
@@ -15,28 +15,28 @@ function SurveyAnswerView({ question, answer }) {
   )
 }
 
-function RecommendationView({ recommendations }) {
-  const bestFit = recommendations.join(', ');
-  // console.log(recommendations);
-
-  let text = 'Based on the survey results, the following cycle is recommended for you:';
-  if (recommendations.length > 1) {
-    text = 'Based on the survey results, the following cycles are recommended for you:';
-  }
+function RecommendationView({ chronotype }) {
+  let text = 'Thank you for participating in the survey. Based on the results, your chronotype is of a ';
 
   return (
     <View style={[styles.headerContainer, {marginBottom:20}]}>
       <Text style={styles.header}>Synopis</Text>
-      <Text style={styles.recommended}>{text}</Text>
-      <Text style={[styles.recommended, {color:'#fff', fontWeight:'500'}]}>- {bestFit}</Text>
+      <Text style={styles.recommended}>
+        {text}
+        <Text style={{ color:'#fff', fontWeight:'500' }}>
+          {chronotype}
+        </Text>
+      </Text>
+
     </View>
   )
 }
 
 export default function SurveyResultView({ questions, result }) {
-  const [recommendations, isProcessing, process] = useRecommender();
+  const [chronotype, score, isProcessing, process] = useChronotype();
 
   useState(() => {
+    console.log('*** mounting SurveyResultView', { result});
     process(result);
   }, [])
 
@@ -54,10 +54,18 @@ export default function SurveyResultView({ questions, result }) {
             </View>
 
             {
-              questions.map((question, index) => <SurveyAnswerView question={question} answer={result[question]} key={index}/>)
+              questions
+              .filter(question => result[question] !== undefined)
+              .map((question, index) => (
+                <SurveyAnswerView
+                  question={question}
+                  answer={result[question]}
+                  key={index}
+                />
+              ))
             }
 
-            <RecommendationView recommendations={recommendations} />
+            <RecommendationView chronotype={chronotype} />
           </ScrollView>
         </View>
       </View>

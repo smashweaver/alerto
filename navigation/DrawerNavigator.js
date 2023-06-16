@@ -16,7 +16,7 @@ export default function DrawerNavigator() {
       drawerContent={(props) => <DrawerContentView {...props} />}
       screenOptions={{
         headerShown: true,
-        headerTitle: 'Alerto',
+        headerTitle: 'Up Time',
         headerStyle: {
           backgroundColor: Theme.HeaderBackgroundColor,
           elevation: 0,

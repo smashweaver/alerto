@@ -55,6 +55,7 @@ export const AppProvider = ({ children }) => {
     createEvent,
     updateEvent,
     retrieveEventById,
+    clearProfile,
     getProfile,
     setProfileSchedule,
     setProfileEvents,
@@ -66,9 +67,9 @@ export const AppProvider = ({ children }) => {
 
   const onUserChanged = async (userData) => {
     const email = userData && userData.email || null;
-    console.log('*** user:', email);
     if (userData) {
       const { uid } = userData;
+      console.log({ uid });
       const userProfile = await getProfile(uid);
       setProfile(userProfile);
       await AsyncStorage.setItem('uid', uid);
@@ -102,6 +103,12 @@ export const AppProvider = ({ children }) => {
     const userProfile = await getProfile(uid);
     console.log('*** user profile refreshed:', userProfile);
     setProfile(userProfile);
+  };
+
+  const resetProfile = async (uid) => {
+    console.log('*** resetting profile:', uid);
+    await clearProfile(uid);
+    await refreshProfile(uid);
   };
 
   const updateProfileSchedule = async (uid, code, custom=[]) => {
@@ -265,6 +272,7 @@ export const AppProvider = ({ children }) => {
       addDatedEvent,
       removeDatedEvent,
       updateDatedEvent,
+      resetProfile,
     },
 
     phone: { notify, ticker },

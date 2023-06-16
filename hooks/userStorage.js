@@ -5,6 +5,7 @@ const STORAGE_KEY_PREFIX = 'myAlertoData';
 export default class UserStorage {
   constructor(id) {
     this.storageKey = `${STORAGE_KEY_PREFIX}:${id}`;
+    console.log('*** storageKey:', this.storageKey);
   }
 
   async saveId(uid) {
@@ -46,8 +47,12 @@ export default class UserStorage {
   }
 
   async clearData() {
+    console.log('*** clearing data for: ', this.storageKey);
     try {
       await AsyncStorage.removeItem(this.storageKey);
+      const data = await this.loadData();
+      console.log('*** clearData', { data });
+
     } catch (error) {
       console.log(`Error clearing data for user ${this.storageKey}:`, error);
     }
