@@ -18,7 +18,7 @@ const sleepCycle = (code) => {
   const map = {
     'dolphin': 'Dolphin',
     'lion': 'Lion',
-    'wolf': 'wolf',
+    'wolf': 'Wolf',
     'bear': 'Bear',
   }
   return map[code];
